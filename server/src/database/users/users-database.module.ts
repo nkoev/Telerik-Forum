@@ -5,4 +5,4 @@ import { UsersInMemoryStorage } from './users-in-memory-storage';
   providers: [UsersInMemoryStorage],
   exports: [UsersInMemoryStorage],
 })
-export class DatabaseModule {}
+export class UsersDatabaseModule {}

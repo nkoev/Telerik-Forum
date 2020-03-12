@@ -5,4 +5,4 @@ import { CommentsInMemoryStorage } from './comments-in-memory-storage';
   providers: [CommentsInMemoryStorage],
   exports: [CommentsInMemoryStorage],
 })
-export class DatabaseModule {}
+export class CommentsDatabaseModule {}

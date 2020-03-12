@@ -5,4 +5,4 @@ import { PostsInMemoryStorage } from './posts-in-memory-storage';
   providers: [PostsInMemoryStorage],
   exports: [PostsInMemoryStorage],
 })
-export class DatabaseModule {}
+export class PostsDatabaseModule {}
