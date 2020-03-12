@@ -1,4 +1,4 @@
-export class UsersInMemoryStorage<T extends { id: number, isDeleted: boolean }> {
+export class UsersInMemoryStorage<T extends { id: number, username: string, isDeleted: boolean }> {
   private readonly _data: T[] = [];
   private currentId = 1;
 
@@ -8,6 +8,10 @@ export class UsersInMemoryStorage<T extends { id: number, isDeleted: boolean }> 
 
   public find(modelId: number): T {
     return this._data.find(x => x.id === modelId);
+  }
+
+  public findByUsername(modelUsername: string): T {
+    return this._data.find(x => x.username === modelUsername);
   }
 
   public add(model: T): T {

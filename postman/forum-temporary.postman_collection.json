@@ -68,7 +68,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": " {\r\n    \"username\": \"My user\",\r\n    \"password\": \"123456789\"\r\n}"
+					"raw": " {\r\n    \"username\": \"Test User\",\r\n    \"password\": \"12345\"\r\n}"
 				},
 				"url": {
 					"raw": "localhost:3000/users/login",
