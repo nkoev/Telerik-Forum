@@ -1,4 +1,4 @@
-import { Controller, HttpCode, HttpStatus, Body, Post } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Body, Post, Delete } from '@nestjs/common';
 import { UsersService } from './users.service'
 
 @Controller('users')
@@ -13,5 +13,14 @@ export class UsersController {
         this.usersService.loginUser(username, password);
 
         return { msg: 'Success! Send JWT...'};
+    }
+
+    @Delete('/session')
+    @HttpCode(HttpStatus.OK)
+    public logoutUser() {
+
+        this.usersService.logoutUser();
+
+        return { msg: 'Success! User logged out...'};
     }
 }

@@ -38,4 +38,8 @@ export class UsersService {
 
         return foundUser;
     }
+
+    logoutUser() {
+        return 'logout...';
+    }
 }
