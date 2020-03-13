@@ -6,6 +6,42 @@ import { UsersInMemoryStorage } from 'src/database/users/users-in-memory-storage
 export class UsersService {
     constructor(private readonly users: UsersInMemoryStorage<UserDTO>) { }
 
+    registerUser(username: string, password: string) {
+        if (username === undefined) {
+            throw new BadRequestException(
+                'Username missing',
+            );
+        }
+        if (password === undefined) {
+            throw new BadRequestException(
+                'Password missing',
+            );
+        }
+
+        // // for testing purposes only
+        // this.users.add({id: 0, username: 'Test User', password: '12345', isDeleted: false});
+
+        const foundUser = this.users.findByUsername(username);
+
+        if (foundUser) {
+            throw new HttpException({
+                status: HttpStatus.CONFLICT,
+                error: 'Username taken',
+            }, 409);
+        }
+
+        const registeredUser: UserDTO = {
+            id: 0,
+            username: username,
+            password: password,
+            isDeleted: false
+        }
+
+        this.users.add(registeredUser);
+
+        return registeredUser;
+    }
+
     loginUser(username: string, password: string) {
         if (username === undefined) {
             throw new BadRequestException(

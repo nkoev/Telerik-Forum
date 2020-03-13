@@ -5,6 +5,18 @@ import { UsersService } from './users.service'
 export class UsersController {
     constructor(private readonly usersService: UsersService) { }
 
+    // REGISTER
+    @Post('')
+    @HttpCode(HttpStatus.CREATED)
+    public registerUser(@Body() user: any) {
+        const { username, password } = user;
+
+        this.usersService.registerUser(username, password);
+
+        return { msg: 'User registered...'};
+    }
+
+    // LOGIN
     @Post('/session')
     @HttpCode(HttpStatus.ACCEPTED)
     public loginUser(@Body() user: any) {
