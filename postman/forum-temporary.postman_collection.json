@@ -6,11 +6,21 @@
 	},
 	"item": [
 		{
-			"name": "1. GET /users - Success",
+			"name": "1. POST /users - Success",
 			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"username\": \"My user\",\r\n    \"password\": \"12345\"\r\n}"
+				},
 				"url": {
 					"raw": "localhost:3000/users",
 					"host": [
@@ -25,37 +35,7 @@
 			"response": []
 		},
 		{
-			"name": "2. POST /users/register - Success",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": " {\r\n    \"username\": \"My user\",\r\n    \"password\": \"123456789\"\r\n}"
-				},
-				"url": {
-					"raw": "localhost:3000/users/register",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"users",
-						"register"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "3. POST /users/login - Success",
+			"name": "2. POST /users/session - Success",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -71,41 +51,47 @@
 					"raw": " {\r\n    \"username\": \"Test User\",\r\n    \"password\": \"12345\"\r\n}"
 				},
 				"url": {
-					"raw": "localhost:3000/users/login",
+					"raw": "localhost:3000/users/session",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
 						"users",
-						"login"
+						"session"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "4. GET /users/logout - Success",
+			"name": "3. DELETE /users/session - Success",
 			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
 				"url": {
-					"raw": "localhost:3000/users/logout",
+					"raw": "localhost:3000/users/session",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
 						"users",
-						"logout"
+						"session"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "5. GET /users/:userId/posts - Success",
+			"name": "4. GET /users/:userId/posts - Success",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -126,7 +112,7 @@
 			"response": []
 		},
 		{
-			"name": "6. GET /users/:userId/posts/:postId - Success",
+			"name": "5. GET /users/:userId/posts/:postId - Success",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -148,7 +134,7 @@
 			"response": []
 		},
 		{
-			"name": "7. POST /users/:userId/posts - Success",
+			"name": "6. POST /users/:userId/posts - Success",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -179,7 +165,7 @@
 			"response": []
 		},
 		{
-			"name": "8. PUT /users/:userId/posts/:postId - Success",
+			"name": "7. PUT /users/:userId/posts/:postId - Success",
 			"request": {
 				"method": "PUT",
 				"header": [
@@ -211,7 +197,7 @@
 			"response": []
 		},
 		{
-			"name": "9. DELETE /users/:userId/posts/:postId - Success",
+			"name": "8. DELETE /users/:userId/posts/:postId - Success",
 			"request": {
 				"method": "DELETE",
 				"header": [

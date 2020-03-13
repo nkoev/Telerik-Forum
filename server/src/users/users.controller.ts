@@ -5,7 +5,7 @@ import { UsersService } from './users.service'
 export class UsersController {
     constructor(private readonly usersService: UsersService) { }
 
-    @Post('/login')
+    @Post('/session')
     @HttpCode(HttpStatus.ACCEPTED)
     public loginUser(@Body() user: any) {
         const { username, password } = user;
