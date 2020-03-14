@@ -7,7 +7,7 @@ import { CommentsModule } from './comments/comments.module';
 import { TypeOrmModule } from '@nestjs/typeorm'
 
 @Module({
-  imports: [UsersModule, PostsModule, CommentsModule, TypeOrmModule,
+  imports: [UsersModule, PostsModule, CommentsModule,
     TypeOrmModule.forRoot()],
   controllers: [AppController],
   providers: [AppService],
