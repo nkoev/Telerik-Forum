@@ -1,4 +1,4 @@
-import { Controller, HttpCode, HttpStatus, Body, Post } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Body, Post, Delete } from '@nestjs/common';
 import { UsersService } from './users.service'
 
 @Controller('users')
@@ -6,7 +6,7 @@ export class UsersController {
 
     constructor(private readonly usersService: UsersService) { }
 
-    // REGISTER
+    //  REGISTER
     @Post('')
     @HttpCode(HttpStatus.CREATED)
     async registerUser(
@@ -16,7 +16,7 @@ export class UsersController {
         return await this.usersService.registerUser({"username": username, "password": password});
     }
 
-    // // LOGIN
+    //  LOGIN
     @Post('/session')
     @HttpCode(HttpStatus.ACCEPTED)
     async loginUser(
@@ -24,5 +24,15 @@ export class UsersController {
         @Body('password') password: string
     ) {
         return await this.usersService.loginUser({"username": username, "password": password});
+    }
+
+    //  LOGOUT
+    @Delete('/session')
+    @HttpCode(HttpStatus.OK)
+    async logoutUser() {
+
+        await this.usersService.logoutUser();
+
+        return { msg: 'Success! User logged out...'};
     }
 }
