@@ -13,7 +13,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
       host: "localhost",
       port: 3306,
       username: "root",
-      password: "nepu6ete",
+      password: "1234",
       database: "forumdb",
       entities: [
         __dirname + "/**/*.entity{.js,.ts}"
