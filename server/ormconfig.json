@@ -2,13 +2,13 @@
    "type": "mysql",
    "host": "localhost",
    "port": 3306,
-   "username": "test",
-   "password": "test",
-   "database": "test",
+   "username": "root",
+   "password": "1234",
+   "database": "forumdb",
    "synchronize": true,
    "logging": false,
    "entities": [
-      "src/entity/**/*.ts"
+      "build/**/*.entity{.ts,.js}"
    ],
    "migrations": [
       "src/migration/**/*.ts"
