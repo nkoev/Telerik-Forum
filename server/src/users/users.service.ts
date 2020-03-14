@@ -8,20 +8,20 @@ export class UsersService {
 
     constructor(
         @InjectRepository(User) private readonly userRepository: Repository<User>
-      ) { }
+    ) { }
 
-      async all(): Promise<User[]> {
-           return await this.userRepository.find({ });
-      }
+    async all(): Promise<User[]> {
+        return await this.userRepository.find({ });
+    }
     
-      async find(options: Partial<User>): Promise<User[]> {
+    async find(options: Partial<User>): Promise<User[]> {
         return await this.userRepository.find({
             where: options
         });
-      }
+    }
 
-
-      async registerUser(user: Partial<User>): Promise<User> {
+    // REGISTER
+    async registerUser(user: Partial<User>): Promise<User> {
         if (user.username === undefined) {
             throw new BadRequestException(
                 'Username missing',
@@ -44,9 +44,10 @@ export class UsersService {
         }
 
         return await this.userRepository.save(user);
-      }
+    }
 
 
+    // LOGIN
     async loginUser(user: Partial<User>): Promise<User> {
         if (user.username === undefined) {
             throw new BadRequestException(
@@ -79,6 +80,8 @@ export class UsersService {
         return foundUser;
     }
 
+    
+    // LOGOUT
     async logoutUser() {
         return 'logout...';
     }
