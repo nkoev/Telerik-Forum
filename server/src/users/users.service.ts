@@ -1,62 +1,67 @@
-import { Injectable, BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
-import { UserDTO } from './models/user.dto';
-import { UsersInMemoryStorage } from './../database/users/users-in-memory-storage';
+import { Injectable, BadRequestException, HttpException, HttpStatus} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-    constructor(private readonly users: UsersInMemoryStorage<UserDTO>) { }
 
-    registerUser(username: string, password: string) {
-        if (username === undefined) {
+    constructor(
+        @InjectRepository(User) private readonly userRepository: Repository<User>
+    ) { }
+
+    async all(): Promise<User[]> {
+        return await this.userRepository.find({ });
+    }
+    
+    async find(options: Partial<User>): Promise<User[]> {
+        return await this.userRepository.find({
+            where: options
+        });
+    }
+
+    // REGISTER
+    async registerUser(user: Partial<User>): Promise<User> {
+        if (user.username === undefined) {
             throw new BadRequestException(
                 'Username missing',
             );
         }
-        if (password === undefined) {
+        if (user.password === undefined) {
             throw new BadRequestException(
                 'Password missing',
             );
         }
 
-        // // for testing purposes only
-        // this.users.add({id: 0, username: 'Test User', password: '12345', isDeleted: false});
+        const foundUser = await this.find(user)
+        .then(res => res[0]);
 
-        const foundUser = this.users.findByUsername(username);
-
-        if (foundUser) {
+        if (foundUser !== undefined) {
             throw new HttpException({
                 status: HttpStatus.CONFLICT,
                 error: 'Username taken',
             }, 409);
         }
 
-        const registeredUser: UserDTO = {
-            id: 0,
-            username: username,
-            password: password,
-            isDeleted: false
-        }
-
-        this.users.add(registeredUser);
-
-        return registeredUser;
+        return await this.userRepository.save(user);
     }
 
-    loginUser(username: string, password: string) {
-        if (username === undefined) {
+
+    // LOGIN
+    async loginUser(user: Partial<User>): Promise<User> {
+        if (user.username === undefined) {
             throw new BadRequestException(
                 'Username missing',
             );
         }
-        if (password === undefined) {
+        if (user.password === undefined) {
             throw new BadRequestException(
                 'Password missing',
             );
         }
 
-        // for testing purposes only
-        // this.users.add({id: 0, username: 'Test User', password: '12345', isDeleted: false});
-        const foundUser = this.users.findByUsername(username);
+        const foundUser = await this.find(user)
+        .then(res => res[0]);
 
         if (foundUser === undefined) {
             throw new HttpException({
@@ -65,7 +70,7 @@ export class UsersService {
             }, 404);
         }
 
-        if (foundUser.password !== password) {
+        if (foundUser.password !== user.password) {
             throw new HttpException({
                 status: HttpStatus.CONFLICT,
                 error: 'Wrong password',
@@ -73,5 +78,11 @@ export class UsersService {
         }
 
         return foundUser;
+    }
+
+    
+    // LOGOUT
+    async logoutUser() {
+        return 'logout...';
     }
 }

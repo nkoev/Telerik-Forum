@@ -1,29 +1,38 @@
-import { Controller, HttpCode, HttpStatus, Body, Post } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Body, Post, Delete } from '@nestjs/common';
 import { UsersService } from './users.service'
 
 @Controller('users')
 export class UsersController {
+
     constructor(private readonly usersService: UsersService) { }
 
-    // REGISTER
+    //  REGISTER
     @Post('')
     @HttpCode(HttpStatus.CREATED)
-    public registerUser(@Body() user: any) {
-        const { username, password } = user;
-
-        this.usersService.registerUser(username, password);
-
-        return { msg: 'User registered...'};
+    async registerUser(
+        @Body('username') username: string,
+        @Body('password') password: string
+    ) {
+        return await this.usersService.registerUser({"username": username, "password": password});
     }
 
-    // LOGIN
+    //  LOGIN
     @Post('/session')
     @HttpCode(HttpStatus.ACCEPTED)
-    public loginUser(@Body() user: any) {
-        const { username, password } = user;
+    async loginUser(
+        @Body('username') username: string,
+        @Body('password') password: string
+    ) {
+        return await this.usersService.loginUser({"username": username, "password": password});
+    }
 
-        this.usersService.loginUser(username, password);
+    //  LOGOUT
+    @Delete('/session')
+    @HttpCode(HttpStatus.OK)
+    async logoutUser() {
 
-        return { msg: 'Success! Send JWT...'};
+        await this.usersService.logoutUser();
+
+        return { msg: 'Success! User logged out...'};
     }
 }
