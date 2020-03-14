@@ -79,7 +79,7 @@ export class UsersService {
         return foundUser;
     }
 
-    logoutUser() {
+    async logoutUser() {
         return 'logout...';
     }
 }

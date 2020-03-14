@@ -6,7 +6,7 @@ export class UsersController {
 
     constructor(private readonly usersService: UsersService) { }
 
-    // REGISTER
+    //  REGISTER
     @Post('')
     @HttpCode(HttpStatus.CREATED)
     async registerUser(
@@ -16,7 +16,7 @@ export class UsersController {
         return await this.usersService.registerUser({"username": username, "password": password});
     }
 
-    // // LOGIN
+    //  LOGIN
     @Post('/session')
     @HttpCode(HttpStatus.ACCEPTED)
     async loginUser(
@@ -26,11 +26,12 @@ export class UsersController {
         return await this.usersService.loginUser({"username": username, "password": password});
     }
 
+    //  LOGOUT
     @Delete('/session')
     @HttpCode(HttpStatus.OK)
-    public logoutUser() {
+    async logoutUser() {
 
-        this.usersService.logoutUser();
+        await this.usersService.logoutUser();
 
         return { msg: 'Success! User logged out...'};
     }
