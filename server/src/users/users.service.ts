@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 import { UserDTO } from './models/user.dto';
-import { UsersInMemoryStorage } from 'src/database/users/users-in-memory-storage';
+import { UsersInMemoryStorage } from './../database/users/users-in-memory-storage';
 
 @Injectable()
 export class UsersService {
