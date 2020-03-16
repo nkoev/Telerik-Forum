@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../../entities/user.entity';
 import { Repository } from 'typeorm';
+import { User } from '../../entities/users.entity';
 
 @Injectable()
 export class UsersService {
@@ -16,6 +16,12 @@ export class UsersService {
 
     async find(options: Partial<User>): Promise<User[]> {
         return await this.userRepository.find({
+            where: options
+        });
+    }
+
+    async findOne(options: Partial<User>): Promise<User> {
+        return await this.userRepository.findOne({
             where: options
         });
     }
