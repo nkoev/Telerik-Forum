@@ -3,10 +3,10 @@ import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 @Entity('posts')
 export class Post {
 
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryGeneratedColumn('increment')
     id: string;
 
-    @Column()
+    @Column('nvarchar')
     title: string;
 
     @Column()

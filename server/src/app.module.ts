@@ -1,15 +1,16 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
-import { PostsModule } from './posts/posts.module';
-import { CommentsModule } from './comments/comments.module';
+import { UsersModule } from './features/users/users.module';
+import { PostsModule } from './features/posts/posts.module';
+import { CommentsModule } from './features/comments/comments.module';
 import { TypeOrmModule } from '@nestjs/typeorm'
 
 @Module({
-  imports: [UsersModule, PostsModule, CommentsModule,
-    TypeOrmModule.forRoot()],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    UsersModule,
+    PostsModule,
+    CommentsModule,
+    TypeOrmModule.forRoot()
+  ]
 })
+
 export class AppModule { }

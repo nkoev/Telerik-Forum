@@ -1,6 +1,6 @@
-import { Injectable, BadRequestException, HttpException, HttpStatus} from '@nestjs/common';
+import { Injectable, BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../entities/user.entity';
+import { User } from '../../entities/user.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -11,9 +11,9 @@ export class UsersService {
     ) { }
 
     async all(): Promise<User[]> {
-        return await this.userRepository.find({ });
+        return await this.userRepository.find({});
     }
-    
+
     async find(options: Partial<User>): Promise<User[]> {
         return await this.userRepository.find({
             where: options
@@ -34,7 +34,7 @@ export class UsersService {
         }
 
         const foundUser = await this.find(user)
-        .then(res => res[0]);
+            .then(res => res[0]);
 
         if (foundUser !== undefined) {
             throw new HttpException({
@@ -61,7 +61,7 @@ export class UsersService {
         }
 
         const foundUser = await this.find(user)
-        .then(res => res[0]);
+            .then(res => res[0]);
 
         if (foundUser === undefined) {
             throw new HttpException({
@@ -80,7 +80,7 @@ export class UsersService {
         return foundUser;
     }
 
-    
+
     // LOGOUT
     async logoutUser() {
         return 'logout...';
