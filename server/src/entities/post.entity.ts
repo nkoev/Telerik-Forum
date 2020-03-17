@@ -4,15 +4,17 @@ import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 export class Post {
 
     @PrimaryGeneratedColumn('increment')
-    id: string;
+    id: number;
 
     @Column('nvarchar')
     title: string;
 
-    @Column()
+    @Column('nvarchar')
     content: string;
 
-    @Column()
+    @Column({ type: 'boolean', default: false })
     isDeleted: boolean;
 
+    @Column({ type: 'int', default: 5 })
+    userId: number;
 }
