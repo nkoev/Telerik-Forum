@@ -24,11 +24,11 @@ export class PostsService {
     return posts.map((post) => this.PostEntityToDto(post));
   }
 
-  public async createPost(post: CreatePostDTO): Promise<Post> {
+  public async createPost(post: CreatePostDTO): Promise<void> {
 
     const postEntity: Post = this.postRepository.create(post);
 
-    return await this.postRepository.save(postEntity)
+    await this.postRepository.save(postEntity)
   }
 
   private PostEntityToDto(entity: Post): PostDTO {
