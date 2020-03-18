@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { User } from "./user.entity";
 
 @Entity('posts')
 export class Post {
@@ -6,15 +7,17 @@ export class Post {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
-    @Column('nvarchar')
+    @Column('nvarchar', { nullable: false, length: 20 })
     title: string;
 
-    @Column('nvarchar')
+    @Column('nvarchar', { nullable: false, length: 20 })
     content: string;
 
     @Column({ type: 'boolean', default: false })
     isDeleted: boolean;
 
-    @Column({ type: 'int', default: 5 })
-    userId: number;
+    @ManyToOne(type => User, {
+        eager: true
+    })
+    user: User;
 }
