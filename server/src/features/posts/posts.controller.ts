@@ -16,10 +16,11 @@ export class PostsController {
   }
 
   @Post()
-  async createPost(@Body() body: CreatePostDTO): Promise<ResponseMessage> {
+  async createPost(@Body() body: CreatePostDTO): Promise<PostDTO> {
 
-    await this.postsService.createPost(body);
+    //USER ID HARDCODED UNTIL AUTHENTICATION
+    const addedUser: PostDTO = await this.postsService.createPost(body, 'c8874f07-7a19-4587-8e49-d3faac272110');
 
-    return { msg: 'Post added' }
+    return addedUser
   }
 }
