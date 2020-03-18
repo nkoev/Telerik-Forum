@@ -7,8 +7,8 @@ import { Post } from '../../entities/posts.entity';
 import { User } from '../../entities/users.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Comment])],
+  imports: [TypeOrmModule.forFeature([Comment, User, Post])],
   controllers: [CommentsController],
   providers: [CommentsService]
 })
-export class CommentsModule {}
+export class CommentsModule { }
