@@ -1,5 +1,7 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, HttpCode, HttpStatus } from '@nestjs/common';
 import { PostsService } from './posts.service';
+import { CreatePostDTO } from '../../models/posts/create-post.dto';
+import { ShowPostDTO } from '../../models/posts/show-post.dto';
 
 @Controller('users')
 export class PostsController {
@@ -7,18 +9,19 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) { }
 
   @Get('/:userId/posts')
-  async getPosts(@Param('userId') userId: string) {
+  @HttpCode(HttpStatus.OK)
+  async getPosts(@Param('userId') userId: string): Promise<ShowPostDTO[]> {
 
     return await this.postsService.getAllPosts(userId);
   }
 
   @Post('/:userId/posts')
+  @HttpCode(HttpStatus.CREATED)
   async createPost(
     @Param('userId') userId: string,
-    @Body('title') title: string,
-    @Body('content') content: string
-  ) {
+    @Body() post: CreatePostDTO
+  ): Promise<ShowPostDTO> {
 
-    return await this.postsService.createPost(userId, { "title": title, "content": content, "isDeleted": false });
+    return await this.postsService.createPost(userId, post);
   }
 }

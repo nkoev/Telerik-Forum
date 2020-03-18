@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn, OneToMany } from "typeorm";
 import { User } from "./users.entity";
+import { Comment } from "./comments.entity";
 
 @Entity('posts')
 export class Post {
@@ -7,20 +8,30 @@ export class Post {
     @PrimaryGeneratedColumn('increment')
     id: string;
 
-    @Column('nvarchar', {length: 20})
+    @Column('nvarchar', { length: 20 })
     title: string;
 
-    @Column('nvarchar', {length: 200})
+    @Column('nvarchar', { length: 200 })
     content: string;
 
-    @CreateDateColumn({name: 'created_on'})
+    @CreateDateColumn({ name: 'created_on' })
     createdOn: Date;
 
-    @ManyToOne(type => User)
-    @JoinColumn({name: 'user_id'})
-    userId: string;
+    @ManyToOne(
+        type => User,
+        user => user.posts,
+        { lazy: true },
+    )
+    public user: Promise<User>;
 
-    @Column('bool', {name: 'is_deleted', default: false})
+    @OneToMany(
+        type => Comment,
+        comment => comment.post,
+        { lazy: true },
+    )
+    public comments: Promise<Comment[]>;
+
+    @Column({ nullable: false, default: false })
     isDeleted: boolean;
 
 }

@@ -2,6 +2,9 @@ import { Injectable, BadRequestException, HttpException, HttpStatus } from '@nes
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../entities/users.entity';
+import { RegisterUserDTO } from '../../models/users/register-user.dto';
+import { ShowUserDTO } from '../../models/users/show-user.dto';
+import { LoginUserDTO } from '../../models/users/login-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -27,7 +30,7 @@ export class UsersService {
     }
 
     // REGISTER
-    async registerUser(user: Partial<User>): Promise<User> {
+    async registerUser(user: RegisterUserDTO): Promise<ShowUserDTO> {
         if (user.username === undefined) {
             throw new BadRequestException(
                 'Username missing',
@@ -39,8 +42,7 @@ export class UsersService {
             );
         }
 
-        const foundUser = await this.find(user)
-            .then(res => res[0]);
+        const foundUser = await this.findOne(user);
 
         if (foundUser !== undefined) {
             throw new HttpException({
@@ -49,12 +51,21 @@ export class UsersService {
             }, 409);
         }
 
-        return await this.userRepository.save(user);
+        const newUser: User = this.userRepository.create(user);
+        newUser.posts = Promise.resolve([]);
+        newUser.comments = Promise.resolve([]);
+        newUser.isDeleted = false;
+
+        await this.userRepository.save(newUser);
+
+        return {
+            username: newUser.username
+        };
     }
 
 
     // LOGIN
-    async loginUser(user: Partial<User>): Promise<User> {
+    async loginUser(user: LoginUserDTO): Promise<ShowUserDTO> {
         if (user.username === undefined) {
             throw new BadRequestException(
                 'Username missing',
@@ -66,8 +77,7 @@ export class UsersService {
             );
         }
 
-        const foundUser = await this.find(user)
-            .then(res => res[0]);
+        const foundUser = await this.findOne(user);
 
         if (foundUser === undefined) {
             throw new HttpException({
@@ -83,7 +93,9 @@ export class UsersService {
             }, 409);
         }
 
-        return foundUser;
+        return {
+            username: foundUser.username
+        };
     }
 
 

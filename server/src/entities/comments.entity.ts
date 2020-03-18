@@ -8,21 +8,27 @@ export class Comment {
     @PrimaryGeneratedColumn('increment')
     id: string;
 
-    @Column('nvarchar', {length: 200})
+    @Column('nvarchar', { length: 200 })
     content: string;
 
-    @CreateDateColumn({name: 'created_on'})
+    @CreateDateColumn({ name: 'created_on' })
     createdOn: Date;
 
-    @ManyToOne(type => Post)
-    @JoinColumn({name: 'post_id'})
-    postId: string;
+    @ManyToOne(
+        type => User,
+        user => user.comments,
+        { lazy: true },
+    )
+    public user: Promise<User>;
 
-    @ManyToOne(type => User)
-    @JoinColumn({name: 'user_id'})
-    userId: string;
+    @ManyToOne(
+        type => Post,
+        post => post.comments,
+        { lazy: true },
+    )
+    public post: Promise<Post>;
 
-    @Column('bool', {name: 'is_deleted', default: false})
+    @Column({ nullable: false, default: false })
     isDeleted: boolean;
 
 }
