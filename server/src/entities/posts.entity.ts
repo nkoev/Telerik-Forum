@@ -6,23 +6,19 @@ import { Comment } from "./comments.entity";
 export class Post {
 
     @PrimaryGeneratedColumn('increment')
-    id: string;
+    id: number;
 
-    @Column('nvarchar', { length: 20 })
+    @Column('nvarchar', { nullable: false, length: 20 })
     title: string;
 
-    @Column('nvarchar', { length: 200 })
+    @Column('nvarchar', { nullable: false, length: 20 })
     content: string;
 
     @CreateDateColumn({ name: 'created_on' })
     createdOn: Date;
 
-    @ManyToOne(
-        type => User,
-        user => user.posts,
-        { lazy: true },
-    )
-    public user: Promise<User>;
+    @Column({ type: 'boolean', default: false })
+    isDeleted: boolean;
 
     @OneToMany(
         type => Comment,
@@ -31,12 +27,9 @@ export class Post {
     )
     public comments: Promise<Comment[]>;
 
-    @Column({ nullable: false, default: false })
-    isDeleted: boolean;
-
-    @BeforeInsert()
-    beforeInsertActions() {
-        this.isDeleted = false;
-    }
+    @ManyToOne(type => User, {
+        eager: true
+    })
+    user: User;
 
 }
