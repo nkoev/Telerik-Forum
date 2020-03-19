@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn, BeforeInsert } from "typeorm";
 import { User } from "./users.entity";
 import { Post } from "./posts.entity";
 
@@ -30,5 +30,10 @@ export class Comment {
 
     @Column({ nullable: false, default: false })
     isDeleted: boolean;
+
+    @BeforeInsert()
+    beforeInsertActions() {
+        this.isDeleted = false;
+    }
 
 }

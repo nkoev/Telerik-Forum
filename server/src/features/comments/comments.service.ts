@@ -58,7 +58,6 @@ export class CommentsService {
 
         newComment.user = Promise.resolve(foundUser);
         newComment.post = Promise.resolve(foundPost);
-        newComment.isDeleted = false;
 
         return await this.commentRepository.save(newComment)
     }
