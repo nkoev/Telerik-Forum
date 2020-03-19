@@ -23,27 +23,22 @@ export class PostsService {
       posts = posts.filter((post) => post.id === +id)
     }
 
-    return posts.map((post) => this.PostEntityToDto(post));
+    return posts.map(post => new PostDTO(post));
   }
 
   public async createPost(post: CreatePostDTO, userId: string): Promise<PostDTO> {
 
     const postEntity: Post = this.postsRepo.create(post);
     const userEntity: User = await this.usersRepo.findOne({
-      where: { id: userId }
+      where: {
+        id: userId,
+        isDeleted: false
+      }
     })
     postEntity.user = userEntity
     const savedPost = await this.postsRepo.save(postEntity)
 
-    return this.PostEntityToDto(savedPost)
+    return new PostDTO(savedPost)
   }
 
-  private PostEntityToDto(entity: Post): PostDTO {
-    const dto = new PostDTO
-    dto.id = entity.id
-    dto.title = entity.title
-    dto.content = entity.content
-    dto.author = entity.user.username
-    return dto
-  }
 }
