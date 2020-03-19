@@ -26,7 +26,7 @@ export class PostsService {
 
     const posts = await this.postRepository.find({ where: { user: { id: userId }, isDeleted: false } });
 
-    return posts;
+    return posts.map(post => new ShowPostDTO(post.title, post.content));
   }
 
   public async createPost(userId: string, post: CreatePostDTO): Promise<ShowPostDTO> {
@@ -45,9 +45,6 @@ export class PostsService {
 
     await this.postRepository.save(newPost);
 
-    return {
-      title: newPost.title,
-      content: newPost.content
-    };
+    return new ShowPostDTO(newPost.title, newPost.content);
   }
 }

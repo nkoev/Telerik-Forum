@@ -1,3 +1,3 @@
 export class ShowCommentDTO {
-    public content: string;
+    constructor(public content: string) { }
 }

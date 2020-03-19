@@ -57,9 +57,7 @@ export class UsersService {
 
         await this.userRepository.save(newUser);
 
-        return {
-            username: newUser.username
-        };
+        return new ShowUserDTO(newUser.username);
     }
 
 
@@ -92,9 +90,7 @@ export class UsersService {
             }, 409);
         }
 
-        return {
-            username: foundUser.username
-        };
+        return new ShowUserDTO(foundUser.username);
     }
 
 
