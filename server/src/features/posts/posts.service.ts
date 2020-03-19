@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm';
 import { CreatePostDTO } from '../../models/posts/create-post.dto';
 import { PostDTO } from '../../models/posts/post.dto';
-import { User } from '../../entities/users.entity';
-import { Post } from '../../entities/posts.entity';
+import { User } from '../../entities/user.entity';
+import { Post } from '../../entities/post.entity';
 
 @Injectable()
 export class PostsService {
@@ -20,8 +20,6 @@ export class PostsService {
 
     return posts.map(post => new PostDTO(post));
   }
-
-
 
   public async getPosts(id: string): Promise<PostDTO[]> {
     let posts = await this.postsRepo.find({

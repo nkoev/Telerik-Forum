@@ -1,6 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn, OneToMany, BeforeInsert } from "typeorm";
-import { User } from "./users.entity";
-import { Comment } from "./comments.entity";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany } from "typeorm";
+import { User } from "./user.entity";
+import { Comment } from "./comment.entity";
 
 @Entity('posts')
 export class Post {
@@ -23,11 +23,11 @@ export class Post {
     @OneToMany(
         type => Comment,
         comment => comment.post,
-        { lazy: true },
     )
-    public comments: Promise<Comment[]>;
+    comments: Promise<Comment[]>;
 
-    @ManyToOne(type => User, {
+    @ManyToOne(
+        type => User, {
         eager: true
     })
     user: User;
