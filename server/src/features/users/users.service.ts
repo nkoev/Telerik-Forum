@@ -54,7 +54,6 @@ export class UsersService {
         const newUser: User = this.userRepository.create(user);
         newUser.posts = Promise.resolve([]);
         newUser.comments = Promise.resolve([]);
-        newUser.isDeleted = false;
 
         await this.userRepository.save(newUser);
 

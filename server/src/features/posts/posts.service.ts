@@ -42,7 +42,6 @@ export class PostsService {
 
     newPost.user = Promise.resolve(foundUser);
     newPost.comments = Promise.resolve([]);
-    newPost.isDeleted = false;
 
     await this.postRepository.save(newPost);
 
