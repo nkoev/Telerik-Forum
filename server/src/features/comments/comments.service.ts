@@ -59,10 +59,12 @@ export class CommentsService {
         newComment.user = Promise.resolve(foundUser);
         newComment.post = Promise.resolve(foundPost);
 
-        return await this.commentRepository.save(newComment)
+        await this.commentRepository.save(newComment);
+
+        return new ShowCommentDTO(newComment.content);
     }
 
-    public async readAllComments(userId: string, postId: string): Promise<Comment[]> {
+    public async readAllComments(userId: string, postId: string): Promise<ShowCommentDTO[]> {
 
         const foundUser: User = await this.userRepository.findOne({
             id: userId
@@ -83,6 +85,8 @@ export class CommentsService {
             throw new BadRequestException('Post does not exist');
         }
 
-        return await this.commentRepository.find({ where: { user: { id: userId }, post: { id: postId }, isDeleted: false } });
+        const comments = await this.commentRepository.find({ where: { user: { id: userId }, post: { id: postId }, isDeleted: false } });
+
+        return comments.map(comment => new ShowCommentDTO(comment.content));
     }
 }

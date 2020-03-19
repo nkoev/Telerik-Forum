@@ -1,3 +1,3 @@
 export class ShowUserDTO {
-    public username: string;
+    constructor(public username: string) { }
 }
