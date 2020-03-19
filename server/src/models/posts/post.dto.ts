@@ -1,4 +1,4 @@
-import { Post } from "../../entities/posts.entity"
+import { Post } from "../../entities/post.entity"
 
 export class PostDTO {
 
