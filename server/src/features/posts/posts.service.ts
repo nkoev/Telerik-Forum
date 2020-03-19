@@ -1,50 +1,59 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm';
-import { Post } from '../../entities/posts.entity';
-import { User } from '../../entities/users.entity';
 import { CreatePostDTO } from '../../models/posts/create-post.dto';
-import { ShowPostDTO } from '../../models/posts/show-post.dto';
+import { PostDTO } from '../../models/posts/post.dto';
+import { User } from '../../entities/users.entity';
+import { Post } from '../../entities/posts.entity';
 
 @Injectable()
 export class PostsService {
 
   constructor(
-    @InjectRepository(Post) private readonly postRepository: Repository<Post>,
-    @InjectRepository(User) private readonly userRepository: Repository<User>
+    @InjectRepository(Post) private readonly postsRepo: Repository<Post>,
+    @InjectRepository(User) private readonly usersRepo: Repository<User>
   ) { }
 
-  public async getAllPosts(userId: string): Promise<ShowPostDTO[]> {
+  public async getUserPosts(userId: string): Promise<PostDTO[]> {
 
-    const foundUser: User = await this.userRepository.findOne({
-      id: userId
+    const posts = await this.postsRepo.find({ where: { user: { id: userId }, isDeleted: false } });
+
+    return posts.map(post => new PostDTO(post));
+  }
+
+
+
+  public async getPosts(id: string): Promise<PostDTO[]> {
+    let posts = await this.postsRepo.find({
+      where: { isDeleted: false }
     });
 
-    if (foundUser === undefined) {
+    if (id) {
+      posts = posts.filter((post) => post.id === +id)
+    }
+
+    return posts.map(post => new PostDTO(post));
+  }
+
+  public async createPost(post: CreatePostDTO, userId: string): Promise<PostDTO> {
+
+    const postEntity: Post = this.postsRepo.create(post);
+    const userEntity: User = await this.usersRepo.findOne({
+      where: {
+        id: userId,
+        isDeleted: false
+      }
+    })
+
+    if (userEntity === undefined) {
       throw new BadRequestException('User does not exist');
     }
 
-    const posts = await this.postRepository.find({ where: { user: { id: userId }, isDeleted: false } });
+    postEntity.user = userEntity
+    postEntity.comments = Promise.resolve([]);
+    const savedPost = await this.postsRepo.save(postEntity)
 
-    return posts.map(post => new ShowPostDTO(post.title, post.content));
+    return new PostDTO(savedPost)
   }
 
-  public async createPost(userId: string, post: CreatePostDTO): Promise<ShowPostDTO> {
-
-    const newPost: Post = this.postRepository.create(post);
-    const foundUser: User = await this.userRepository.findOne({
-      id: userId
-    });
-
-    if (foundUser === undefined) {
-      throw new BadRequestException('User does not exist');
-    }
-
-    newPost.user = Promise.resolve(foundUser);
-    newPost.comments = Promise.resolve([]);
-
-    await this.postRepository.save(newPost);
-
-    return new ShowPostDTO(newPost.title, newPost.content);
-  }
 }
