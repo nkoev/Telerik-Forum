@@ -5,6 +5,7 @@ import { CreatePostDTO } from '../../models/posts/create-post.dto';
 import { PostDTO } from '../../models/posts/post.dto';
 import { User } from '../../database/entities/user.entity';
 import { Post } from '../../database/entities/post.entity';
+import { UpdatePostDTO } from '../../models/posts/update-post.dto';
 
 @Injectable()
 export class PostsService {
@@ -56,6 +57,20 @@ export class PostsService {
     postEntity.user = userEntity
     postEntity.comments = Promise.resolve([]);
     const savedPost = await this.postsRepo.save(postEntity)
+
+    return new PostDTO(savedPost)
+  }
+
+  public async updatePost(update: UpdatePostDTO, postId: string) {
+
+    const post = await this.postsRepo.findOne({
+      where: {
+        id: postId,
+        isDeleted: false
+      }
+    });
+    const updatedPost = { ...post, ...update }
+    const savedPost = await this.postsRepo.save(updatedPost)
 
     return new PostDTO(savedPost)
   }
