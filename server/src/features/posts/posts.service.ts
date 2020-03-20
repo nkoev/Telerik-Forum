@@ -14,23 +14,29 @@ export class PostsService {
     @InjectRepository(User) private readonly usersRepo: Repository<User>
   ) { }
 
-  public async getUserPosts(userId: string): Promise<PostDTO[]> {
+  public async getPosts(): Promise<PostDTO[]> {
 
-    const posts = await this.postsRepo.find({ where: { user: { id: userId }, isDeleted: false } });
+    const posts = await this.postsRepo.find({
+      where: { isDeleted: false }
+    });
 
     return posts.map(post => new PostDTO(post));
   }
 
-  public async getPosts(id: string): Promise<PostDTO[]> {
-    let posts = await this.postsRepo.find({
-      where: { isDeleted: false }
+  public async getSinglePost(postId: string): Promise<PostDTO> {
+
+    const post = await this.postsRepo.findOne({
+      where: {
+        isDeleted: false,
+        id: postId
+      }
     });
 
-    if (id) {
-      posts = posts.filter((post) => post.id === +id)
+    if (post === undefined) {
+      throw new BadRequestException('Post does not exist');
     }
 
-    return posts.map(post => new PostDTO(post));
+    return new PostDTO(post);
   }
 
   public async createPost(post: CreatePostDTO, userId: string): Promise<PostDTO> {
