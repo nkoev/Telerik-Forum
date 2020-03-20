@@ -1,11 +1,11 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Comment } from '../../entities/comment.entity';
+import { Comment } from '../../database/entities/comment.entity';
 import { CreateCommentDTO } from '../../models/comments/create-comment.dto';
 import { ShowCommentDTO } from '../../models/comments/show-comment.dto';
-import { User } from '../../entities/user.entity';
-import { Post } from '../../entities/post.entity';
+import { User } from '../../database/entities/user.entity';
+import { Post } from '../../database/entities/post.entity';
 
 
 @Injectable()
