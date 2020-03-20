@@ -75,4 +75,20 @@ export class PostsService {
     return new PostDTO(savedPost)
   }
 
+  public async deletePost(userId: string, postId: string): Promise<void> {
+    const post = await this.postsRepo.findOne({
+      where: {
+        id: postId,
+        isDeleted: false
+      }
+    });
+
+    if (post.user.id !== userId) {
+      throw new BadRequestException('This post doesn\'t belong to the user')
+    }
+
+    post.isDeleted = true
+    this.postsRepo.save(post);
+  }
+
 }

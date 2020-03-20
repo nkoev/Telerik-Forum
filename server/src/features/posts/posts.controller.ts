@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, HttpCode, HttpStatus, Put } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, HttpCode, HttpStatus, Put, Delete } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDTO } from '../../models/posts/create-post.dto';
 import { PostDTO } from '../../models/posts/post.dto';
@@ -10,14 +10,12 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) { }
 
   @Get()
-  @HttpCode(HttpStatus.OK)
   async getPosts(): Promise<PostDTO[]> {
 
     return await this.postsService.getPosts();
   }
 
   @Get('/:postId')
-  @HttpCode(HttpStatus.OK)
   async getSinglePost(@Param('postId') postId: string): Promise<PostDTO> {
 
     return await this.postsService.getSinglePost(postId);
@@ -34,7 +32,6 @@ export class PostsController {
   }
 
   @Put('/:postId')
-  @HttpCode(HttpStatus.ACCEPTED)
   async updatePost(
     @Param('postId') postId: string,
     @Body() update: UpdatePostDTO
@@ -42,5 +39,16 @@ export class PostsController {
 
     return await this.postsService.updatePost(update, postId);
   }
+
+  @Delete('/:postId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deletePost(
+    @Param('userId') userId: string,
+    @Param('postId') postId: string,
+  ): Promise<void> {
+
+    await this.postsService.deletePost(userId, postId);
+  }
+
 
 }
