@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, Get, HttpCode, HttpStatus, Query } from '@nestjs/common';
+import { Controller, Post, Body, Param, Get, HttpCode, HttpStatus, Query, Put } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDTO } from '../../models/comments/create-comment.dto';
 import { ShowCommentDTO } from '../../models/comments/show-comment.dto';
@@ -26,5 +26,17 @@ export class CommentsController {
     ): Promise<ShowCommentDTO> {
 
         return await this.commentsService.createPostComment(userId, postId, comment);
+    }
+
+    @Put('/posts/:postId/comments/:commentId')
+    @HttpCode(HttpStatus.OK)
+    async updatePostComment(
+        @Query('userId') userId: string,
+        @Param('postId') postId: string,
+        @Param('commentId') commentId: string,
+        @Body() comment: CreateCommentDTO
+    ): Promise<ShowCommentDTO> {
+
+        return await this.commentsService.updatePostComment(userId, postId, commentId, comment);
     }
 }
