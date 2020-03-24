@@ -1,3 +1,14 @@
+import { Comment } from "../../database/entities/comment.entity"
+
 export class ShowCommentDTO {
-    constructor(public content: string) { }
+
+    public id: number;
+    public content: string;
+    public user: string;
+
+    constructor(comment: Comment) {
+        this.id = comment.id;
+        this.content = comment.content;
+        this.user = comment.user.username;
+    }
 }
