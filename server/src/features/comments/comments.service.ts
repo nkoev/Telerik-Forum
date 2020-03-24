@@ -102,10 +102,33 @@ export class CommentsService {
             throw new BadRequestException('Comment does not exist');
         }
 
-        const newComment: Comment = { ...foundComment, ...comment };
+        const updatedComment: Comment = { ...foundComment, ...comment };
 
-        await this.commentRepository.save(newComment);
+        await this.commentRepository.save(updatedComment);
 
-        return new ShowCommentDTO(newComment);
+        return new ShowCommentDTO(updatedComment);
+    }
+
+
+    public async deletePostComment(userId: string, postId: string, commentId: string) {
+
+        const foundComment: Comment = await this.commentRepository.findOne({
+            where: {
+                id: +commentId,
+                post: { id: +postId, isDeleted: false },
+                user: { id: userId, isDeleted: false },
+                isDeleted: false
+            }
+        });
+
+        if (foundComment === undefined) {
+            throw new BadRequestException('Comment does not exist');
+        }
+
+        const deletedComment: Comment = { ...foundComment, isDeleted: true };
+
+        await this.commentRepository.save(deletedComment);
+
+        return new ShowCommentDTO(deletedComment);
     }
 }
