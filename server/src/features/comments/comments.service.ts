@@ -6,6 +6,7 @@ import { CreateCommentDTO } from '../../models/comments/create-comment.dto';
 import { ShowCommentDTO } from '../../models/comments/show-comment.dto';
 import { User } from '../../database/entities/user.entity';
 import { Post } from '../../database/entities/post.entity';
+import { UpdateCommentDTO } from '../../models/comments/update-comment.dto';
 
 
 @Injectable()
@@ -33,11 +34,11 @@ export class CommentsService {
         });
     }
 
-    public async readPostComments(postId: string): Promise<ShowCommentDTO[]> {
+    public async readPostComments(postId: number): Promise<ShowCommentDTO[]> {
 
         const foundPost: Post = await this.postRepository.findOne({
             where: {
-                id: +postId,
+                id: postId,
                 isDeleted: false
             }
         });
@@ -52,7 +53,7 @@ export class CommentsService {
     }
 
 
-    public async createPostComment(userId: string, postId: string, comment: CreateCommentDTO): Promise<ShowCommentDTO> {
+    public async createPostComment(userId: string, postId: number, comment: CreateCommentDTO): Promise<ShowCommentDTO> {
 
         const foundUser: User = await this.userRepository.findOne({
             id: userId,
@@ -65,7 +66,7 @@ export class CommentsService {
 
         const foundPost: Post = await this.postRepository.findOne({
             where: {
-                id: +postId,
+                id: postId,
                 user: { id: userId },
                 isDeleted: false
             }
@@ -87,12 +88,12 @@ export class CommentsService {
     }
 
 
-    public async updatePostComment(userId: string, postId: string, commentId: string, comment: CreateCommentDTO): Promise<ShowCommentDTO> {
+    public async updatePostComment(userId: string, postId: number, commentId: number, comment: UpdateCommentDTO): Promise<ShowCommentDTO> {
 
         const foundComment: Comment = await this.commentRepository.findOne({
             where: {
-                id: +commentId,
-                post: { id: +postId, isDeleted: false },
+                id: commentId,
+                post: { id: postId, isDeleted: false },
                 user: { id: userId, isDeleted: false },
                 isDeleted: false
             }
@@ -110,12 +111,12 @@ export class CommentsService {
     }
 
 
-    public async deletePostComment(userId: string, postId: string, commentId: string) {
+    public async deletePostComment(userId: string, postId: number, commentId: number): Promise<ShowCommentDTO> {
 
         const foundComment: Comment = await this.commentRepository.findOne({
             where: {
-                id: +commentId,
-                post: { id: +postId, isDeleted: false },
+                id: commentId,
+                post: { id: postId, isDeleted: false },
                 user: { id: userId, isDeleted: false },
                 isDeleted: false
             }
