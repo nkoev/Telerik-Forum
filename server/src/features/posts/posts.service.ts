@@ -69,6 +69,11 @@ export class PostsService {
         isDeleted: false
       }
     });
+
+    if (post === undefined) {
+      throw new BadRequestException('Post does not exist');
+    }
+
     const updatedPost = { ...post, ...update }
     const savedPost = await this.postsRepo.save(updatedPost)
 
@@ -83,6 +88,9 @@ export class PostsService {
       }
     });
 
+    if (post === undefined) {
+      throw new BadRequestException('Post does not exist');
+    }
     if (post.user.id !== userId) {
       throw new BadRequestException('This post doesn\'t belong to the user')
     }
