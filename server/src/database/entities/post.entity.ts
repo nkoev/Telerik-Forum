@@ -11,7 +11,7 @@ export class Post {
     @Column('nvarchar', { nullable: false, length: 20 })
     title: string;
 
-    @Column('nvarchar', { nullable: false, length: 200 })
+    @Column('nvarchar', { nullable: false, length: 1000 })
     content: string;
 
     @CreateDateColumn({ name: 'created_on' })

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, HttpCode, HttpStatus, Put, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, HttpCode, HttpStatus, Put, Delete, ValidationPipe, ParseIntPipe, ParseUUIDPipe } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDTO } from '../../models/posts/create-post.dto';
 import { PostDTO } from '../../models/posts/post.dto';
@@ -16,7 +16,10 @@ export class PostsController {
   }
 
   @Get('/:postId')
-  async getSinglePost(@Param('postId') postId: string): Promise<PostDTO> {
+  async getSinglePost(
+    @Param('postId', ParseIntPipe)
+    postId: number
+  ): Promise<PostDTO> {
 
     return await this.postsService.getSinglePost(postId);
   }
@@ -24,8 +27,12 @@ export class PostsController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createPost(
-    @Param('userId') userId: string,
-    @Body() post: CreatePostDTO
+    @Param('userId', ParseUUIDPipe)
+    userId: string,
+    @Body(new ValidationPipe({
+      whitelist: true
+    }))
+    post: CreatePostDTO
   ): Promise<PostDTO> {
 
     return await this.postsService.createPost(post, userId);
@@ -33,8 +40,12 @@ export class PostsController {
 
   @Put('/:postId')
   async updatePost(
-    @Param('postId') postId: string,
-    @Body() update: UpdatePostDTO
+    @Param('postId', ParseIntPipe)
+    postId: number,
+    @Body(new ValidationPipe({
+      whitelist: true, skipMissingProperties: true
+    }))
+    update: UpdatePostDTO
   ): Promise<PostDTO> {
 
     return await this.postsService.updatePost(update, postId);
@@ -43,12 +54,13 @@ export class PostsController {
   @Delete('/:postId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deletePost(
-    @Param('userId') userId: string,
-    @Param('postId') postId: string,
+    @Param('userId', ParseUUIDPipe)
+    userId: string,
+    @Param('postId', ParseIntPipe)
+    postId: number,
   ): Promise<void> {
 
     await this.postsService.deletePost(userId, postId);
   }
-
 
 }
