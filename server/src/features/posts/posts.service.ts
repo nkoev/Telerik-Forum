@@ -24,7 +24,7 @@ export class PostsService {
     return posts.map(post => new PostDTO(post));
   }
 
-  public async getSinglePost(postId: string): Promise<PostDTO> {
+  public async getSinglePost(postId: number): Promise<PostDTO> {
 
     const post = await this.postsRepo.findOne({
       where: {
@@ -61,7 +61,7 @@ export class PostsService {
     return new PostDTO(savedPost)
   }
 
-  public async updatePost(update: UpdatePostDTO, postId: string) {
+  public async updatePost(update: UpdatePostDTO, postId: number) {
 
     const post = await this.postsRepo.findOne({
       where: {
@@ -80,7 +80,7 @@ export class PostsService {
     return new PostDTO(savedPost)
   }
 
-  public async deletePost(userId: string, postId: string): Promise<void> {
+  public async deletePost(userId: string, postId: number): Promise<void> {
     const post = await this.postsRepo.findOne({
       where: {
         id: postId,
