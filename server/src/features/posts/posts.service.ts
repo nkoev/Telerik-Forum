@@ -61,7 +61,7 @@ export class PostsService {
     return new PostDTO(savedPost)
   }
 
-  public async updatePost(update: UpdatePostDTO, postId: number) {
+  public async updatePost(update: UpdatePostDTO, userId: string, postId: number) {
 
     const post = await this.postsRepo.findOne({
       where: {
@@ -73,14 +73,16 @@ export class PostsService {
     if (post === undefined) {
       throw new BadRequestException('Post does not exist');
     }
+    if (post.user.id !== userId) {
+      throw new BadRequestException('This post doesn\'t belong to the user')
+    }
 
-    const updatedPost = { ...post, ...update }
-    const savedPost = await this.postsRepo.save(updatedPost)
+    const savedPost = await this.postsRepo.save({ ...post, ...update })
 
     return new PostDTO(savedPost)
   }
 
-  public async deletePost(userId: string, postId: number): Promise<void> {
+  public async deletePost(userId: string, postId: number): Promise<PostDTO> {
     const post = await this.postsRepo.findOne({
       where: {
         id: postId,
@@ -96,7 +98,9 @@ export class PostsService {
     }
 
     post.isDeleted = true
-    this.postsRepo.save(post);
+    const savedPost = await this.postsRepo.save(post);
+
+    return new PostDTO(savedPost)
   }
 
 }
