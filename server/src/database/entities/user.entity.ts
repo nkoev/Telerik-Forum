@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, BeforeInsert } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, BeforeInsert, ManyToMany, ManyToOne } from "typeorm";
 import { Post } from "./post.entity";
 import { Comment } from "./comment.entity";
 
@@ -28,15 +28,24 @@ export class User {
     )
     public comments: Promise<Comment[]>;
 
+    @OneToMany(
+        type => User,
+        user => user.friend,
+        { lazy: true }
+    )
+    public friends: Promise<User[]>;
+
+    @ManyToOne(
+        type => User,
+        user => user.friends,
+        { lazy: true }
+    )
+    public friend: Promise<User>;
+
     @CreateDateColumn({ name: 'created_on' })
     registeredOn: Date;
 
     @Column({ nullable: false, default: false })
     isDeleted: boolean;
-
-    @BeforeInsert()
-    beforeInsertActions() {
-        this.isDeleted = false;
-    }
 
 }

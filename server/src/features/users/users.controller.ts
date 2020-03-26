@@ -1,7 +1,9 @@
-import { Controller, HttpCode, HttpStatus, Body, Post, Delete, ValidationPipe } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Body, Post, Delete, ValidationPipe, Param, ParseUUIDPipe, Get } from '@nestjs/common';
 import { UsersService } from './users.service'
 import { RegisterUserDTO } from '../../models/users/register-user.dto';
 import { LoginUserDTO } from '../../models/users/login-user.dto';
+import { ShowUserDTO } from '../../models/users/show-user.dto';
+import { AddFriendDTO } from '../../models/users/add-friend.dto';
 
 @Controller('users')
 export class UsersController {
@@ -34,5 +36,28 @@ export class UsersController {
         await this.usersService.logoutUser();
 
         return { msg: 'Success! User logged out...' };
+    }
+
+    //  ADD FRIEND
+    @Post('/:userId/friends')
+    @HttpCode(HttpStatus.CREATED)
+    async addFriend(
+        @Param('userId', ParseUUIDPipe) userId: string,
+        @Body(new ValidationPipe({
+            transform: true
+        })) user: AddFriendDTO
+    ): Promise<ShowUserDTO> {
+
+        return await this.usersService.addFriend(userId, user);
+    }
+
+    //  GET ALL FRIENDS
+    @Get('/:userId/friends')
+    @HttpCode(HttpStatus.OK)
+    async getFriends(
+        @Param('userId', ParseUUIDPipe) userId: string
+    ): Promise<ShowUserDTO[]> {
+
+        return await this.usersService.getFriends(userId);
     }
 }
