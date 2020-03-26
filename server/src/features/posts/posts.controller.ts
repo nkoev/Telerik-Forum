@@ -53,6 +53,17 @@ export class PostsController {
     return await this.postsService.updatePost(update, userId, postId);
   }
 
+  @Put('/:postId/votes')
+  async likePost(
+    @Param('postId', ParseIntPipe)
+    postId: number,
+  ): Promise<PostDTO> {
+
+    //userId hardcoded until authentication
+    const userId = 'cbb8c825-67ef-435f-abde-b3677fa75fe0'
+    return await this.postsService.likePost(userId, postId)
+  }
+
   @Delete('/:postId')
   async deletePost(
     @Param('postId', ParseIntPipe)

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, BeforeInsert } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, BeforeInsert, ManyToMany } from "typeorm";
 import { Post } from "./post.entity";
 import { Comment } from "./comment.entity";
 
@@ -38,5 +38,11 @@ export class User {
     beforeInsertActions() {
         this.isDeleted = false;
     }
+
+    @ManyToMany(
+        type => Post,
+        post => post.votes
+    )
+    likedPosts: Promise<Post[]>
 
 }

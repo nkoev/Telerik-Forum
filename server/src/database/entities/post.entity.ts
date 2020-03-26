@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, ManyToMany, JoinTable } from "typeorm";
 import { User } from "./user.entity";
 import { Comment } from "./comment.entity";
 
@@ -31,5 +31,12 @@ export class Post {
         eager: true
     })
     user: User;
+
+    @ManyToMany(
+        type => User,
+        user => user.likedPosts
+    )
+    @JoinTable()
+    votes: Promise<User[]>
 
 }
