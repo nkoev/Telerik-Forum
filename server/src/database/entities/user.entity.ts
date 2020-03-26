@@ -45,4 +45,9 @@ export class User {
     )
     likedPosts: Promise<Post[]>
 
+    @ManyToMany(
+        type => Comment,
+        comment => comment.votes
+    )
+    likedComments: Promise<Comment[]>
 }

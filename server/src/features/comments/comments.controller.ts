@@ -3,6 +3,7 @@ import { CommentsService } from './comments.service';
 import { CreateCommentDTO } from '../../models/comments/create-comment.dto';
 import { ShowCommentDTO } from '../../models/comments/show-comment.dto';
 import { UpdateCommentDTO } from '../../models/comments/update-comment.dto';
+import { User } from '../../database/entities/user.entity';
 
 @Controller('posts')
 export class CommentsController {
@@ -43,6 +44,18 @@ export class CommentsController {
     ): Promise<ShowCommentDTO> {
 
         return await this.commentsService.updatePostComment(userId, postId, commentId, comment);
+    }
+
+    @Put('/:postId/comments/:commentId/votes')
+    @HttpCode(HttpStatus.OK)
+    async likeComment(
+        @Param('postId', ParseIntPipe) postId: number,
+        @Param('commentId', ParseIntPipe) commentId: number,
+    ): Promise<User[]> {
+
+        //userId hardcoded until authentication
+        const userId = 'dffe2e7a-ba77-43a4-90a9-1b1e15af796c'
+        return await this.commentsService.likePostComment(userId, postId, commentId);
     }
 
     @Delete('/:postId/comments/:commentId')

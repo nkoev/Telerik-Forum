@@ -78,7 +78,7 @@ export class PostsService {
     return new PostDTO(savedPost)
   }
 
-  public async likePost(userId: string, postId: number) {
+  public async likePost(userId: string, postId: number): Promise<User[]> {
 
     const post: Post = await this.postsRepo.findOne({
       where: {
@@ -103,9 +103,9 @@ export class PostsService {
       votes.splice(liked, 1)
 
     post.votes = Promise.resolve(votes)
-    const savedPost = await this.postsRepo.save(post)
+    await this.postsRepo.save(post)
 
-    return new PostDTO(savedPost)
+    return post.votes // TO BE CONVERTED TO DTO
   }
 
   public async deletePost(userId: string, postId: number): Promise<PostDTO> {

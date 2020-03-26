@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, BeforeInsert } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, BeforeInsert, ManyToMany, JoinTable } from "typeorm";
 import { User } from "./user.entity";
 import { Post } from "./post.entity";
 
@@ -27,6 +27,13 @@ export class Comment {
         { eager: true },
     )
     public post: Post;
+
+    @ManyToMany(
+        type => User,
+        user => user.likedComments
+    )
+    @JoinTable()
+    public votes: Promise<User[]>
 
     @Column({ nullable: false, type: 'boolean', default: false })
     isDeleted: boolean;

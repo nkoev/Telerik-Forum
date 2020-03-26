@@ -3,6 +3,7 @@ import { PostsService } from './posts.service';
 import { CreatePostDTO } from '../../models/posts/create-post.dto';
 import { PostDTO } from '../../models/posts/post.dto';
 import { UpdatePostDTO } from '../../models/posts/update-post.dto';
+import { User } from '../../database/entities/user.entity';
 
 @Controller('/posts')
 export class PostsController {
@@ -49,7 +50,7 @@ export class PostsController {
   ): Promise<PostDTO> {
 
     //userId hardcoded until authentication
-    const userId = 'cbb8c825-67ef-435f-abde-b3677fa75fe0'
+    const userId = 'dffe2e7a-ba77-43a4-90a9-1b1e15af796c'
     return await this.postsService.updatePost(update, userId, postId);
   }
 
@@ -57,7 +58,7 @@ export class PostsController {
   async likePost(
     @Param('postId', ParseIntPipe)
     postId: number,
-  ): Promise<PostDTO> {
+  ): Promise<User[]> {
 
     //userId hardcoded until authentication
     const userId = 'cbb8c825-67ef-435f-abde-b3677fa75fe0'
