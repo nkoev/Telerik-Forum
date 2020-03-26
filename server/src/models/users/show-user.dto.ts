@@ -1,3 +1,12 @@
+import { User } from "../../database/entities/user.entity";
+
 export class ShowUserDTO {
-    constructor(public username: string) { }
+
+    public id: string;
+    public username: string;
+
+    constructor(user: User) {
+        this.id = user.id;
+        this.username = user.username;
+    }
 }
