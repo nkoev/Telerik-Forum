@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, MinLength, MaxLength } from "class-validator"
 
-export class CreateCommentDTO {
+export class UpdateCommentDTO {
 
     @IsNotEmpty()
     @IsString()
