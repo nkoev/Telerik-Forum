@@ -6,9 +6,9 @@ import { Post } from "./post.entity";
 export class Comment {
 
     @PrimaryGeneratedColumn('increment')
-    id: string;
+    id: number;
 
-    @Column('nvarchar', { length: 200 })
+    @Column('nvarchar', { nullable: false, length: 200 })
     content: string;
 
     @CreateDateColumn({ name: 'created_on' })
@@ -17,23 +17,18 @@ export class Comment {
     @ManyToOne(
         type => User,
         user => user.comments,
-        { lazy: true },
+        { eager: true },
     )
-    public user: Promise<User>;
+    public user: User;
 
     @ManyToOne(
         type => Post,
         post => post.comments,
-        { lazy: true },
+        { eager: true },
     )
-    public post: Promise<Post>;
+    public post: Post;
 
-    @Column({ nullable: false, default: false })
+    @Column({ nullable: false, type: 'boolean', default: false })
     isDeleted: boolean;
-
-    @BeforeInsert()
-    beforeInsertActions() {
-        this.isDeleted = false;
-    }
 
 }

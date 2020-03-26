@@ -6,6 +6,7 @@ import { CreateCommentDTO } from '../../models/comments/create-comment.dto';
 import { ShowCommentDTO } from '../../models/comments/show-comment.dto';
 import { User } from '../../database/entities/user.entity';
 import { Post } from '../../database/entities/post.entity';
+import { UpdateCommentDTO } from '../../models/comments/update-comment.dto';
 
 
 @Injectable()
@@ -33,60 +34,102 @@ export class CommentsService {
         });
     }
 
-    public async createComment(userId: string, postId: string, comment: CreateCommentDTO): Promise<ShowCommentDTO> {
+    public async readPostComments(postId: number): Promise<ShowCommentDTO[]> {
+
+        const foundPost: Post = await this.postRepository.findOne({
+            where: {
+                id: postId,
+                isDeleted: false
+            }
+        });
+
+        if (foundPost === undefined) {
+            throw new BadRequestException('Post does not exist');
+        }
+
+        const comments = await this.commentRepository.find({ where: { post: { id: postId }, isDeleted: false } });
+
+        return comments.map(comment => new ShowCommentDTO(comment));
+    }
+
+
+    public async createPostComment(userId: string, postId: number, comment: CreateCommentDTO): Promise<ShowCommentDTO> {
+
+        const foundUser: User = await this.userRepository.findOne({
+            id: userId,
+            isDeleted: false
+        });
+
+        if (foundUser === undefined) {
+            throw new BadRequestException('User does not exist');
+        }
+
+        const foundPost: Post = await this.postRepository.findOne({
+            where: {
+                id: postId,
+                user: { id: userId },
+                isDeleted: false
+            }
+        });
+
+        if (foundPost === undefined) {
+            throw new BadRequestException('Post does not exist');
+        }
+
 
         const newComment: Comment = this.commentRepository.create(comment);
 
-        const foundUser: User = await this.userRepository.findOne({
-            id: userId
-        });
-
-        if (foundUser === undefined) {
-            throw new BadRequestException('User does not exist');
-        }
-
-        const foundPost: Post = await this.postRepository.findOne({
-            where: {
-                id: postId,
-                user: { id: userId }
-            }
-        });
-
-        if (foundPost === undefined) {
-            throw new BadRequestException('Post does not exist');
-        }
-
-        newComment.user = Promise.resolve(foundUser);
-        newComment.post = Promise.resolve(foundPost);
+        newComment.user = foundUser;
+        newComment.post = foundPost;
 
         await this.commentRepository.save(newComment);
 
-        return new ShowCommentDTO(newComment.content);
+        return new ShowCommentDTO(newComment);
     }
 
-    public async readAllComments(userId: string, postId: string): Promise<ShowCommentDTO[]> {
 
-        const foundUser: User = await this.userRepository.findOne({
-            id: userId
-        });
+    public async updatePostComment(userId: string, postId: number, commentId: number, comment: UpdateCommentDTO): Promise<ShowCommentDTO> {
 
-        if (foundUser === undefined) {
-            throw new BadRequestException('User does not exist');
-        }
-
-        const foundPost: Post = await this.postRepository.findOne({
+        const foundComment: Comment = await this.commentRepository.findOne({
             where: {
-                id: postId,
-                user: { id: userId }
+                id: commentId,
+                post: { id: postId, isDeleted: false },
+                user: { id: userId, isDeleted: false },
+                isDeleted: false
             }
         });
 
-        if (foundPost === undefined) {
-            throw new BadRequestException('Post does not exist');
+        if (foundComment === undefined) {
+            throw new BadRequestException('Comment does not exist');
         }
 
-        const comments = await this.commentRepository.find({ where: { user: { id: userId }, post: { id: postId }, isDeleted: false } });
+        const updatedComment: Comment = { ...foundComment, ...comment };
 
-        return comments.map(comment => new ShowCommentDTO(comment.content));
+        await this.commentRepository.save(updatedComment);
+
+        return new ShowCommentDTO(updatedComment);
+    }
+
+
+    public async deletePostComment(userId: string, postId: number, commentId: number): Promise<ShowCommentDTO> {
+
+        const foundComment: Comment = await this.commentRepository.findOne({
+            where: {
+                id: commentId,
+                post: { id: postId, isDeleted: false },
+                user: { id: userId, isDeleted: false },
+                isDeleted: false
+            }
+        });
+
+        if (foundComment === undefined) {
+            throw new BadRequestException('Comment does not exist');
+        }
+
+        const deletedComment: Comment = { ...foundComment, isDeleted: true };
+
+        await this.commentRepository.save(deletedComment);
+
+        return new ShowCommentDTO(deletedComment);
     }
 }
