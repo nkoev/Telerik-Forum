@@ -51,6 +51,17 @@ export class UsersController {
         return await this.usersService.addFriend(userId, user);
     }
 
+    //  REMOVE FRIEND
+    @Delete('/:userId/friends/:friendId')
+    @HttpCode(HttpStatus.CREATED)
+    async removeFriend(
+        @Param('userId', ParseUUIDPipe) userId: string,
+        @Param('friendId', ParseUUIDPipe) friendId: string
+    ): Promise<ShowUserDTO> {
+
+        return await this.usersService.removeFriend(userId, friendId);
+    }
+
     //  GET ALL FRIENDS
     @Get('/:userId/friends')
     @HttpCode(HttpStatus.OK)
