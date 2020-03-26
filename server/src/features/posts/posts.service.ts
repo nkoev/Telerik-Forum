@@ -5,6 +5,7 @@ import { CreatePostDTO } from '../../models/posts/create-post.dto';
 import { PostDTO } from '../../models/posts/post.dto';
 import { User } from '../../database/entities/user.entity';
 import { Post } from '../../database/entities/post.entity';
+import { UpdatePostDTO } from '../../models/posts/update-post.dto';
 
 @Injectable()
 export class PostsService {
@@ -14,23 +15,29 @@ export class PostsService {
     @InjectRepository(User) private readonly usersRepo: Repository<User>
   ) { }
 
-  public async getUserPosts(userId: string): Promise<PostDTO[]> {
+  public async getPosts(): Promise<PostDTO[]> {
 
-    const posts = await this.postsRepo.find({ where: { user: { id: userId }, isDeleted: false } });
+    const posts = await this.postsRepo.find({
+      where: { isDeleted: false }
+    });
 
     return posts.map(post => new PostDTO(post));
   }
 
-  public async getPosts(id: string): Promise<PostDTO[]> {
-    let posts = await this.postsRepo.find({
-      where: { isDeleted: false }
+  public async getSinglePost(postId: number): Promise<PostDTO> {
+
+    const post = await this.postsRepo.findOne({
+      where: {
+        isDeleted: false,
+        id: postId
+      }
     });
 
-    if (id) {
-      posts = posts.filter((post) => post.id === +id)
+    if (post === undefined) {
+      throw new BadRequestException('Post does not exist');
     }
 
-    return posts.map(post => new PostDTO(post));
+    return new PostDTO(post);
   }
 
   public async createPost(post: CreatePostDTO, userId: string): Promise<PostDTO> {
@@ -50,6 +57,48 @@ export class PostsService {
     postEntity.user = userEntity
     postEntity.comments = Promise.resolve([]);
     const savedPost = await this.postsRepo.save(postEntity)
+
+    return new PostDTO(savedPost)
+  }
+
+  public async updatePost(update: UpdatePostDTO, userId: string, postId: number) {
+
+    const post = await this.postsRepo.findOne({
+      where: {
+        id: postId,
+        isDeleted: false
+      }
+    });
+
+    if (post === undefined) {
+      throw new BadRequestException('Post does not exist');
+    }
+    if (post.user.id !== userId) {
+      throw new BadRequestException('This post doesn\'t belong to the user')
+    }
+
+    const savedPost = await this.postsRepo.save({ ...post, ...update })
+
+    return new PostDTO(savedPost)
+  }
+
+  public async deletePost(userId: string, postId: number): Promise<PostDTO> {
+    const post = await this.postsRepo.findOne({
+      where: {
+        id: postId,
+        isDeleted: false
+      }
+    });
+
+    if (post === undefined) {
+      throw new BadRequestException('Post does not exist');
+    }
+    if (post.user.id !== userId) {
+      throw new BadRequestException('This post doesn\'t belong to the user')
+    }
+
+    post.isDeleted = true
+    const savedPost = await this.postsRepo.save(post);
 
     return new PostDTO(savedPost)
   }
