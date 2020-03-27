@@ -51,7 +51,7 @@ export class CommentsController {
     async likeComment(
         @Param('postId', ParseIntPipe) postId: number,
         @Param('commentId', ParseIntPipe) commentId: number,
-    ): Promise<User[]> {
+    ): Promise<ShowCommentDTO> {
 
         //userId hardcoded until authentication
         const userId = 'dffe2e7a-ba77-43a4-90a9-1b1e15af796c'

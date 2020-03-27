@@ -30,10 +30,11 @@ export class Comment {
 
     @ManyToMany(
         type => User,
-        user => user.likedComments
-    )
+        user => user.likedComments, {
+        eager: true
+    })
     @JoinTable()
-    public votes: Promise<User[]>
+    public votes: User[]
 
     @Column({ nullable: false, type: 'boolean', default: false })
     isDeleted: boolean;

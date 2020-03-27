@@ -34,9 +34,11 @@ export class Post {
 
     @ManyToMany(
         type => User,
-        user => user.likedPosts
+        user => user.likedPosts, {
+        eager: true
+    }
     )
     @JoinTable()
-    votes: Promise<User[]>
+    votes: User[]
 
 }

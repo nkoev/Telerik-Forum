@@ -29,7 +29,8 @@ export class PostsController {
   @HttpCode(HttpStatus.CREATED)
   async createPost(
     @Body(new ValidationPipe({
-      whitelist: true
+      whitelist: true,
+      transform: true
     }))
     post: CreatePostDTO
   ): Promise<PostDTO> {
@@ -44,7 +45,9 @@ export class PostsController {
     @Param('postId', ParseIntPipe)
     postId: number,
     @Body(new ValidationPipe({
-      whitelist: true, skipMissingProperties: true
+      whitelist: true,
+      skipMissingProperties: true,
+      transform: true
     }))
     update: UpdatePostDTO
   ): Promise<PostDTO> {
@@ -58,7 +61,7 @@ export class PostsController {
   async likePost(
     @Param('postId', ParseIntPipe)
     postId: number,
-  ): Promise<User[]> {
+  ): Promise<PostDTO> {
 
     //userId hardcoded until authentication
     const userId = 'cbb8c825-67ef-435f-abde-b3677fa75fe0'
