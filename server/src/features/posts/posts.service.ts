@@ -78,7 +78,7 @@ export class PostsService {
     return new PostDTO(savedPost)
   }
 
-  public async likePost(userId: string, postId: number): Promise<User[]> {
+  public async likePost(userId: string, postId: number): Promise<PostDTO> {
 
     const post: Post = await this.postsRepo.findOne({
       where: {
@@ -86,7 +86,6 @@ export class PostsService {
         isDeleted: false
       }
     });
-    const user: User = await this.usersRepo.findOne({ id: userId })
 
     if (post === undefined) {
       throw new BadRequestException('Post does not exist');
@@ -95,17 +94,21 @@ export class PostsService {
       throw new BadRequestException('Not allowed to like user\'s own posts')
     }
 
-    const votes: User[] = await post.votes
-    const liked: number = votes.findIndex((user) => user.id === userId)
+    const liked: boolean = post.votes.some((user) => user.id === userId)
 
-    liked === -1 ?
-      votes.push(user) :
-      votes.splice(liked, 1)
+    const queryBuilder =
+      this.postsRepo
+        .createQueryBuilder()
+        .relation('votes')
+        .of(post)
 
-    post.votes = Promise.resolve(votes)
-    await this.postsRepo.save(post)
+    liked ?
+      await queryBuilder
+        .remove(userId) :
+      await queryBuilder
+        .add(userId)
 
-    return post.votes // TO BE CONVERTED TO DTO
+    return new PostDTO(post)
   }
 
   public async deletePost(userId: string, postId: number): Promise<PostDTO> {

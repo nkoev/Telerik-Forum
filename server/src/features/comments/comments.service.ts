@@ -110,14 +110,13 @@ export class CommentsService {
         return new ShowCommentDTO(updatedComment);
     }
 
-    public async likePostComment(userId: string, postId: number, commentId: number): Promise<User[]> {
+    public async likePostComment(userId: string, postId: number, commentId: number): Promise<ShowCommentDTO> {
         const comment: Comment = await this.commentRepository.findOne({
             where: {
                 id: commentId,
                 isDeleted: false
             }
         });
-        const user: User = await this.userRepository.findOne({ id: userId })
 
         if (comment === undefined) {
             throw new BadRequestException('Comment does not exist');
@@ -126,17 +125,20 @@ export class CommentsService {
             throw new BadRequestException('Not allowed to like user\'s own comments')
         }
 
-        const votes: User[] = await comment.votes
-        const liked: number = votes.findIndex((user) => user.id === userId)
+        const liked: boolean = comment.votes.some((user) => user.id === userId)
+        const queryBuilder =
+            this.commentRepository
+                .createQueryBuilder()
+                .relation('votes')
+                .of(comment)
 
-        liked === -1 ?
-            votes.push(user) :
-            votes.splice(liked, 1)
+        liked ?
+            await queryBuilder
+                .remove(userId) :
+            await queryBuilder
+                .add(userId)
 
-        comment.votes = Promise.resolve(votes)
-        await this.commentRepository.save(comment)
-
-        return comment.votes // TO BE CONVERTED TO DTO
+        return new ShowCommentDTO(comment)
     }
 
 
