@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, BeforeInsert, ManyToMany, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, BeforeInsert, ManyToMany, ManyToOne, JoinColumn, JoinTable } from "typeorm";
 import { Post } from "./post.entity";
 import { Comment } from "./comment.entity";
+import { Role } from "./role.entity";
 
 @Entity('users')
 export class User {
@@ -59,5 +60,13 @@ export class User {
         comment => comment.votes
     )
     likedComments: Promise<Comment[]>
+
+    @ManyToMany(
+        type => Role,
+        role => role.users, {
+        eager: true
+    })
+    @JoinTable()
+    roles: Role[];
 
 }

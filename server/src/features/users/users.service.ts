@@ -6,12 +6,14 @@ import { RegisterUserDTO } from '../../models/users/register-user.dto';
 import { ShowUserDTO } from '../../models/users/show-user.dto';
 import { LoginUserDTO } from '../../models/users/login-user.dto';
 import { AddFriendDTO } from '../../models/users/add-friend.dto';
+import { Role } from '../../database/entities/role.entity';
 
 @Injectable()
 export class UsersService {
 
     constructor(
-        @InjectRepository(User) private readonly userRepository: Repository<User>
+        @InjectRepository(User) private readonly userRepository: Repository<User>,
+        @InjectRepository(Role) private readonly rolesRepository: Repository<Role>
     ) { }
 
     async all(): Promise<User[]> {
@@ -55,6 +57,10 @@ export class UsersService {
         const newUser: User = this.userRepository.create(user);
         newUser.posts = Promise.resolve([]);
         newUser.comments = Promise.resolve([]);
+        newUser.roles = [
+            await this.rolesRepository.findOne({
+                where: { name: 'Basic' }
+            })]
 
         await this.userRepository.save(newUser);
 
