@@ -5,6 +5,7 @@ import { User } from '../../database/entities/user.entity';
 import { RegisterUserDTO } from '../../models/users/register-user.dto';
 import { ShowUserDTO } from '../../models/users/show-user.dto';
 import { LoginUserDTO } from '../../models/users/login-user.dto';
+import { AddFriendDTO } from '../../models/users/add-friend.dto';
 
 @Injectable()
 export class UsersService {
@@ -57,7 +58,7 @@ export class UsersService {
 
         await this.userRepository.save(newUser);
 
-        return new ShowUserDTO(newUser.username);
+        return new ShowUserDTO(newUser);
     }
 
 
@@ -90,12 +91,95 @@ export class UsersService {
             }, 409);
         }
 
-        return new ShowUserDTO(foundUser.username);
+        return new ShowUserDTO(foundUser);
     }
 
 
     // LOGOUT
     async logoutUser() {
         return 'logout...';
+    }
+
+
+    // ADD FRIEND
+    async addFriend(userId: string, user: AddFriendDTO): Promise<ShowUserDTO> {
+
+        const foundUser: User = await this.userRepository.findOne({
+            id: userId,
+            isDeleted: false
+        });
+
+        if (foundUser === undefined) {
+            throw new BadRequestException('User does not exist');
+        }
+
+        const foundFriend: User = await this.userRepository.findOne({
+            id: user.id,
+            username: user.username,
+            isDeleted: false
+        });
+
+        if (foundFriend === undefined) {
+            throw new BadRequestException('User does not exist');
+        }
+
+        (await foundFriend.friends).forEach(friend => {
+            if (friend.id === foundUser.id) {
+                throw new BadRequestException('The user is already added as a friend');
+            }
+        });
+
+        // Both users are added to their friends lists
+        (await foundUser.friends).push(foundFriend);
+        (await foundFriend.friends).push(foundUser);
+
+        await this.userRepository.save(foundUser);
+        await this.userRepository.save(foundFriend);
+
+        return new ShowUserDTO(foundFriend);
+    }
+
+    // REMOVE FRIEND
+    async removeFriend(userId: string, friendId: string): Promise<ShowUserDTO> {
+
+        const foundUser: User = await this.userRepository.findOne({
+            id: userId,
+            isDeleted: false
+        });
+
+        if (foundUser === undefined) {
+            throw new BadRequestException('User does not exist');
+        }
+
+        const foundFriend: User = (await foundUser.friends).filter(friend => friend.id === friendId)[0];
+
+        if (foundFriend === undefined) {
+            throw new BadRequestException('User not found in friends list');
+        }
+
+        // Both users are removed from their friends lists
+        (await foundUser.friends).splice((await foundUser.friends).indexOf(foundFriend), 1);
+        (await foundFriend.friends).splice((await foundFriend.friends).indexOf(foundUser), 1);
+
+        await this.userRepository.save(foundUser);
+        await this.userRepository.save(foundFriend);
+
+        return new ShowUserDTO(foundFriend);
+    }
+
+
+    // GET ALL FRIENDS
+    async getFriends(userId: string): Promise<ShowUserDTO[]> {
+
+        const foundUser: User = await this.userRepository.findOne({
+            id: userId,
+            isDeleted: false
+        });
+
+        if (foundUser === undefined) {
+            throw new BadRequestException('User does not exist');
+        }
+
+        return (await foundUser.friends).map(friend => new ShowUserDTO(friend));
     }
 }
