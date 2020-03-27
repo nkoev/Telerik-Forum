@@ -36,8 +36,7 @@ export class Post {
         type => User,
         user => user.likedPosts, {
         eager: true
-    }
-    )
+    })
     @JoinTable()
     votes: User[]
 
