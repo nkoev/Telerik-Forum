@@ -1,11 +1,11 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm';
 import { CreatePostDTO } from '../../models/posts/create-post.dto';
 import { PostDTO } from '../../models/posts/post.dto';
 import { User } from '../../database/entities/user.entity';
 import { Post } from '../../database/entities/post.entity';
 import { UpdatePostDTO } from '../../models/posts/update-post.dto';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class PostsService {
@@ -40,19 +40,20 @@ export class PostsService {
     return new PostDTO(post);
   }
 
-  public async createPost(post: CreatePostDTO, userId: string): Promise<PostDTO> {
+  public async createPost(createPostDTO: CreatePostDTO, userId: string): Promise<PostDTO> {
 
-    const postEntity: Post = this.postsRepo.create(post);
-    const userEntity: User = await this.usersRepo.findOne({
+    const post: Post = this.postsRepo.create(createPostDTO);
+    const user: User = await this.usersRepo.findOne({
       where: {
         id: userId,
         isDeleted: false
       }
     })
 
-    postEntity.user = userEntity
-    postEntity.comments = Promise.resolve([]);
-    const savedPost = await this.postsRepo.save(postEntity)
+    post.user = user
+    post.comments = Promise.resolve([]);
+    post.votes = []
+    const savedPost = await this.postsRepo.save(post)
 
     return new PostDTO(savedPost)
   }
@@ -96,16 +97,16 @@ export class PostsService {
 
     const liked: boolean = post.votes.some((user) => user.id === userId)
 
-    const queryBuilder =
+    const postVotes =
       this.postsRepo
         .createQueryBuilder()
         .relation('votes')
         .of(post)
 
     liked ?
-      await queryBuilder
+      await postVotes
         .remove(userId) :
-      await queryBuilder
+      await postVotes
         .add(userId)
 
     return new PostDTO(post)

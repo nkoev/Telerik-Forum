@@ -35,9 +35,9 @@ export class Post {
     @ManyToMany(
         type => User,
         user => user.likedPosts, {
-        eager: true
+        eager: true,
     })
     @JoinTable()
-    votes: User[]
+    votes: User[];
 
 }
