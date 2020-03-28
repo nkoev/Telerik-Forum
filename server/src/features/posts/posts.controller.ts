@@ -3,7 +3,6 @@ import { PostsService } from './posts.service';
 import { CreatePostDTO } from '../../models/posts/create-post.dto';
 import { PostDTO } from '../../models/posts/post.dto';
 import { UpdatePostDTO } from '../../models/posts/update-post.dto';
-import { User } from '../../database/entities/user.entity';
 
 @Controller('/posts')
 export class PostsController {
