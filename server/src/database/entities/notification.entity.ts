@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, ManyToOne, JoinTable } from "typeorm";
 import { NotificationType } from "../../models/notifications/notifications.enum";
+import { ActionType } from "../../models/notifications/actions.enum";
 import { User } from "./user.entity";
 import { Post } from "./post.entity";
 
@@ -12,15 +13,16 @@ export class Notification {
     @Column({
         type: 'enum',
         enum: NotificationType,
-        default: NotificationType.Flag
+        default: NotificationType.Post
     })
     type: NotificationType
 
-    @ManyToMany(
-        type => User,
-        user => user.notifications
-    )
-    forUsers: Promise<User[]>
+    @Column({
+        type: 'enum',
+        enum: ActionType,
+        default: ActionType.Flag
+    })
+    action: ActionType
 
     @ManyToOne(
         type => Post,
@@ -28,6 +30,12 @@ export class Notification {
     )
     @JoinTable()
     entity: Promise<Post>;
+
+    @ManyToMany(
+        type => User,
+        user => user.notifications
+    )
+    forUsers: Promise<User[]>
 
     @Column('boolean', { default: false })
     read: boolean
