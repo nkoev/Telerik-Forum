@@ -10,6 +10,7 @@ import { plainToClass } from 'class-transformer';
 import { ForumSystemException } from '../../common/exceptions/system-exception';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationType } from '../../models/notifications/notifications.enum';
+import { ActionType } from '../../models/notifications/actions.enum';
 
 @Injectable()
 export class PostsService {
@@ -148,7 +149,7 @@ export class PostsService {
         .add(userId)
 
     // Send notification to admin
-    await this.notificationsService.notify(NotificationType.Flag, foundPost.id);
+    await this.notificationsService.notify(NotificationType.Post, ActionType.Flag, foundPost.id);
 
     return this.toPostDTO(foundPost)
   }
