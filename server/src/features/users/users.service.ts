@@ -7,6 +7,7 @@ import { ShowUserDTO } from '../../models/users/show-user.dto';
 import { LoginUserDTO } from '../../models/users/login-user.dto';
 import { AddFriendDTO } from '../../models/users/add-friend.dto';
 import { Role } from '../../database/entities/role.entity';
+import { ShowNotificationDTO } from '../../models/notifications/show-notification.dto';
 
 @Injectable()
 export class UsersService {
@@ -187,5 +188,21 @@ export class UsersService {
         }
 
         return (await foundUser.friends).map(friend => new ShowUserDTO(friend));
+    }
+
+
+    // GET ALL NOTIFICATIONS
+    async getNotifications(userId: string): Promise<ShowNotificationDTO[]> {
+
+        const foundUser: User = await this.userRepository.findOne({
+            id: userId,
+            isDeleted: false
+        });
+
+        if (foundUser === undefined) {
+            throw new BadRequestException('User does not exist');
+        }
+
+        return (await foundUser.notifications).map(notification => new ShowNotificationDTO(notification));
     }
 }

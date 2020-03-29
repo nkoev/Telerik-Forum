@@ -35,7 +35,7 @@ export class PostsController {
   ): Promise<PostDTO> {
 
     //userId hardcoded until authentication
-    const userId = '17148785-7ad2-41b4-bd50-e581556b2506'
+    const userId = '0e30fa06-b3f3-4a4e-a0ab-2443ad9ef960'
     return await this.postsService.createPost(post, userId);
   }
 

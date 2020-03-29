@@ -8,6 +8,7 @@ import { UpdatePostDTO } from '../../models/posts/update-post.dto';
 import { Repository } from 'typeorm';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationType } from '../../models/notifications/notifications.enum';
+import { ActionType } from '../../models/notifications/actions.enum';
 
 @Injectable()
 export class PostsService {
@@ -146,7 +147,7 @@ export class PostsService {
         .add(userId)
 
     // Send notification to admin
-    await this.notificationsService.notify(NotificationType.Flag, foundPost.id);
+    await this.notificationsService.notify(NotificationType.Post, ActionType.Flag, foundPost.id);
 
     return new PostDTO(foundPost)
   }

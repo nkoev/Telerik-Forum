@@ -2,6 +2,7 @@ import { Controller, Post, HttpCode, Query, Param, ParseUUIDPipe, HttpStatus, Pa
 import { NotificationsService } from './notifications.service';
 import { NotificationType } from '../../models/notifications/notifications.enum';
 import { Notification } from '../../database/entities/notification.entity';
+import { ActionType } from '../../models/notifications/actions.enum';
 
 @Controller('/notifications')
 export class NotificationsController {
@@ -11,10 +12,10 @@ export class NotificationsController {
     @Post()
     @HttpCode(HttpStatus.CREATED)
     async notify(
-        @Query('postId', ParseIntPipe) postId: number
+        @Query('entityId', ParseIntPipe) entityId: number
         // @Query('userId', ParseUUIDPipe) userId?: string
     ): Promise<Notification> {
 
-        return await this.notificationsService.notify(NotificationType.Flag, postId);
+        return await this.notificationsService.notify(NotificationType.Post, ActionType.Flag, entityId);
     }
 }
