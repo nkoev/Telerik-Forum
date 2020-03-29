@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { UsersModule } from './features/users/users.module';
 import { PostsModule } from './features/posts/posts.module';
 import { CommentsModule } from './features/comments/comments.module';
+import { NotificationsModule } from './features/notifications/notifications.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
@@ -14,6 +15,7 @@ import { ConfigModule } from '@nestjs/config';
     UsersModule,
     PostsModule,
     CommentsModule,
+    NotificationsModule,
     DatabaseModule,
     ConfigModule.forRoot({
       validationSchema: Joi.object({
