@@ -3,6 +3,7 @@ import { Post } from "./post.entity";
 import { Comment } from "./comment.entity";
 import { Role } from "./role.entity";
 import { Expose } from "class-transformer";
+import { Notification } from "./notification.entity";
 
 @Entity('users')
 
@@ -70,5 +71,19 @@ export class User {
     })
     @JoinTable()
     roles: Role[];
+
+    @ManyToMany(
+        type => Post,
+        post => post.flags
+    )
+    flaggedPosts: Promise<Post[]>
+
+    @ManyToMany(
+        type => Notification,
+        notification => notification.forUsers,
+        { eager: true }
+    )
+    @JoinTable()
+    notifications: Notification[]
 
 }

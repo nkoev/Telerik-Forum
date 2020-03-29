@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, On
 import { User } from "./user.entity";
 import { Comment } from "./comment.entity";
 import { Type, Expose } from "class-transformer";
+import { Notification } from "./notification.entity";
 
 @Entity('posts')
 export class Post {
@@ -41,4 +42,17 @@ export class Post {
     @JoinTable()
     votes: User[];
 
+    @ManyToMany(
+        type => User,
+        user => user.flaggedPosts, {
+        eager: true,
+    })
+    @JoinTable()
+    flags: User[];
+
+    @OneToMany(
+        type => Notification,
+        notification => notification.entity,
+    )
+    notifications: Promise<Notification[]>;
 }

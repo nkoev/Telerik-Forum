@@ -8,13 +8,16 @@ import { UpdatePostDTO } from '../../models/posts/update-post.dto';
 import { Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
 import { ForumSystemException } from '../../common/exceptions/system-exception';
+import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationType } from '../../models/notifications/notifications.enum';
 
 @Injectable()
 export class PostsService {
 
   constructor(
     @InjectRepository(Post) private readonly postsRepo: Repository<Post>,
-    @InjectRepository(User) private readonly usersRepo: Repository<User>
+    @InjectRepository(User) private readonly usersRepo: Repository<User>,
+    private readonly notificationsService: NotificationsService
   ) { }
 
   public async getPosts(): Promise<PostDTO[]> {
@@ -112,6 +115,42 @@ export class PostsService {
         .add(userId)
 
     return this.toPostDTO(post)
+  }
+
+  public async flagPost(userId: string, postId: number): Promise<PostDTO> {
+
+    const foundPost: Post = await this.postsRepo.findOne({
+      where: {
+        id: postId,
+        isDeleted: false
+      }
+    })
+
+    if (foundPost === undefined) {
+      throw new ForumSystemException('Post does not exist', 404);
+    }
+    if (foundPost.user.id === userId) {
+      throw new ForumSystemException('Not allowed to flag user\'s own posts', 403)
+    }
+
+    const flags: boolean = foundPost.flags.some((user) => user.id === userId)
+
+    const postFlags =
+      this.postsRepo
+        .createQueryBuilder()
+        .relation('flags')
+        .of(foundPost)
+
+    flags ?
+      await postFlags
+        .remove(userId) :
+      await postFlags
+        .add(userId)
+
+    // Send notification to admin
+    await this.notificationsService.notify(NotificationType.Flag, foundPost.id);
+
+    return this.toPostDTO(foundPost)
   }
 
   public async deletePost(userId: string, postId: number): Promise<PostDTO> {

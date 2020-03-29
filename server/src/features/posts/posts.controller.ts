@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, HttpCode, HttpStatus, Put, Delete, ValidationPipe, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, HttpCode, HttpStatus, Put, Delete, ValidationPipe, ParseIntPipe, UseGuards, Query, ParseUUIDPipe } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDTO } from '../../models/posts/create-post.dto';
 import { PostDTO } from '../../models/posts/post.dto';
@@ -70,6 +70,16 @@ export class PostsController {
     return await this.postsService.likePost(user.id, postId)
   }
 
+  @Post('/:postId/flag')
+  @HttpCode(HttpStatus.OK)
+  async flagPost(
+    @User() user: UserShowDTO,
+    @Param('postId', ParseIntPipe) postId: number
+  ): Promise<PostDTO> {
+
+    return await this.postsService.flagPost(user.id, postId);
+  }
+
   @Delete('/:postId')
   async deletePost(
     @User() user: UserShowDTO,
@@ -79,5 +89,4 @@ export class PostsController {
 
     return await this.postsService.deletePost(user.id, postId);
   }
-
 }
