@@ -1,9 +1,10 @@
-import { Controller, HttpCode, HttpStatus, Body, Post, Delete, ValidationPipe, Param, ParseUUIDPipe, Get } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Body, Post, Delete, ValidationPipe, Param, ParseUUIDPipe, Get, Query } from '@nestjs/common';
 import { UsersService } from './users.service'
 import { RegisterUserDTO } from '../../models/users/register-user.dto';
 import { LoginUserDTO } from '../../models/users/login-user.dto';
 import { ShowUserDTO } from '../../models/users/show-user.dto';
 import { AddFriendDTO } from '../../models/users/add-friend.dto';
+import { ShowNotificationDTO } from '../../models/notifications/show-notification.dto';
 
 @Controller('users')
 export class UsersController {
@@ -70,5 +71,15 @@ export class UsersController {
     ): Promise<ShowUserDTO[]> {
 
         return await this.usersService.getFriends(userId);
+    }
+
+    //  GET ALL NOTIFICATIONS
+    @Get('/notifications')
+    @HttpCode(HttpStatus.OK)
+    async getNotifications(
+        @Query('userId', ParseUUIDPipe) userId: string
+    ): Promise<ShowNotificationDTO[]> {
+
+        return await this.usersService.getNotifications(userId);
     }
 }
