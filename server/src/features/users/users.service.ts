@@ -7,6 +7,7 @@ import { ShowUserDTO } from '../../models/users/show-user.dto';
 import { LoginUserDTO } from '../../models/users/login-user.dto';
 import { AddFriendDTO } from '../../models/users/add-friend.dto';
 import { Role } from '../../database/entities/role.entity';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class UsersService {
@@ -64,7 +65,7 @@ export class UsersService {
 
         await this.userRepository.save(newUser);
 
-        return new ShowUserDTO(newUser);
+        return this.toShowUserDTO(newUser);
     }
 
 
@@ -97,7 +98,7 @@ export class UsersService {
             }, 409);
         }
 
-        return new ShowUserDTO(foundUser);
+        return this.toShowUserDTO(foundUser);
     }
 
 
@@ -142,7 +143,7 @@ export class UsersService {
         await this.userRepository.save(foundUser);
         await this.userRepository.save(foundFriend);
 
-        return new ShowUserDTO(foundFriend);
+        return this.toShowUserDTO(foundFriend);
     }
 
     // REMOVE FRIEND
@@ -170,7 +171,7 @@ export class UsersService {
         await this.userRepository.save(foundUser);
         await this.userRepository.save(foundFriend);
 
-        return new ShowUserDTO(foundFriend);
+        return this.toShowUserDTO(foundFriend);
     }
 
 
@@ -186,6 +187,14 @@ export class UsersService {
             throw new BadRequestException('User does not exist');
         }
 
-        return (await foundUser.friends).map(friend => new ShowUserDTO(friend));
+        return (await foundUser.friends).map(this.toShowUserDTO);
+    }
+
+    private toShowUserDTO(user: User): ShowUserDTO {
+        return plainToClass(
+            ShowUserDTO,
+            user, {
+            excludeExtraneousValues: true
+        });
     }
 }
