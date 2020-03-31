@@ -167,6 +167,8 @@ export class UsersService {
             throw new BadRequestException('User does not exist');
         }
 
-        return (await foundUser.notifications).map(notification => new ShowNotificationDTO(notification));
+        const foundNotifications = await foundUser.notifications;
+
+        return (foundNotifications).map(notification => new ShowNotificationDTO(notification));
     }
 }
