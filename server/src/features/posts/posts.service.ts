@@ -6,6 +6,7 @@ import { PostDTO } from '../../models/posts/post.dto';
 import { User } from '../../database/entities/user.entity';
 import { Post } from '../../database/entities/post.entity';
 import { UpdatePostDTO } from '../../models/posts/update-post.dto';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class PostsService {
@@ -21,7 +22,7 @@ export class PostsService {
       where: { isDeleted: false }
     });
 
-    return posts.map(post => new PostDTO(post));
+    return posts.map(this.toPostDTO);
   }
 
   public async getSinglePost(postId: number): Promise<PostDTO> {
@@ -37,7 +38,7 @@ export class PostsService {
       throw new BadRequestException('Post does not exist');
     }
 
-    return new PostDTO(post);
+    return this.toPostDTO(post);
   }
 
   public async createPost(post: CreatePostDTO, userId: string): Promise<PostDTO> {
@@ -54,7 +55,7 @@ export class PostsService {
     postEntity.comments = Promise.resolve([]);
     const savedPost = await this.postsRepo.save(postEntity)
 
-    return new PostDTO(savedPost)
+    return this.toPostDTO(savedPost)
   }
 
   public async updatePost(update: UpdatePostDTO, userId: string, postId: number) {
@@ -75,7 +76,7 @@ export class PostsService {
 
     const savedPost = await this.postsRepo.save({ ...post, ...update })
 
-    return new PostDTO(savedPost)
+    return this.toPostDTO(savedPost)
   }
 
   public async likePost(userId: string, postId: number): Promise<PostDTO> {
@@ -108,7 +109,7 @@ export class PostsService {
       await queryBuilder
         .add(userId)
 
-    return new PostDTO(post)
+    return this.toPostDTO(post)
   }
 
   public async deletePost(userId: string, postId: number): Promise<PostDTO> {
@@ -129,7 +130,15 @@ export class PostsService {
     post.isDeleted = true
     const savedPost = await this.postsRepo.save(post);
 
-    return new PostDTO(savedPost)
+    return this.toPostDTO(savedPost)
+  }
+
+  private toPostDTO(post: Post): PostDTO {
+    return plainToClass(
+      PostDTO,
+      post, {
+      excludeExtraneousValues: true
+    });
   }
 
 }

@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, ManyToMany, JoinTable } from "typeorm";
 import { User } from "./user.entity";
 import { Comment } from "./comment.entity";
+import { Type, Expose } from "class-transformer";
 
 @Entity('posts')
 export class Post {
