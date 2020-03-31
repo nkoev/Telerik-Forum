@@ -1,16 +1,16 @@
-import { Comment } from "../../database/entities/comment.entity"
+import { Expose, Transform } from "class-transformer";
+import { User } from "../../database/entities/user.entity";
 
 export class ShowCommentDTO {
 
+    @Expose()
     public id: number;
+    @Expose()
     public content: string;
-    public user: string;
+    @Expose()
+    public user: User;
+    @Expose()
+    @Transform(votes => votes.length)
     public votes: number;
 
-    constructor(comment: Comment) {
-        this.id = comment.id;
-        this.content = comment.content;
-        this.user = comment.user.username;
-        this.votes = comment.votes.length
-    }
 }
