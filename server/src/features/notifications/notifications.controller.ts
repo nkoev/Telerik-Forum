@@ -7,15 +7,15 @@ import { ActionType } from '../../models/notifications/actions.enum';
 @Controller('/notifications')
 export class NotificationsController {
 
-    constructor(private readonly notificationsService: NotificationsService) { }
+    // constructor(private readonly notificationsService: NotificationsService) { }
 
-    @Post()
-    @HttpCode(HttpStatus.CREATED)
-    async notify(
-        @Query('entityId', ParseIntPipe) entityId: number
-        // @Query('userId', ParseUUIDPipe) userId?: string
-    ): Promise<Notification> {
+    // @Post()
+    // @HttpCode(HttpStatus.CREATED)
+    // async notify(
+    //     @Query('entityId', ParseIntPipe) entityId: number
+    //     // @Query('userId', ParseUUIDPipe) userId?: string
+    // ): Promise<Notification> {
 
-        return await this.notificationsService.notify(NotificationType.Post, ActionType.Flag, entityId);
-    }
+    //     return await this.notificationsService.notify(NotificationType.Post, ActionType.Flag, entityId);
+    // }
 }

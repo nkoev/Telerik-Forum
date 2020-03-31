@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm';
 import { Notification } from '../../database/entities/notification.entity';
 import { User } from '../../database/entities/user.entity';
-import { Post } from '../../database/entities/post.entity';
 import { NotificationType } from '../../models/notifications/notifications.enum';
 import { ActionType } from '../../models/notifications/actions.enum';
 
@@ -12,32 +11,45 @@ export class NotificationsService {
 
     constructor(
         @InjectRepository(Notification) private readonly notificationsRepo: Repository<Notification>,
-        @InjectRepository(User) private readonly usersRepo: Repository<User>,
-        @InjectRepository(Post) private readonly postsRepo: Repository<Post>,
+        @InjectRepository(User) private readonly usersRepo: Repository<User>
     ) { }
 
-    async notify(notificationType: NotificationType, actionType: ActionType, eventID: number, forUser?: string) {
+    async notifyAdmins(notificationType: NotificationType, actionType: ActionType, targetPath: string, forUser?: string) {
 
-        const notifiedUser = await this.usersRepo.findOne({
+
+        const notifiedUsers = await this.usersRepo.find({
             where: {
                 username: 'admin',
                 isDeleted: false
             }
-        })
+        });
 
-
-        const event = await this.postsRepo.findOne({
-            where: {
-                id: eventID,
-                isDeleted: false
-            }
-        })
+        console.log(notifiedUsers);
 
         const newNotification = this.notificationsRepo.create();
         newNotification.type = notificationType;
         newNotification.action = actionType;
-        (await newNotification.forUsers).push(notifiedUser);
-        newNotification.entity = Promise.resolve(event);
+        (await newNotification.forUsers).push(...notifiedUsers);
+        newNotification.target = targetPath;
+
+        return await this.notificationsRepo.save(newNotification);
+    }
+
+    async notifyUsers(userId: string, notificationType: NotificationType, actionType: ActionType, targetPath: string, forUser?: string) {
+
+        const foundUser: User = await this.usersRepo.findOne({
+            id: userId,
+            isDeleted: false
+        });
+
+        const notifiedUsers = await foundUser.friends;
+        console.log(notifiedUsers);
+
+        const newNotification = this.notificationsRepo.create();
+        newNotification.type = notificationType;
+        newNotification.action = actionType;
+        (await newNotification.forUsers).push(...notifiedUsers);
+        newNotification.target = targetPath;
 
         return await this.notificationsRepo.save(newNotification);
     }
