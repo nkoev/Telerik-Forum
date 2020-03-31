@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
 import * as Joi from '@hapi/joi';
 import { ConfigModule } from '@nestjs/config';
+import { AdminModule } from './features/admin/admin.module';
 
 
 @Module({
@@ -14,6 +15,7 @@ import { ConfigModule } from '@nestjs/config';
     UsersModule,
     PostsModule,
     CommentsModule,
+    AdminModule,
     DatabaseModule,
     ConfigModule.forRoot({
       validationSchema: Joi.object({
