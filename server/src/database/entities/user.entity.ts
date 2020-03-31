@@ -1,13 +1,15 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, BeforeInsert, ManyToMany, ManyToOne } from "typeorm";
 import { Post } from "./post.entity";
 import { Comment } from "./comment.entity";
+import { Expose } from "class-transformer";
 
 @Entity('users')
-export class User {
 
+export class User {
+    @Expose()
     @PrimaryGeneratedColumn('uuid')
     id: string;
-
+    @Expose()
     @Column('nvarchar', { length: 20, unique: true })
     username: string;
 

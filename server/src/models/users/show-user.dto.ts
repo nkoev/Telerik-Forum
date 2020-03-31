@@ -1,12 +1,9 @@
-import { User } from "../../database/entities/user.entity";
+import { Expose } from "class-transformer";
 
 export class ShowUserDTO {
-
+    @Expose()
     public id: string;
+    @Expose()
     public username: string;
 
-    constructor(user: User) {
-        this.id = user.id;
-        this.username = user.username;
-    }
 }
