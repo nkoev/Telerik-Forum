@@ -1,8 +1,8 @@
 export enum ActionType {
-    Flag = 'Flag',
-    Like = 'Like',
-    Post = 'Post',
-    Comment = 'Comment',
-    Add = 'Add',
-    Remove = 'Remove'
+    Flag = 'flagged',
+    Like = 'liked',
+    Post = 'posted',
+    Comment = 'commented',
+    Add = 'added',
+    Remove = 'removed'
 }

@@ -2,7 +2,6 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, ManyToOn
 import { NotificationType } from "../../models/notifications/notifications.enum";
 import { ActionType } from "../../models/notifications/actions.enum";
 import { User } from "./user.entity";
-import { Post } from "./post.entity";
 
 @Entity('notifications')
 export class Notification {
@@ -24,12 +23,8 @@ export class Notification {
     })
     action: ActionType
 
-    @ManyToOne(
-        type => Post,
-        post => post.notifications,
-    )
-    @JoinTable()
-    entity: Promise<Post>;
+    @Column('nvarchar')
+    target: string;
 
     @ManyToMany(
         type => User,

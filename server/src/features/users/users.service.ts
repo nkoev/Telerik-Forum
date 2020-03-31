@@ -14,7 +14,7 @@ export class UsersService {
 
     constructor(
         @InjectRepository(User) private readonly userRepository: Repository<User>,
-        @InjectRepository(Role) private readonly rolesRepository: Repository<Role>
+        @InjectRepository(Role) private readonly rolesRepository: Repository<Role>,
     ) { }
 
     async all(): Promise<User[]> {
@@ -203,6 +203,8 @@ export class UsersService {
             throw new BadRequestException('User does not exist');
         }
 
-        return (await foundUser.notifications).map(notification => new ShowNotificationDTO(notification));
+        const foundNotifications = await foundUser.notifications;
+
+        return (foundNotifications).map(notification => new ShowNotificationDTO(notification));
     }
 }

@@ -48,10 +48,4 @@ export class Post {
     })
     @JoinTable()
     flags: User[];
-
-    @OneToMany(
-        type => Notification,
-        notification => notification.entity,
-    )
-    notifications: Promise<Notification[]>;
 }
