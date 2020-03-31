@@ -1,21 +1,18 @@
-import { Post } from "../../database/entities/post.entity"
+import { Expose, Transform } from "class-transformer";
+import { User } from "../../database/entities/user.entity";
 
 export class PostDTO {
-
+  @Expose()
   public id: number;
+  @Expose()
   public title: string;
+  @Expose()
   public content: string;
-  public author: string;
+  @Expose()
+  public user: User;
+  @Expose()
+  @Transform(votes => votes.length)
   public votes: number;
 
-  constructor(
-    post: Post,
-  ) {
-    this.id = post.id;
-    this.title = post.title;
-    this.content = post.content;
-    this.author = post.user.username;
-    this.votes = post.votes.length
-  }
-
 }
+

@@ -7,6 +7,7 @@ import { ShowCommentDTO } from '../../models/comments/show-comment.dto';
 import { User } from '../../database/entities/user.entity';
 import { Post } from '../../database/entities/post.entity';
 import { UpdateCommentDTO } from '../../models/comments/update-comment.dto';
+import { plainToClass } from 'class-transformer';
 
 
 @Injectable()
@@ -49,7 +50,7 @@ export class CommentsService {
 
         const comments = await this.commentRepository.find({ where: { post: { id: postId }, isDeleted: false } });
 
-        return comments.map(comment => new ShowCommentDTO(comment));
+        return comments.map(this.toCommnentDTO);
     }
 
 
@@ -84,7 +85,7 @@ export class CommentsService {
 
         await this.commentRepository.save(newComment);
 
-        return new ShowCommentDTO(newComment);
+        return this.toCommnentDTO(newComment);
     }
 
 
@@ -107,7 +108,7 @@ export class CommentsService {
 
         await this.commentRepository.save(updatedComment);
 
-        return new ShowCommentDTO(updatedComment);
+        return this.toCommnentDTO(updatedComment);
     }
 
     public async likePostComment(userId: string, postId: number, commentId: number): Promise<ShowCommentDTO> {
@@ -138,7 +139,7 @@ export class CommentsService {
             await queryBuilder
                 .add(userId)
 
-        return new ShowCommentDTO(comment)
+        return this.toCommnentDTO(comment)
     }
 
 
@@ -161,6 +162,13 @@ export class CommentsService {
 
         await this.commentRepository.save(deletedComment);
 
-        return new ShowCommentDTO(deletedComment);
+        return this.toCommnentDTO(deletedComment);
+    }
+    private toCommnentDTO(comment: Comment): ShowCommentDTO {
+        return plainToClass(
+            ShowCommentDTO,
+            comment, {
+            excludeExtraneousValues: true
+        });
     }
 }
