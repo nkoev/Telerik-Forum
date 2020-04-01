@@ -5,6 +5,7 @@ import { PostDTO } from '../../models/posts/post.dto';
 import { UpdatePostDTO } from '../../models/posts/update-post.dto';
 import { User } from '../../common/decorators/user.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
+import { ShowUserDTO } from '../../models/users/show-user.dto';
 
 @Controller('/posts')
 @UseGuards(RolesGuard)
@@ -30,7 +31,7 @@ export class PostsController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createPost(
-    @User() user,
+    @User() user: ShowUserDTO,
     @Body(new ValidationPipe({
       whitelist: true,
       transform: true
@@ -43,7 +44,7 @@ export class PostsController {
 
   @Put('/:postId')
   async updatePost(
-    @User() user,
+    @User() user: ShowUserDTO,
     @Param('postId', ParseIntPipe)
     postId: number,
     @Body(new ValidationPipe({
@@ -59,7 +60,7 @@ export class PostsController {
 
   @Put('/:postId/votes')
   async likePost(
-    @User() user,
+    @User() user: ShowUserDTO,
     @Param('postId', ParseIntPipe)
     postId: number,
   ): Promise<PostDTO> {
@@ -69,7 +70,7 @@ export class PostsController {
 
   @Delete('/:postId')
   async deletePost(
-    @User() user,
+    @User() user: ShowUserDTO,
     @Param('postId', ParseIntPipe)
     postId: number,
   ): Promise<PostDTO> {
