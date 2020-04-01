@@ -20,16 +20,6 @@ export class UsersController {
         return await this.usersService.registerUser(user);
     }
 
-    //  LOGOUT
-    @Delete('/session')
-    @HttpCode(HttpStatus.OK)
-    async logoutUser() {
-
-        await this.usersService.logoutUser();
-
-        return { msg: 'Success! User logged out...' };
-    }
-
     //  ADD FRIEND
     @Post('/:userId/friends')
     @HttpCode(HttpStatus.CREATED)

@@ -58,45 +58,6 @@ export class UsersService {
     }
 
 
-    // LOGIN
-    async loginUser(user: UserLoginDTO): Promise<UserShowDTO> {
-        if (user.username === undefined) {
-            throw new BadRequestException(
-                'Username missing',
-            );
-        }
-        if (user.password === undefined) {
-            throw new BadRequestException(
-                'Password missing',
-            );
-        }
-
-        const foundUser = await this.findOne(user);
-
-        if (foundUser === undefined) {
-            throw new HttpException({
-                status: HttpStatus.NOT_FOUND,
-                error: 'Username not found',
-            }, 404);
-        }
-
-        if (foundUser.password !== user.password) {
-            throw new HttpException({
-                status: HttpStatus.CONFLICT,
-                error: 'Wrong password',
-            }, 409);
-        }
-
-        return this.toUserShowDTO(foundUser);
-    }
-
-
-    // LOGOUT
-    async logoutUser() {
-        return 'logout...';
-    }
-
-
     // ADD FRIEND
     async addFriend(userId: string, user: AddFriendDTO): Promise<UserShowDTO> {
 
