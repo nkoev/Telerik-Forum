@@ -2,11 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import "reflect-metadata";
+import { attachUser } from './common/middlewares/attach-user';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
-
+  app.use(attachUser)
   const options = new DocumentBuilder()
     .setTitle('Telerik Forum')
     .setDescription('Forum API description')
