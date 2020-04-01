@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { UsersModule } from './features/users/users.module';
 import { PostsModule } from './features/posts/posts.module';
 import { CommentsModule } from './features/comments/comments.module';
@@ -8,7 +8,6 @@ import { DatabaseModule } from './database/database.module';
 import * as Joi from '@hapi/joi';
 import { ConfigModule } from '@nestjs/config';
 import { AdminModule } from './features/admin/admin.module';
-
 
 @Module({
   imports: [

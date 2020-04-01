@@ -1,15 +1,13 @@
-import { IsNotEmpty, IsString, MaxLength, MinLength } from "class-validator";
+import { IsNotEmpty, IsString, MaxLength, MinLength, Length } from "class-validator";
 
 export class UpdatePostDTO {
   @IsNotEmpty()
   @IsString()
-  @MinLength(3)
-  @MaxLength(20)
+  @Length(3, 20)
   title: string;
 
   @IsNotEmpty()
   @IsString()
-  @MinLength(3)
-  @MaxLength(20)
+  @Length(3, 20)
   content: string
 }
