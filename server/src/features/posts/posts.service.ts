@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm'
 import { CreatePostDTO } from '../../models/posts/create-post.dto';
 import { PostDTO } from '../../models/posts/post.dto';
@@ -7,6 +7,7 @@ import { Post } from '../../database/entities/post.entity';
 import { UpdatePostDTO } from '../../models/posts/update-post.dto';
 import { Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
+import { ForumSystemException } from '../../common/exceptions/system-exception';
 
 @Injectable()
 export class PostsService {
@@ -35,7 +36,7 @@ export class PostsService {
     });
 
     if (post === undefined) {
-      throw new BadRequestException('Post does not exist');
+      throw new ForumSystemException('Post does not exist', 404);
     }
 
     return this.toPostDTO(post);
@@ -69,10 +70,10 @@ export class PostsService {
     });
 
     if (post === undefined) {
-      throw new BadRequestException('Post does not exist');
+      throw new ForumSystemException('Post does not exist', 404);
     }
     if (post.user.id !== userId) {
-      throw new BadRequestException('Not allowed to modify other users posts')
+      throw new ForumSystemException('Not allowed to modify other users posts', 403)
     }
 
     const savedPost = await this.postsRepo.save({ ...post, ...update })
@@ -90,10 +91,10 @@ export class PostsService {
     });
 
     if (post === undefined) {
-      throw new BadRequestException('Post does not exist');
+      throw new ForumSystemException('Post does not exist', 404);
     }
     if (post.user.id === userId) {
-      throw new BadRequestException('Not allowed to like user\'s own posts')
+      throw new ForumSystemException('Not allowed to like user\'s own posts', 403)
     }
 
     const liked: boolean = post.votes.some((user) => user.id === userId)
@@ -122,10 +123,10 @@ export class PostsService {
     });
 
     if (post === undefined) {
-      throw new BadRequestException('Post does not exist');
+      throw new ForumSystemException('Post does not exist', 404);
     }
     if (post.user.id !== userId) {
-      throw new BadRequestException('Not allowed to delete other users posts')
+      throw new ForumSystemException('Not allowed to delete other users posts', 403)
     }
 
     post.isDeleted = true

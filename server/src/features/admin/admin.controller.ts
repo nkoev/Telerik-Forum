@@ -14,7 +14,8 @@ export class AdminController {
   @Put('/users/:userId/banstatus')
   async banUsers(
     @Param('userId') userId: string, ) {
-    throw new ForumSystemException('something', 501)
+
+    throw new ForumSystemException('something', 401)
     return await this.adminService.banUsers(userId)
   }
 }
