@@ -3,11 +3,11 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import "reflect-metadata";
 import { attachUser } from './common/middlewares/attach-user';
+import { SystemExceptionFilter } from './common/filters/system-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
-  app.use(attachUser)
+
   const options = new DocumentBuilder()
     .setTitle('Telerik Forum')
     .setDescription('Forum API description')
@@ -16,6 +16,10 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
+
+  app.enableCors();
+  app.use(attachUser);
+  app.useGlobalFilters(new SystemExceptionFilter());
 
   await app.listen(3000);
 }
