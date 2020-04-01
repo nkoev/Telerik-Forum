@@ -1,4 +1,4 @@
-import { Expose } from "class-transformer";
+import { Expose, Transform } from "class-transformer";
 
 export class ShowUserDTO {
     @Expose()
@@ -6,6 +6,7 @@ export class ShowUserDTO {
     @Expose()
     public username: string;
     @Expose()
+    @Transform((_, obj) => obj.roles.map((x: any) => x.name))
     public roles: string[];
 
 }
