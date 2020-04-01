@@ -5,5 +5,7 @@ export class ShowUserDTO {
     public id: string;
     @Expose()
     public username: string;
+    @Expose()
+    public roles: string[];
 
 }
