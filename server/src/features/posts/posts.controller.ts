@@ -4,8 +4,10 @@ import { CreatePostDTO } from '../../models/posts/create-post.dto';
 import { PostDTO } from '../../models/posts/post.dto';
 import { UpdatePostDTO } from '../../models/posts/update-post.dto';
 import { User } from '../../common/decorators/user.decorator';
+import { RolesGuard } from '../../common/guards/roles.guard';
 
 @Controller('/posts')
+@UseGuards(RolesGuard)
 export class PostsController {
 
   constructor(private readonly postsService: PostsService) { }
@@ -41,6 +43,7 @@ export class PostsController {
 
   @Put('/:postId')
   async updatePost(
+    @User() user,
     @Param('postId', ParseIntPipe)
     postId: number,
     @Body(new ValidationPipe({
@@ -51,31 +54,27 @@ export class PostsController {
     update: UpdatePostDTO
   ): Promise<PostDTO> {
 
-    //userId hardcoded until authentication
-    const userId = 'dffe2e7a-ba77-43a4-90a9-1b1e15af796c'
-    return await this.postsService.updatePost(update, userId, postId);
+    return await this.postsService.updatePost(update, user.id, postId);
   }
 
   @Put('/:postId/votes')
   async likePost(
+    @User() user,
     @Param('postId', ParseIntPipe)
     postId: number,
   ): Promise<PostDTO> {
 
-    //userId hardcoded until authentication
-    const userId = 'cbb8c825-67ef-435f-abde-b3677fa75fe0'
-    return await this.postsService.likePost(userId, postId)
+    return await this.postsService.likePost(user.id, postId)
   }
 
   @Delete('/:postId')
   async deletePost(
+    @User() user,
     @Param('postId', ParseIntPipe)
     postId: number,
   ): Promise<PostDTO> {
 
-    //userId hardcoded until authentication
-    const userId = 'cbb8c825-67ef-435f-abde-b3677fa75fe0'
-    return await this.postsService.deletePost(userId, postId);
+    return await this.postsService.deletePost(user.id, postId);
   }
 
 }

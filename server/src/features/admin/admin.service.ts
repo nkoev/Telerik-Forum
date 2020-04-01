@@ -11,6 +11,7 @@ export class AdminService {
   ) { }
 
   async banUsers(userId: string) {
+
     return 'Iuhuuuuuu'
   }
 }
