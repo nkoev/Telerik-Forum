@@ -1,8 +1,8 @@
 import { Controller, HttpCode, HttpStatus, Body, Post, Delete, ValidationPipe, Param, ParseUUIDPipe, Get } from '@nestjs/common';
 import { UsersService } from './users.service'
-import { RegisterUserDTO } from '../../models/users/register-user.dto';
-import { LoginUserDTO } from '../../models/users/login-user.dto';
-import { ShowUserDTO } from '../../models/users/show-user.dto';
+import { UserRegisterDTO } from '../../models/users/user-register.dto';
+import { UserLoginDTO } from '../../models/users/user-login.dto';
+import { UserShowDTO } from '../../models/users/user-show.dto';
 import { AddFriendDTO } from '../../models/users/add-friend.dto';
 
 @Controller('users')
@@ -11,21 +11,13 @@ export class UsersController {
     constructor(private readonly usersService: UsersService) { }
 
     //  REGISTER
-    @Post('')
+    @Post()
     @HttpCode(HttpStatus.CREATED)
     async registerUser(@Body(new ValidationPipe({
+        whitelist: true,
         transform: true
-    })) user: RegisterUserDTO) {
+    })) user: UserRegisterDTO) {
         return await this.usersService.registerUser(user);
-    }
-
-    //  LOGIN
-    @Post('/session')
-    @HttpCode(HttpStatus.ACCEPTED)
-    async loginUser(@Body(new ValidationPipe({
-        transform: true
-    })) user: LoginUserDTO) {
-        return await this.usersService.loginUser(user);
     }
 
     //  LOGOUT
@@ -46,7 +38,7 @@ export class UsersController {
         @Body(new ValidationPipe({
             transform: true
         })) user: AddFriendDTO
-    ): Promise<ShowUserDTO> {
+    ): Promise<UserShowDTO> {
 
         return await this.usersService.addFriend(userId, user);
     }
@@ -57,7 +49,7 @@ export class UsersController {
     async removeFriend(
         @Param('userId', ParseUUIDPipe) userId: string,
         @Param('friendId', ParseUUIDPipe) friendId: string
-    ): Promise<ShowUserDTO> {
+    ): Promise<UserShowDTO> {
 
         return await this.usersService.removeFriend(userId, friendId);
     }
@@ -67,7 +59,7 @@ export class UsersController {
     @HttpCode(HttpStatus.OK)
     async getFriends(
         @Param('userId', ParseUUIDPipe) userId: string
-    ): Promise<ShowUserDTO[]> {
+    ): Promise<UserShowDTO[]> {
 
         return await this.usersService.getFriends(userId);
     }
