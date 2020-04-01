@@ -3,7 +3,8 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import "reflect-metadata";
 import { attachUser } from './common/middlewares/attach-user';
-import { SystemExceptionFilter } from './common/filters/system-exception.filter';
+import { SystemExceptionFilter } from './common/filters/system-exception-filter';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,7 +22,7 @@ async function bootstrap() {
   app.use(attachUser);
   app.useGlobalFilters(new SystemExceptionFilter());
 
-  await app.listen(3000);
+  await app.listen(app.get(ConfigService).get('PORT'));
 }
 
 bootstrap();
