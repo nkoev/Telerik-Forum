@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, MinLength, MaxLength } from "class-validator";
 
-export class RegisterUserDTO {
+export class UserRegisterDTO {
 
     @IsNotEmpty()
     @IsString()

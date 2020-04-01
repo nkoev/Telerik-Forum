@@ -13,7 +13,7 @@ export class User {
     @Column('nvarchar', { length: 20, unique: true })
     username: string;
 
-    @Column('nvarchar', { length: 20 })
+    @Column('nvarchar', { length: 60 })
     password: string;
 
     @OneToMany(

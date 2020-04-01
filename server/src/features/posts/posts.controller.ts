@@ -1,9 +1,10 @@
-import { Controller, Post, Body, Get, Param, HttpCode, HttpStatus, Put, Delete, ValidationPipe, ParseIntPipe } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, HttpCode, HttpStatus, Put, Delete, ValidationPipe, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDTO } from '../../models/posts/create-post.dto';
 import { PostDTO } from '../../models/posts/post.dto';
 import { UpdatePostDTO } from '../../models/posts/update-post.dto';
-import { User } from '../../database/entities/user.entity';
+import { AuthGuard } from '@nestjs/passport';
+import { AuthGuardWithBlacklisting } from '../../guards/auth-guard-with-blacklisting.guard';
 
 @Controller('/posts')
 export class PostsController {
@@ -11,6 +12,8 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) { }
 
   @Get()
+  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuardWithBlacklisting)
   async getPosts(): Promise<PostDTO[]> {
 
     return await this.postsService.getPosts();
