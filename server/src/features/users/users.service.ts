@@ -171,4 +171,5 @@ export class UsersService {
 
         return (foundNotifications).map(notification => new ShowNotificationDTO(notification));
     }
+
 }
