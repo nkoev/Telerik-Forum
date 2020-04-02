@@ -1,7 +1,8 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, ValidationPipe, Delete } from "@nestjs/common";
+import { Controller, Post, Body, HttpCode, HttpStatus, ValidationPipe, Delete, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { UserLoginDTO } from "../../models/users/user-login.dto";
 import { Token } from "../../decorators/token.decorator";
+import { AuthGuardWithBlacklisting } from "../../guards/auth-guard-with-blacklisting.guard";
 
 @Controller('session')
 export class AuthController {
@@ -22,6 +23,7 @@ export class AuthController {
     }
 
     @Delete()
+    @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
     async logout(@Token() token: string): Promise<{ msg: string }> {
 
