@@ -1,9 +1,9 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { jwtConstants } from '../constants/secret';
 import { JWTPayload } from '../../../models/payload/jwt-payload';
 import { AuthService } from '../auth.service';
+import { ConfigService } from '@nestjs/config';
 
 /* 
 ERROR: Class constructor MixinStrategy cannot be invoked without 'new'
@@ -14,11 +14,12 @@ https://stackoverflow.com/questions/50654877/typeerror-class-constructor-mixinst
 export class JwtStrategy extends PassportStrategy(Strategy) {
     constructor(
         private readonly authService: AuthService,
+        configService: ConfigService
     ) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
-            secretOrKey: jwtConstants.secret,
+            secretOrKey: configService.get('JWT_SECRET'),
         });
     }
 

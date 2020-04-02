@@ -1,11 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import * as helmet from 'helmet';
 import "reflect-metadata";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors();
+  app.use(helmet());
 
   const options = new DocumentBuilder()
     .setTitle('Telerik Forum')

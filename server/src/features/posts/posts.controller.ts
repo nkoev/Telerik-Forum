@@ -13,7 +13,7 @@ export class PostsController {
 
   @Get()
   @UseGuards(AuthGuard('jwt'))
-  @UseGuards(AuthGuardWithBlacklisting)
+  // @UseGuards(AuthGuardWithBlacklisting)
   async getPosts(): Promise<PostDTO[]> {
 
     return await this.postsService.getPosts();
