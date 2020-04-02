@@ -5,15 +5,17 @@ import { PostDTO } from '../../models/posts/post.dto';
 import { UpdatePostDTO } from '../../models/posts/update-post.dto';
 import { User } from '../../common/decorators/user.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import { ShowUserDTO } from '../../models/users/show-user.dto';
+import { UserShowDTO } from '../../models/users/user-show.dto';
+import { AuthGuardWithBlacklisting } from '../../common/guards/auth-guard-with-blacklisting.guard';
 
 @Controller('/posts')
-@UseGuards(RolesGuard)
+// @UseGuards(RolesGuard)
 export class PostsController {
 
   constructor(private readonly postsService: PostsService) { }
 
   @Get()
+  @UseGuards(AuthGuardWithBlacklisting)
   async getPosts(): Promise<PostDTO[]> {
 
     return await this.postsService.getPosts();
@@ -31,7 +33,7 @@ export class PostsController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createPost(
-    @User() user: ShowUserDTO,
+    @User() user: UserShowDTO,
     @Body(new ValidationPipe({
       whitelist: true,
       transform: true
@@ -44,7 +46,7 @@ export class PostsController {
 
   @Put('/:postId')
   async updatePost(
-    @User() user: ShowUserDTO,
+    @User() user: UserShowDTO,
     @Param('postId', ParseIntPipe)
     postId: number,
     @Body(new ValidationPipe({
@@ -60,7 +62,7 @@ export class PostsController {
 
   @Put('/:postId/votes')
   async likePost(
-    @User() user: ShowUserDTO,
+    @User() user: UserShowDTO,
     @Param('postId', ParseIntPipe)
     postId: number,
   ): Promise<PostDTO> {
@@ -70,7 +72,7 @@ export class PostsController {
 
   @Delete('/:postId')
   async deletePost(
-    @User() user: ShowUserDTO,
+    @User() user: UserShowDTO,
     @Param('postId', ParseIntPipe)
     postId: number,
   ): Promise<PostDTO> {
