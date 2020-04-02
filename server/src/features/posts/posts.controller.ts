@@ -67,7 +67,7 @@ export class PostsController {
     return await this.postsService.likePost(userId, postId)
   }
 
-  @Post('/:postId/flag')
+  @Put('/:postId/flag')
   @HttpCode(HttpStatus.OK)
   async flagPost(
     @Query('userId', ParseUUIDPipe) userId: string,

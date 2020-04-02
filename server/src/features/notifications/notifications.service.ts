@@ -24,7 +24,7 @@ export class NotificationsService {
             }
         });
 
-        console.log(notifiedUsers);
+        // console.log(notifiedUsers);
 
         const newNotification = this.notificationsRepo.create();
         newNotification.type = notificationType;
@@ -43,7 +43,7 @@ export class NotificationsService {
         });
 
         const notifiedUsers = await foundUser.friends;
-        console.log(notifiedUsers);
+        // console.log(notifiedUsers);
 
         const newNotification = this.notificationsRepo.create();
         newNotification.type = notificationType;
