@@ -1,13 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import * as helmet from 'helmet';
 import "reflect-metadata";
-import { attachUser } from './common/middlewares/attach-user';
 import { SystemExceptionFilter } from './common/filters/system-exception-filter';
 import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors();
+  // app.use(helmet());
 
   const options = new DocumentBuilder()
     .setTitle('Telerik Forum')
@@ -19,7 +21,6 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   app.enableCors();
-  app.use(attachUser);
   app.useGlobalFilters(new SystemExceptionFilter());
 
   await app.listen(app.get(ConfigService).get('PORT'));
