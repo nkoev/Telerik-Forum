@@ -115,6 +115,9 @@ export class PostsService {
       await postVotes
         .add(userId)
 
+    // if (!liked) {
+    //   await this.notificationsService.notifyUsers(userId, NotificationType.Post, ActionType.Like, `posts/${postId}`);
+    // }
 
     // await this.notificationsService.notifyUsers(userId, NotificationType.Post, ActionType.Like, `posts/${postId}`);
 
@@ -152,7 +155,9 @@ export class PostsService {
         .add(userId)
 
     // Send notification to admins
-    await this.notificationsService.notifyAdmins(NotificationType.Post, ActionType.Flag, `posts/${postId}`);
+    if (!flags) {
+      await this.notificationsService.notifyAdmins(NotificationType.Post, ActionType.Flag, `posts/${postId}`);
+    }
     // await resourceService(Post).notify(NotificationType.Post, ActionType.Flag, foundPost.id);
 
     return this.toPostDTO(foundPost)
