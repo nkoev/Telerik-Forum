@@ -70,7 +70,7 @@ export class PostsController {
     return await this.postsService.likePost(user.id, postId)
   }
 
-  @Post('/:postId/flag')
+  @Put('/:postId/flag')
   @HttpCode(HttpStatus.OK)
   async flagPost(
     @User() user: UserShowDTO,
