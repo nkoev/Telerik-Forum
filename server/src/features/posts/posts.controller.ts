@@ -15,7 +15,7 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) { }
 
   @Get()
-  @UseGuards(AuthGuardWithBlacklisting)
+  // @UseGuards(AuthGuardWithBlacklisting)
   async getPosts(): Promise<PostDTO[]> {
 
     return await this.postsService.getPosts();

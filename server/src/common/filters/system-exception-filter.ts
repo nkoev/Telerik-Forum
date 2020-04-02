@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { ForumSystemException } from '../exceptions/system-exception';
 
 
-@Catch()
+@Catch(ForumSystemException)
 export class SystemExceptionFilter implements ExceptionFilter {
   public catch(exception: ForumSystemException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
