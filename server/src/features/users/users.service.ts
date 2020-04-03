@@ -8,13 +8,18 @@ import { AddFriendDTO } from '../../models/users/add-friend.dto';
 import { Role } from '../../database/entities/role.entity';
 import { plainToClass } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
+import { BanStatus } from '../../database/entities/ban-status.entity';
+import { BanStatusDTO } from '../../models/users/ban-status.dto';
+import { ForumSystemException } from '../../common/exceptions/system-exception';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class UsersService {
 
     constructor(
         @InjectRepository(Role) private readonly rolesRepository: Repository<Role>,
-        @InjectRepository(User) private readonly usersRepository: Repository<User>
+        @InjectRepository(User) private readonly usersRepository: Repository<User>,
+        @InjectRepository(BanStatus) private readonly banStatusRepository: Repository<BanStatus>
     ) { }
 
     async all(): Promise<User[]> {
@@ -56,6 +61,10 @@ export class UsersService {
             await this.rolesRepository.findOne({
                 where: { name: 'Basic' }
             })]
+        newUser.banStatus =
+            await this.banStatusRepository.save(
+                this.banStatusRepository.create()
+            )
 
         await this.usersRepository.save(newUser);
 
@@ -68,7 +77,7 @@ export class UsersService {
 
         const foundUser: User = await this.usersRepository.findOne({
             id: userId,
-            isDeleted: false
+            isDeleted: false,
         });
 
         if (foundUser === undefined) {
@@ -145,6 +154,25 @@ export class UsersService {
         return (await foundUser.friends).map(this.toUserShowDTO);
     }
 
+    // BAN USER
+    async updateBanStatus(userId: string, banStatusUpdate: BanStatusDTO): Promise<UserShowDTO> {
+        const foundUser: User = await this.usersRepository.findOne({
+            id: userId,
+            isDeleted: false,
+        })
+
+        if (foundUser === undefined) {
+            throw new ForumSystemException('User does not exist', 400);
+        }
+        if (foundUser.banStatus.isBanned === true) {
+            throw new ForumSystemException('User is already banned', 400);
+        }
+
+        await this.banStatusRepository.save({ ...foundUser.banStatus, ...banStatusUpdate })
+
+        return this.toUserShowDTO(foundUser)
+    }
+
     private toUserShowDTO(user: User): UserShowDTO {
         return plainToClass(
             UserShowDTO,
@@ -152,4 +180,17 @@ export class UsersService {
             excludeExtraneousValues: true
         });
     }
+
+    @Cron('* 1 0 * * *')
+    async handleCron() {
+        const banStatuses = await this.banStatusRepository.find({ isBanned: true })
+        const dateTime = new Date().getTime()
+        banStatuses.forEach(status => {
+            if (status.expires.getTime() < dateTime) {
+                status.isBanned = false
+                this.banStatusRepository.save(status)
+            }
+        })
+    }
+
 }

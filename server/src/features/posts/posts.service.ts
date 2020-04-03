@@ -52,6 +52,10 @@ export class PostsService {
       }
     })
 
+    if (!user) {
+      throw new ForumSystemException('Logged user doesn\'t exist', 400)
+    }
+
     post.user = user
     post.comments = Promise.resolve([]);
     post.votes = []

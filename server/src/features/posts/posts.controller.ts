@@ -10,12 +10,12 @@ import { AuthGuardWithBlacklisting } from '../../common/guards/auth-guard-with-b
 
 @Controller('/posts')
 // @UseGuards(RolesGuard)
+@UseGuards(AuthGuardWithBlacklisting)
 export class PostsController {
 
   constructor(private readonly postsService: PostsService) { }
 
   @Get()
-  // @UseGuards(AuthGuardWithBlacklisting)
   async getPosts(): Promise<PostDTO[]> {
 
     return await this.postsService.getPosts();
