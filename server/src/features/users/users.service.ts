@@ -154,7 +154,7 @@ export class UsersService {
         return (await foundUser.friends).map(this.toUserShowDTO);
     }
 
-    // BAN USER
+    // BAN USERS
     async updateBanStatus(userId: string, banStatusUpdate: BanStatusDTO): Promise<UserShowDTO> {
         const foundUser: User = await this.usersRepository.findOne({
             id: userId,
