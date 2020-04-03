@@ -11,7 +11,6 @@ import * as bcrypt from 'bcrypt';
 import { BanStatus } from '../../database/entities/ban-status.entity';
 import { BanStatusDTO } from '../../models/users/ban-status.dto';
 import { ForumSystemException } from '../../common/exceptions/system-exception';
-import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class UsersService {
@@ -179,18 +178,6 @@ export class UsersService {
             user, {
             excludeExtraneousValues: true
         });
-    }
-
-    @Cron('* 1 0 * * *')
-    async handleCron() {
-        const banStatuses = await this.banStatusRepository.find({ isBanned: true })
-        const dateTime = new Date().getTime()
-        banStatuses.forEach(status => {
-            if (status.expires.getTime() < dateTime) {
-                status.isBanned = false
-                this.banStatusRepository.save(status)
-            }
-        })
     }
 
 }
