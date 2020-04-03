@@ -1,12 +1,16 @@
-import { Controller, HttpCode, HttpStatus, Body, Post, Delete, ValidationPipe, Param, ParseUUIDPipe, Get, Put } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Body, Post, Delete, ValidationPipe, Param, ParseUUIDPipe, Get, Put, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service'
 import { UserRegisterDTO } from '../../models/users/user-register.dto';
-import { UserLoginDTO } from '../../models/users/user-login.dto';
 import { UserShowDTO } from '../../models/users/user-show.dto';
 import { AddFriendDTO } from '../../models/users/add-friend.dto';
 import { BanStatusDTO } from '../../models/users/ban-status.dto';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { AccessLevel } from '../../common/decorators/roles.decorator';
+import { AuthGuardWithBlacklisting } from '../../common/guards/auth-guard-with-blacklisting.guard';
+import { BanGuard } from '../../common/guards/ban.guard';
 
 @Controller('users')
+@UseGuards(RolesGuard)
 export class UsersController {
 
     constructor(private readonly usersService: UsersService) { }
@@ -23,6 +27,7 @@ export class UsersController {
 
     //  ADD FRIEND
     @Post('/:userId/friends')
+    @UseGuards(BanGuard, AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.CREATED)
     async addFriend(
         @Param('userId', ParseUUIDPipe) userId: string,
@@ -36,6 +41,7 @@ export class UsersController {
 
     //  REMOVE FRIEND
     @Delete('/:userId/friends/:friendId')
+    @UseGuards(BanGuard, AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.CREATED)
     async removeFriend(
         @Param('userId', ParseUUIDPipe) userId: string,
@@ -47,6 +53,7 @@ export class UsersController {
 
     //  GET ALL FRIENDS
     @Get('/:userId/friends')
+    @UseGuards(BanGuard, AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
     async getFriends(
         @Param('userId', ParseUUIDPipe) userId: string
@@ -55,8 +62,10 @@ export class UsersController {
         return await this.usersService.getFriends(userId);
     }
 
-    // UPDATE BAN STATUS
+    // BAN USERS
     @Put('/:userId/banstatus')
+    @AccessLevel('Admin')
+    @UseGuards(BanGuard, AuthGuardWithBlacklisting)
     async updateBanStatus(
         @Param('userId', ParseUUIDPipe) userId: string,
         @Body(new ValidationPipe({
