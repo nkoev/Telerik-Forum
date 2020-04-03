@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, BeforeInsert, ManyToMany, ManyToOne, JoinColumn, JoinTable } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, BeforeInsert, ManyToMany, ManyToOne, JoinColumn, JoinTable, OneToOne } from "typeorm";
 import { Post } from "./post.entity";
 import { Comment } from "./comment.entity";
 import { Role } from "./role.entity";
 import { Expose } from "class-transformer";
+import { BanStatus } from "./ban-status.entity";
 
 @Entity('users')
 
@@ -70,5 +71,13 @@ export class User {
     })
     @JoinTable()
     roles: Role[];
+
+    @OneToOne(
+        type => BanStatus,
+        banStatus => banStatus.user,
+        { eager: true }
+    )
+    @JoinColumn()
+    banStatus: BanStatus
 
 }

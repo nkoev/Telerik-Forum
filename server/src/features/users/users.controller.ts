@@ -1,9 +1,10 @@
-import { Controller, HttpCode, HttpStatus, Body, Post, Delete, ValidationPipe, Param, ParseUUIDPipe, Get } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Body, Post, Delete, ValidationPipe, Param, ParseUUIDPipe, Get, Put } from '@nestjs/common';
 import { UsersService } from './users.service'
 import { UserRegisterDTO } from '../../models/users/user-register.dto';
 import { UserLoginDTO } from '../../models/users/user-login.dto';
 import { UserShowDTO } from '../../models/users/user-show.dto';
 import { AddFriendDTO } from '../../models/users/add-friend.dto';
+import { BanStatusDTO } from '../../models/users/ban-status.dto';
 
 @Controller('users')
 export class UsersController {
@@ -52,5 +53,18 @@ export class UsersController {
     ): Promise<UserShowDTO[]> {
 
         return await this.usersService.getFriends(userId);
+    }
+
+    // UPDATE BAN STATUS
+    @Put('/:userId/banstatus')
+    async updateBanStatus(
+        @Param('userId', ParseUUIDPipe) userId: string,
+        @Body(new ValidationPipe({
+            whitelist: true,
+            transform: true
+        })) banStatusUpdate: BanStatusDTO
+    ): Promise<UserShowDTO> {
+
+        return await this.usersService.updateBanStatus(userId, banStatusUpdate);
     }
 }
