@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, getConnection } from 'typeorm';
 import { User } from '../../database/entities/user.entity';
 import { UserRegisterDTO } from '../../models/users/user-register.dto';
 import { UserShowDTO } from '../../models/users/user-show.dto';
@@ -12,6 +12,7 @@ import { ShowNotificationDTO } from '../../models/notifications/show-notificatio
 import { BanStatus } from '../../database/entities/ban-status.entity';
 import { BanStatusDTO } from '../../models/users/ban-status.dto';
 import { ForumSystemException } from '../../common/exceptions/system-exception';
+import { Activity } from '../../database/entities/activity.entity';
 
 @Injectable()
 export class UsersService {
@@ -173,14 +174,6 @@ export class UsersService {
         return this.toUserShowDTO(foundUser)
     }
 
-    private toUserShowDTO(user: User): UserShowDTO {
-        return plainToClass(
-            UserShowDTO,
-            user, {
-            excludeExtraneousValues: true
-        });
-    }
-
     // GET ALL NOTIFICATIONS
     async getNotifications(userId: string): Promise<ShowNotificationDTO[]> {
 
@@ -198,4 +191,26 @@ export class UsersService {
         return (foundNotifications).map(notification => new ShowNotificationDTO(notification));
     }
 
+    // GET ACTIVITY
+    async getUserActivity(userId: string): Promise<Activity[]> {
+        const user = await getConnection().manager.findOne(User, userId);
+
+        if (!user) {
+            throw new BadRequestException('User does not exist');
+        }
+
+        return await getConnection()
+            .createQueryBuilder()
+            .relation(User, "activity")
+            .of(user)
+            .loadMany();
+    }
+
+    private toUserShowDTO(user: User): UserShowDTO {
+        return plainToClass(
+            UserShowDTO,
+            user, {
+            excludeExtraneousValues: true
+        });
+    }
 }
