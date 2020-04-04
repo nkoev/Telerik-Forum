@@ -2,7 +2,6 @@ import { Global, Module } from "@nestjs/common";
 import { AuthModule } from "../auth/auth.module";
 import { ConfigModule } from "@nestjs/config";
 import Joi = require("@hapi/joi");
-import { ForumSystemException } from "../../common/exceptions/system-exception";
 
 @Global()
 @Module({

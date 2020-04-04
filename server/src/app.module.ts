@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './features/auth/auth.module';
 import { CoreModule } from './features/core/core.module';
+import { ScheduleModule } from '@nestjs/schedule'
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CoreModule } from './features/core/core.module';
     NotificationsModule,
     DatabaseModule,
     AuthModule,
+    ScheduleModule.forRoot()
   ],
   controllers: [AppController],
   providers: [AppService]

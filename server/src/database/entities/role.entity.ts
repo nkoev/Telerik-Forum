@@ -1,5 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, ManyToMany, Column, ManyToOne, JoinTable } from "typeorm";
-import { UserRoles } from "../../models/users/roles.enum";
+import { Entity, PrimaryGeneratedColumn, ManyToMany, Column } from "typeorm";
 import { User } from "./user.entity";
 
 @Entity('roles')
