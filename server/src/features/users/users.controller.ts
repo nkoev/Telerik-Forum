@@ -10,6 +10,8 @@ import { AccessLevel } from '../../common/decorators/roles.decorator';
 import { AuthGuardWithBlacklisting } from '../../common/guards/auth-guard-with-blacklisting.guard';
 import { BanGuard } from '../../common/guards/ban.guard';
 import { Activity } from '../../database/entities/activity.entity';
+import { ReqUser } from '../../common/decorators/user.decorator';
+import { User } from '../../database/entities/user.entity';
 
 @Controller('users')
 @UseGuards(RolesGuard)
@@ -74,14 +76,16 @@ export class UsersController {
         return await this.usersService.getNotifications(userId);
     }
 
-    // GET ACTIVITY
+    // GET USER ACTIVITY
     @Get('/:userId/activity')
+    @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
     async getUserActivity(
-        @Param('userId', ParseUUIDPipe) userId: string
+        @Param('userId', ParseUUIDPipe) userId: string,
+        @ReqUser() loggedUser: User
     ): Promise<Activity[]> {
 
-        return await this.usersService.getUserActivity(userId);
+        return await this.usersService.getUserActivity(loggedUser, userId);
     }
 
     // BAN USERS
