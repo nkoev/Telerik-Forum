@@ -9,6 +9,7 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { AccessLevel } from '../../common/decorators/roles.decorator';
 import { AuthGuardWithBlacklisting } from '../../common/guards/auth-guard-with-blacklisting.guard';
 import { BanGuard } from '../../common/guards/ban.guard';
+import { Activity } from '../../database/entities/activity.entity';
 
 @Controller('users')
 @UseGuards(RolesGuard)
@@ -71,18 +72,30 @@ export class UsersController {
     ): Promise<ShowNotificationDTO[]> {
 
         return await this.usersService.getNotifications(userId);
-        // BAN USERS
-        @Put('/:userId/banstatus')
-        @AccessLevel('Admin')
-        @UseGuards(BanGuard, AuthGuardWithBlacklisting)
-        async updateBanStatus(
+    }
+
+    // GET ACTIVITY
+    @Get('/:userId/activity')
+    @HttpCode(HttpStatus.OK)
+    async getUserActivity(
+        @Param('userId', ParseUUIDPipe) userId: string
+    ): Promise<Activity[]> {
+
+        return await this.usersService.getUserActivity(userId);
+    }
+
+    // BAN USERS
+    @Put('/:userId/banstatus')
+    @AccessLevel('Admin')
+    @UseGuards(BanGuard, AuthGuardWithBlacklisting)
+    async updateBanStatus(
         @Param('userId', ParseUUIDPipe) userId: string,
         @Body(new ValidationPipe({
             whitelist: true,
             transform: true
         })) banStatusUpdate: BanStatusDTO
-    ): Promise < UserShowDTO > {
+    ): Promise<UserShowDTO> {
 
-            return await this.usersService.updateBanStatus(userId, banStatusUpdate);
-        }
+        return await this.usersService.updateBanStatus(userId, banStatusUpdate);
     }
+}

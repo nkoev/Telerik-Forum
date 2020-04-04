@@ -11,6 +11,9 @@ import { ForumSystemException } from '../../common/exceptions/system-exception';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationType } from '../../models/notifications/notifications.enum';
 import { ActionType } from '../../models/notifications/actions.enum';
+import { ActivityLogger } from '../../common/activity-logger';
+import { ActivityType } from '../../models/users/activity-type.enum';
+import { ActivityTarget } from '../../models/users/activity-target.enum';
 
 @Injectable()
 export class PostsService {
@@ -18,7 +21,8 @@ export class PostsService {
   constructor(
     @InjectRepository(Post) private readonly postsRepo: Repository<Post>,
     @InjectRepository(User) private readonly usersRepo: Repository<User>,
-    private readonly notificationsService: NotificationsService
+    private readonly notificationsService: NotificationsService,
+    private readonly activityLogger: ActivityLogger
   ) { }
 
   public async getPosts(): Promise<PostDTO[]> {
@@ -64,6 +68,7 @@ export class PostsService {
     post.comments = Promise.resolve([]);
     post.votes = []
     const savedPost = await this.postsRepo.save(post)
+    await this.activityLogger.log(user, ActivityType.Create, ActivityTarget.Post)
 
     return this.toPostDTO(savedPost)
   }

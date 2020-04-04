@@ -1,7 +1,7 @@
 import { Repository, In, createConnection } from "typeorm";
-import { Role } from "./database/entities/role.entity";
-import { UserRoles } from "./models/users/roles.enum";
-import { User } from "./database/entities/user.entity";
+import { Role } from "../database/entities/role.entity";
+import { UserRoles } from "../models/users/roles.enum";
+import { User } from "../database/entities/user.entity";
 import * as bcrypt from 'bcrypt';
 
 const seedRoles = async (connection: any) => {
