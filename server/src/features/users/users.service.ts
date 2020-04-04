@@ -191,10 +191,16 @@ export class UsersService {
         return (foundNotifications).map(notification => new ShowNotificationDTO(notification));
     }
 
-    // GET ACTIVITY
-    async getUserActivity(userId: string): Promise<Activity[]> {
+    // GET USER ACTIVITY
+    async getUserActivity(loggedUser: User, userId: string): Promise<Activity[]> {
         const user = await getConnection().manager.findOne(User, userId);
+        const loggedUserRoles = loggedUser.roles.map(role => role.name)
 
+        if (!loggedUserRoles.includes('Admin')) {
+            if (loggedUser.id !== user.id) {
+                throw new BadRequestException('Not allowed to read other users\' activity log');
+            }
+        }
         if (!user) {
             throw new BadRequestException('User does not exist');
         }
