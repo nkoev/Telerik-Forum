@@ -2,6 +2,7 @@ import { Repository, In, createConnection } from "typeorm";
 import { Role } from "./database/entities/role.entity";
 import { UserRoles } from "./models/users/roles.enum";
 import { User } from "./database/entities/user.entity";
+import * as bcrypt from 'bcrypt';
 
 const seedRoles = async (connection: any) => {
   const rolesRepo: Repository<Role> = connection.manager.getRepository(Role);
@@ -49,11 +50,11 @@ const seedAdmin = async (connection: any) => {
 
   const username = 'admin';
   const password = 'Aaa123';
-  // const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   const newAdmin: User = userRepo.create({
     username,
-    password,
+    password: hashedPassword,
     roles: allUserRoles,
   });
 
