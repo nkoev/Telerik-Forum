@@ -163,10 +163,10 @@ export class UsersService {
             isDeleted: false,
         })
 
-        if (foundUser === undefined) {
+        if (!foundUser) {
             throw new ForumSystemException('User does not exist', 400);
         }
-        if (foundUser.banStatus.isBanned === true) {
+        if (foundUser.banStatus.isBanned) {
             throw new ForumSystemException('User is already banned', 400);
         }
 

@@ -5,12 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Comment } from '../../database/entities/comment.entity';
 import { Post } from '../../database/entities/post.entity';
 import { User } from '../../database/entities/user.entity';
-import { ActivityLogger } from '../../common/activity-logger';
+import { ActivityService } from '../../common/activity.service';
 import { ActivityRecord } from '../../database/entities/activity.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Comment, User, Post, ActivityRecord])],
   controllers: [CommentsController],
-  providers: [CommentsService, ActivityLogger]
+  providers: [CommentsService, ActivityService]
 })
 export class CommentsModule { }

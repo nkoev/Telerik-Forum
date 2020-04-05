@@ -3,21 +3,31 @@ import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Injectable } from "@nestjs/common";
 import { ActivityType } from "../models/activity/activity-type.enum";
-import { ActivityTarget } from "../models/activity/activity-target.enum";
 import { User } from "../database/entities/user.entity";
 
 @Injectable()
-export class ActivityLogger {
+export class ActivityService {
 
   constructor(
     @InjectRepository(ActivityRecord) private readonly activitiesRepo: Repository<ActivityRecord>,
   ) { }
 
-  async log(user: User, action: ActivityType, target: ActivityTarget): Promise<void> {
+  async logPostEvent(user: User, action: ActivityType, postId: number): Promise<void> {
 
     const newRecord = this.activitiesRepo.create({
       action,
-      target
+      target: `/posts/${postId}`
+    })
+    newRecord.user = Promise.resolve(user)
+    this.activitiesRepo.save(newRecord)
+
+  }
+
+  async logCommentEvent(user: User, action: ActivityType, postId: number, commentId: number): Promise<void> {
+
+    const newRecord = this.activitiesRepo.create({
+      action,
+      target: `/posts/${postId}/comments/${commentId}`
     })
     newRecord.user = Promise.resolve(user)
     this.activitiesRepo.save(newRecord)

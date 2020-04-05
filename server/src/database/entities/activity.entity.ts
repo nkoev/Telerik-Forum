@@ -1,7 +1,6 @@
 import { PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, Entity, JoinColumn } from "typeorm";
 import { User } from "./user.entity";
 import { ActivityType } from "../../models/activity/activity-type.enum";
-import { ActivityTarget } from "../../models/activity/activity-target.enum";
 
 @Entity('activityrecords')
 
@@ -19,11 +18,8 @@ export class ActivityRecord {
   })
   action: ActivityType;
 
-  @Column({
-    type: 'enum',
-    enum: ActivityTarget
-  })
-  target: ActivityTarget;
+  @Column('nvarchar')
+  target: string;
 
   @ManyToOne(
     type => User,

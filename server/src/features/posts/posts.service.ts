@@ -10,9 +10,8 @@ import { ForumSystemException } from '../../common/exceptions/system-exception';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationType } from '../../models/notifications/notifications.enum';
 import { ActionType } from '../../models/notifications/actions.enum';
-import { ActivityLogger } from '../../common/activity-logger';
+import { ActivityService } from '../../common/activity.service';
 import { ActivityType } from '../../models/activity/activity-type.enum';
-import { ActivityTarget } from '../../models/activity/activity-target.enum';
 import { PostShowDTO } from '../../models/posts/post-show.dto';
 
 @Injectable()
@@ -22,7 +21,7 @@ export class PostsService {
     @InjectRepository(Post) private readonly postsRepo: Repository<Post>,
     @InjectRepository(User) private readonly usersRepo: Repository<User>,
     private readonly notificationsService: NotificationsService,
-    private readonly activityLogger: ActivityLogger
+    private readonly activityLogger: ActivityService
   ) { }
 
   public async getPosts(): Promise<PostShowDTO[]> {
@@ -58,7 +57,7 @@ export class PostsService {
     post.comments = Promise.resolve([]);
     post.votes = []
     const savedPost = await this.postsRepo.save(post)
-    await this.activityLogger.log(loggedUser, ActivityType.Create, ActivityTarget.Post)
+    await this.activityLogger.logPostEvent(loggedUser, ActivityType.Create, savedPost.id)
 
     return this.toPostShowDTO(savedPost)
   }
@@ -72,15 +71,15 @@ export class PostsService {
       }
     });
 
-    if (post === undefined) {
+    if (!post) {
       throw new ForumSystemException('Post does not exist', 404);
     }
-    if (post.user.id !== loggedUser.id) {
+    if (post.user !== loggedUser) {
       throw new ForumSystemException('Not allowed to modify other users posts', 403)
     }
 
     const savedPost = await this.postsRepo.save({ ...post, ...update })
-    await this.activityLogger.log(loggedUser, ActivityType.Update, ActivityTarget.Post)
+    await this.activityLogger.logPostEvent(loggedUser, ActivityType.Update, savedPost.id)
 
     return this.toPostShowDTO(savedPost)
   }
@@ -94,10 +93,10 @@ export class PostsService {
       }
     });
 
-    if (post === undefined) {
+    if (!post) {
       throw new ForumSystemException('Post does not exist', 404);
     }
-    if (post.user.id === loggedUser.id) {
+    if (post.user === loggedUser) {
       throw new ForumSystemException('Not allowed to like user\'s own posts', 403)
     }
 
@@ -115,12 +114,11 @@ export class PostsService {
       await postVotes
         .add(loggedUser)
 
-    // if (!liked) {
-    //   await this.notificationsService.notifyUsers(userId, NotificationType.Post, ActionType.Like, `posts/${postId}`);
-    // }
-
-    // await this.notificationsService.notifyUsers(userId, NotificationType.Post, ActionType.Like, `posts/${postId}`);
-    await this.activityLogger.log(loggedUser, ActivityType.Like, ActivityTarget.Post)
+    if (liked) {
+      await this.activityLogger.logPostEvent(loggedUser, ActivityType.Unlike, postId);
+    } else {
+      await this.activityLogger.logPostEvent(loggedUser, ActivityType.Like, postId);
+    }
 
     return this.toPostShowDTO(post)
   }
@@ -134,10 +132,10 @@ export class PostsService {
       }
     })
 
-    if (foundPost === undefined) {
+    if (!foundPost) {
       throw new ForumSystemException('Post does not exist', 404);
     }
-    if (foundPost.user.id === loggedUser.id) {
+    if (foundPost.user === loggedUser) {
       throw new ForumSystemException('Not allowed to flag user\'s own posts', 403)
     }
 
@@ -155,12 +153,10 @@ export class PostsService {
       await postFlags
         .add(loggedUser)
 
-    // Send notification to admins
     if (!flags) {
       await this.notificationsService.notifyAdmins(NotificationType.Post, ActionType.Flag, `posts/${postId}`);
+      await this.activityLogger.logPostEvent(loggedUser, ActivityType.Flag, postId)
     }
-    // await resourceService(Post).notify(NotificationType.Post, ActionType.Flag, foundPost.id);
-    await this.activityLogger.log(loggedUser, ActivityType.Flag, ActivityTarget.Post)
 
     return this.toPostShowDTO(foundPost)
   }
@@ -173,17 +169,16 @@ export class PostsService {
       }
     });
 
-    if (post === undefined) {
+    if (!post) {
       throw new ForumSystemException('Post does not exist', 404);
     }
-    if (post.user.id !== loggedUser.id) {
+    if (post.user !== loggedUser) {
       throw new ForumSystemException('Not allowed to delete other users posts', 403)
     }
 
     post.isDeleted = true
     const savedPost = await this.postsRepo.save(post);
-    await this.activityLogger.log(loggedUser, ActivityType.Remove, ActivityTarget.Post)
-
+    await this.activityLogger.logPostEvent(loggedUser, ActivityType.Remove, postId)
 
     return this.toPostShowDTO(savedPost)
   }
