@@ -8,10 +8,8 @@ import { User } from '../../database/entities/user.entity';
 import { Post } from '../../database/entities/post.entity';
 import { UpdateCommentDTO } from '../../models/comments/update-comment.dto';
 import { plainToClass } from 'class-transformer';
-import { ActivityLogger } from '../../common/activity-logger';
+import { ActivityService } from '../../common/activity.service';
 import { ActivityType } from '../../models/activity/activity-type.enum';
-import { ActivityTarget } from '../../models/activity/activity-target.enum';
-
 
 @Injectable()
 export class CommentsService {
@@ -20,7 +18,7 @@ export class CommentsService {
         @InjectRepository(Comment) private readonly commentRepository: Repository<Comment>,
         @InjectRepository(User) private readonly userRepository: Repository<User>,
         @InjectRepository(Post) private readonly postRepository: Repository<Post>,
-        private readonly activityLogger: ActivityLogger
+        private readonly activityLogger: ActivityService
     ) { }
 
     async all(): Promise<Comment[]> {
@@ -88,7 +86,7 @@ export class CommentsService {
         newComment.post = foundPost;
 
         await this.commentRepository.save(newComment);
-        await this.activityLogger.log(foundUser, ActivityType.Create, ActivityTarget.Comment)
+        await this.activityLogger.logCommentEvent(foundUser, ActivityType.Create, postId, newComment.id)
 
 
         return this.toCommnentDTO(newComment);
@@ -113,7 +111,7 @@ export class CommentsService {
         const updatedComment: Comment = { ...foundComment, ...comment };
 
         await this.commentRepository.save(updatedComment);
-        // await this.activityLogger.log(foundUser, ActivityType.Update, ActivityTarget.Comment)
+        // await this.activityLogger.logCommentEvent(foundUser, ActivityType.Update, postId, commentId)
 
 
         return this.toCommnentDTO(updatedComment);
@@ -147,7 +145,7 @@ export class CommentsService {
             await queryBuilder
                 .add(loggedUser)
 
-        await this.activityLogger.log(loggedUser, ActivityType.Like, ActivityTarget.Comment)
+        await this.activityLogger.logCommentEvent(loggedUser, ActivityType.Like, postId, commentId)
 
 
         return this.toCommnentDTO(comment)
@@ -172,7 +170,7 @@ export class CommentsService {
         const deletedComment: Comment = { ...foundComment, isDeleted: true };
 
         await this.commentRepository.save(deletedComment);
-        // await this.activityLogger.log(foundUser, ActivityType.Remove, ActivityTarget.Comment)
+        // await this.activityLogger.logCommentEvent(foundUser, ActivityType.Remove, postId, commentId)
 
 
         return this.toCommnentDTO(deletedComment);
