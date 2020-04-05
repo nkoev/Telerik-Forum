@@ -107,6 +107,7 @@ export class UsersController {
     @Get('/notifications')
     @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
+    @UseGuards(AuthGuardWithBlacklisting)
     async getNotifications(
         @User() user: UserShowDTO
     ): Promise<ShowNotificationDTO[]> {
