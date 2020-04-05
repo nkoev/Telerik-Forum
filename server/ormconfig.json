@@ -5,6 +5,9 @@
   "username": "root",
   "password": "1234",
   "database": "forumdb",
+  "subscribers": [
+    "src/subscriber/**/*.ts"
+  ],
   "entities": [
     "src/database/entities/**/*.ts"
   ],
@@ -12,6 +15,7 @@
     "src/database/migration/**/*.ts"
   ],
   "cli": {
+    "subscribersDir": "src/subscriber",
     "entitiesDir": "src/database/entities",
     "migrationsDir": "src/database/migration"
   }

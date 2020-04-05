@@ -1,13 +1,13 @@
-import { Controller, Post, Body, Get, Param, HttpCode, HttpStatus, Put, Delete, ValidationPipe, ParseIntPipe, UseGuards, Query, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, HttpCode, HttpStatus, Put, Delete, ValidationPipe, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDTO } from '../../models/posts/create-post.dto';
 import { PostDTO } from '../../models/posts/post.dto';
 import { UpdatePostDTO } from '../../models/posts/update-post.dto';
 import { ReqUser } from '../../common/decorators/user.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import { UserShowDTO } from '../../models/users/user-show.dto';
 import { AuthGuardWithBlacklisting } from '../../common/guards/auth-guard-with-blacklisting.guard';
 import { BanGuard } from '../../common/guards/ban.guard';
+import { User } from '../../database/entities/user.entity';
 
 @Controller('/posts')
 @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
@@ -34,7 +34,7 @@ export class PostsController {
   @UseGuards(BanGuard)
   @HttpCode(HttpStatus.CREATED)
   async createPost(
-    @ReqUser() user: UserShowDTO,
+    @ReqUser() user: User,
     @Body(new ValidationPipe({
       whitelist: true,
       transform: true
@@ -48,7 +48,7 @@ export class PostsController {
   @Put('/:postId')
   @UseGuards(BanGuard)
   async updatePost(
-    @ReqUser() user: UserShowDTO,
+    @ReqUser() user: User,
     @Param('postId', ParseIntPipe)
     postId: number,
     @Body(new ValidationPipe({
@@ -65,7 +65,7 @@ export class PostsController {
   @Put('/:postId/votes')
   @UseGuards(BanGuard)
   async likePost(
-    @ReqUser() user: UserShowDTO,
+    @ReqUser() user: User,
     @Param('postId', ParseIntPipe)
     postId: number,
   ): Promise<PostDTO> {
@@ -76,7 +76,7 @@ export class PostsController {
   @Put('/:postId/flag')
   @HttpCode(HttpStatus.OK)
   async flagPost(
-    @ReqUser() user: UserShowDTO,
+    @ReqUser() user: User,
     @Param('postId', ParseIntPipe) postId: number
   ): Promise<PostDTO> {
 
@@ -86,7 +86,7 @@ export class PostsController {
   @Delete('/:postId')
   @UseGuards(BanGuard)
   async deletePost(
-    @ReqUser() user: UserShowDTO,
+    @ReqUser() user: User,
     @Param('postId', ParseIntPipe)
     postId: number,
   ): Promise<PostDTO> {
