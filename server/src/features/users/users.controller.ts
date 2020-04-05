@@ -70,7 +70,7 @@ export class UsersController {
     }
 
     //  REMOVE FRIEND
-    @Delete('/:userId/friends/:friendId')
+    @Delete('/friends/:friendId')
     @UseGuards(BanGuard, AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.CREATED)
     async removeFriend(
