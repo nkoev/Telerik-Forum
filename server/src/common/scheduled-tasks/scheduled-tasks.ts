@@ -17,6 +17,5 @@ export class ScheduledTasks {
         this.banStatusRepository.save(status)
       }
     })
-    console.log('working')
   }
 }

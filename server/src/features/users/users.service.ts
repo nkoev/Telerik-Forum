@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, getConnection } from 'typeorm';
 import { User } from '../../database/entities/user.entity';
 import { UserRegisterDTO } from '../../models/users/user-register.dto';
 import { UserShowDTO } from '../../models/users/user-show.dto';
@@ -13,6 +13,8 @@ import { BanStatus } from '../../database/entities/ban-status.entity';
 import { BanStatusDTO } from '../../models/users/ban-status.dto';
 import { ForumSystemException } from '../../common/exceptions/system-exception';
 import { FriendRequest } from '../../database/entities/friend-request.entity';
+import { ActivityRecord } from '../../database/entities/activity.entity';
+import { ActivityShowDTO } from '../../models/activity/activity-show.dto';
 
 @Injectable()
 export class UsersService {
@@ -283,24 +285,16 @@ export class UsersService {
             isDeleted: false,
         })
 
-        if (foundUser === undefined) {
+        if (!foundUser) {
             throw new ForumSystemException('User does not exist', 400);
         }
-        if (foundUser.banStatus.isBanned === true) {
+        if (foundUser.banStatus.isBanned) {
             throw new ForumSystemException('User is already banned', 400);
         }
 
         await this.banStatusRepository.save({ ...foundUser.banStatus, ...banStatusUpdate })
 
         return this.toUserShowDTO(foundUser)
-    }
-
-    private toUserShowDTO(user: User): UserShowDTO {
-        return plainToClass(
-            UserShowDTO,
-            user, {
-            excludeExtraneousValues: true
-        });
     }
 
     // GET ALL NOTIFICATIONS
@@ -320,4 +314,42 @@ export class UsersService {
         return (foundNotifications).map(notification => new ShowNotificationDTO(notification));
     }
 
+    // GET USER ACTIVITY
+    async getUserActivity(loggedUser: User, userId: string): Promise<ActivityShowDTO[]> {
+        const user = await getConnection().manager.findOne(User, userId);
+        const loggedUserRoles = loggedUser.roles.map(role => role.name)
+
+        if (!loggedUserRoles.includes('Admin')) {
+            if (loggedUser.id !== user.id) {
+                throw new BadRequestException('Not allowed to read other users\' activity log');
+            }
+        }
+        if (!user) {
+            throw new BadRequestException('User does not exist');
+        }
+
+        const records = await getConnection()
+            .createQueryBuilder()
+            .relation(User, "activity")
+            .of(user)
+            .loadMany();
+
+        return records.map(this.toActivityShowDTO)
+
+    }
+
+    private toUserShowDTO(user: User): UserShowDTO {
+        return plainToClass(
+            UserShowDTO,
+            user, {
+            excludeExtraneousValues: true
+        });
+    }
+    private toActivityShowDTO(record: ActivityRecord): ActivityShowDTO {
+        return plainToClass(
+            ActivityShowDTO,
+            record, {
+            excludeExtraneousValues: true
+        });
+    }
 }

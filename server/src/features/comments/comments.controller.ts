@@ -6,6 +6,8 @@ import { UpdateCommentDTO } from '../../models/comments/update-comment.dto';
 import { AuthGuardWithBlacklisting } from '../../common/guards/auth-guard-with-blacklisting.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { BanGuard } from '../../common/guards/ban.guard';
+import { LoggedUser } from '../../common/decorators/user.decorator';
+import { User } from '../../database/entities/user.entity';
 
 @Controller('posts')
 @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
@@ -55,13 +57,12 @@ export class CommentsController {
     @UseGuards(BanGuard)
     @HttpCode(HttpStatus.OK)
     async likeComment(
+        @LoggedUser() loggedUser: User,
         @Param('postId', ParseIntPipe) postId: number,
         @Param('commentId', ParseIntPipe) commentId: number,
     ): Promise<ShowCommentDTO> {
 
-        //userId hardcoded until authentication
-        const userId = 'dffe2e7a-ba77-43a4-90a9-1b1e15af796c'
-        return await this.commentsService.likePostComment(userId, postId, commentId);
+        return await this.commentsService.likePostComment(loggedUser, postId, commentId);
     }
 
     @Delete('/:postId/comments/:commentId')

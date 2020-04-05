@@ -8,7 +8,8 @@ import { User } from '../../database/entities/user.entity';
 import { Post } from '../../database/entities/post.entity';
 import { UpdateCommentDTO } from '../../models/comments/update-comment.dto';
 import { plainToClass } from 'class-transformer';
-
+import { ActivityService } from '../../common/activity.service';
+import { ActivityType } from '../../models/activity/activity-type.enum';
 
 @Injectable()
 export class CommentsService {
@@ -17,6 +18,7 @@ export class CommentsService {
         @InjectRepository(Comment) private readonly commentRepository: Repository<Comment>,
         @InjectRepository(User) private readonly userRepository: Repository<User>,
         @InjectRepository(Post) private readonly postRepository: Repository<Post>,
+        private readonly activityLogger: ActivityService
     ) { }
 
     async all(): Promise<Comment[]> {
@@ -84,6 +86,8 @@ export class CommentsService {
         newComment.post = foundPost;
 
         await this.commentRepository.save(newComment);
+        await this.activityLogger.logCommentEvent(foundUser, ActivityType.Create, postId, newComment.id)
+
 
         return this.toCommnentDTO(newComment);
     }
@@ -107,11 +111,13 @@ export class CommentsService {
         const updatedComment: Comment = { ...foundComment, ...comment };
 
         await this.commentRepository.save(updatedComment);
+        // await this.activityLogger.logCommentEvent(foundUser, ActivityType.Update, postId, commentId)
+
 
         return this.toCommnentDTO(updatedComment);
     }
 
-    public async likePostComment(userId: string, postId: number, commentId: number): Promise<ShowCommentDTO> {
+    public async likePostComment(loggedUser: User, postId: number, commentId: number): Promise<ShowCommentDTO> {
         const comment: Comment = await this.commentRepository.findOne({
             where: {
                 id: commentId,
@@ -122,11 +128,11 @@ export class CommentsService {
         if (comment === undefined) {
             throw new BadRequestException('Comment does not exist');
         }
-        if (comment.user.id === userId) {
+        if (comment.user === loggedUser) {
             throw new BadRequestException('Not allowed to like user\'s own comments')
         }
 
-        const liked: boolean = comment.votes.some((user) => user.id === userId)
+        const liked: boolean = comment.votes.some((user) => user === loggedUser)
         const queryBuilder =
             this.commentRepository
                 .createQueryBuilder()
@@ -135,9 +141,12 @@ export class CommentsService {
 
         liked ?
             await queryBuilder
-                .remove(userId) :
+                .remove(loggedUser) :
             await queryBuilder
-                .add(userId)
+                .add(loggedUser)
+
+        await this.activityLogger.logCommentEvent(loggedUser, ActivityType.Like, postId, commentId)
+
 
         return this.toCommnentDTO(comment)
     }
@@ -161,6 +170,8 @@ export class CommentsService {
         const deletedComment: Comment = { ...foundComment, isDeleted: true };
 
         await this.commentRepository.save(deletedComment);
+        // await this.activityLogger.logCommentEvent(foundUser, ActivityType.Remove, postId, commentId)
+
 
         return this.toCommnentDTO(deletedComment);
     }
