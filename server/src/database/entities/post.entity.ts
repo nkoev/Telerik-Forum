@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, ManyToMany, JoinTable, BeforeUpdate, BeforeInsert } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, ManyToMany, JoinTable } from "typeorm";
 import { User } from "./user.entity";
 import { Comment } from "./comment.entity";
 
@@ -19,6 +19,9 @@ export class Post {
 
     @Column({ type: 'boolean', default: false })
     isDeleted: boolean;
+
+    @Column({ type: 'boolean', default: false })
+    isLocked: boolean;
 
     @OneToMany(
         type => Comment,
@@ -48,8 +51,4 @@ export class Post {
     @JoinTable()
     flags: User[];
 
-    @BeforeInsert()
-    updateDates() {
-        console.log('Here you are')
-    }
 }

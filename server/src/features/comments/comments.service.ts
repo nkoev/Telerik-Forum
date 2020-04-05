@@ -10,6 +10,7 @@ import { UpdateCommentDTO } from '../../models/comments/update-comment.dto';
 import { plainToClass } from 'class-transformer';
 import { ActivityService } from '../../common/activity.service';
 import { ActivityType } from '../../models/activity/activity-type.enum';
+import { ForumSystemException } from '../../common/exceptions/system-exception';
 
 @Injectable()
 export class CommentsService {
@@ -77,6 +78,9 @@ export class CommentsService {
 
         if (foundPost === undefined) {
             throw new BadRequestException('Post does not exist');
+        }
+        if (foundPost.isLocked) {
+            throw new ForumSystemException('Post is locked', 403)
         }
 
 
