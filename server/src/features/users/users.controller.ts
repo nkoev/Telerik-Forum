@@ -9,9 +9,9 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { AccessLevel } from '../../common/decorators/roles.decorator';
 import { AuthGuardWithBlacklisting } from '../../common/guards/auth-guard-with-blacklisting.guard';
 import { BanGuard } from '../../common/guards/ban.guard';
-import { Activity } from '../../database/entities/activity.entity';
 import { ReqUser } from '../../common/decorators/user.decorator';
 import { User } from '../../database/entities/user.entity';
+import { ActivityShowDTO } from '../../models/activity/activity-show.dto';
 
 @Controller('users')
 @UseGuards(RolesGuard)
@@ -83,7 +83,7 @@ export class UsersController {
     async getUserActivity(
         @Param('userId', ParseUUIDPipe) userId: string,
         @ReqUser() loggedUser: User
-    ): Promise<Activity[]> {
+    ): Promise<ActivityShowDTO[]> {
 
         return await this.usersService.getUserActivity(loggedUser, userId);
     }

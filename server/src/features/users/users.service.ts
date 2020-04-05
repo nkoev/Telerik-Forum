@@ -12,7 +12,8 @@ import { ShowNotificationDTO } from '../../models/notifications/show-notificatio
 import { BanStatus } from '../../database/entities/ban-status.entity';
 import { BanStatusDTO } from '../../models/users/ban-status.dto';
 import { ForumSystemException } from '../../common/exceptions/system-exception';
-import { Activity } from '../../database/entities/activity.entity';
+import { ActivityRecord } from '../../database/entities/activity.entity';
+import { ActivityShowDTO } from '../../models/activity/activity-show.dto';
 
 @Injectable()
 export class UsersService {
@@ -192,7 +193,7 @@ export class UsersService {
     }
 
     // GET USER ACTIVITY
-    async getUserActivity(loggedUser: User, userId: string): Promise<Activity[]> {
+    async getUserActivity(loggedUser: User, userId: string): Promise<ActivityShowDTO[]> {
         const user = await getConnection().manager.findOne(User, userId);
         const loggedUserRoles = loggedUser.roles.map(role => role.name)
 
@@ -205,17 +206,27 @@ export class UsersService {
             throw new BadRequestException('User does not exist');
         }
 
-        return await getConnection()
+        const records = await getConnection()
             .createQueryBuilder()
             .relation(User, "activity")
             .of(user)
             .loadMany();
+
+        return records.map(this.toActivityShowDTO)
+
     }
 
     private toUserShowDTO(user: User): UserShowDTO {
         return plainToClass(
             UserShowDTO,
             user, {
+            excludeExtraneousValues: true
+        });
+    }
+    private toActivityShowDTO(record: ActivityRecord): ActivityShowDTO {
+        return plainToClass(
+            ActivityShowDTO,
+            record, {
             excludeExtraneousValues: true
         });
     }
