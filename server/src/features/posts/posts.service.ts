@@ -19,9 +19,8 @@ export class PostsService {
 
   constructor(
     @InjectRepository(Post) private readonly postsRepo: Repository<Post>,
-    @InjectRepository(User) private readonly usersRepo: Repository<User>,
     private readonly notificationsService: NotificationsService,
-    private readonly activityLogger: ActivityService
+    private readonly activityService: ActivityService
   ) { }
 
   public async getPosts(): Promise<PostShowDTO[]> {
@@ -57,7 +56,7 @@ export class PostsService {
     post.comments = Promise.resolve([]);
     post.votes = []
     const savedPost = await this.postsRepo.save(post)
-    await this.activityLogger.logPostEvent(loggedUser, ActivityType.Create, savedPost.id)
+    await this.activityService.logPostEvent(loggedUser, ActivityType.Create, savedPost.id)
 
     return this.toPostShowDTO(savedPost)
   }
@@ -82,7 +81,7 @@ export class PostsService {
     }
 
     const savedPost = await this.postsRepo.save({ ...post, ...update })
-    await this.activityLogger.logPostEvent(loggedUser, ActivityType.Update, savedPost.id)
+    await this.activityService.logPostEvent(loggedUser, ActivityType.Update, savedPost.id)
 
     return this.toPostShowDTO(savedPost)
   }
@@ -106,7 +105,7 @@ export class PostsService {
       throw new ForumSystemException('Not allowed to like user\'s own posts', 403)
     }
 
-    const liked: boolean = post.votes.some((user) => user.id === loggedUser.id)
+    const liked: boolean = post.votes.some((user) => user === loggedUser)
 
     const postVotes =
       this.postsRepo
@@ -121,9 +120,9 @@ export class PostsService {
         .add(loggedUser)
 
     if (liked) {
-      await this.activityLogger.logPostEvent(loggedUser, ActivityType.Unlike, postId);
+      await this.activityService.logPostEvent(loggedUser, ActivityType.Unlike, postId);
     } else {
-      await this.activityLogger.logPostEvent(loggedUser, ActivityType.Like, postId);
+      await this.activityService.logPostEvent(loggedUser, ActivityType.Like, postId);
     }
 
     return this.toPostShowDTO(post)
@@ -148,7 +147,7 @@ export class PostsService {
       throw new ForumSystemException('Not allowed to flag user\'s own posts', 403)
     }
 
-    const flags: boolean = post.flags.some((user) => user.id === loggedUser.id)
+    const flagged: boolean = post.flags.some((user) => user === loggedUser)
 
     const postFlags =
       this.postsRepo
@@ -156,15 +155,15 @@ export class PostsService {
         .relation('flags')
         .of(post)
 
-    flags ?
+    flagged ?
       await postFlags
         .remove(loggedUser) :
       await postFlags
         .add(loggedUser)
 
-    if (!flags) {
+    if (!flagged) {
       await this.notificationsService.notifyAdmins(NotificationType.Post, ActionType.Flag, `posts/${postId}`);
-      await this.activityLogger.logPostEvent(loggedUser, ActivityType.Flag, postId)
+      await this.activityService.logPostEvent(loggedUser, ActivityType.Flag, postId)
     }
 
     return this.toPostShowDTO(post)
@@ -187,7 +186,7 @@ export class PostsService {
 
     post.isDeleted = true
     const savedPost = await this.postsRepo.save(post);
-    await this.activityLogger.logPostEvent(loggedUser, ActivityType.Remove, postId)
+    await this.activityService.logPostEvent(loggedUser, ActivityType.Remove, postId)
 
     return this.toPostShowDTO(savedPost)
   }

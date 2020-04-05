@@ -19,7 +19,7 @@ export class CommentsService {
         @InjectRepository(Comment) private readonly commentRepository: Repository<Comment>,
         @InjectRepository(User) private readonly userRepository: Repository<User>,
         @InjectRepository(Post) private readonly postRepository: Repository<Post>,
-        private readonly activityLogger: ActivityService
+        private readonly activityService: ActivityService
     ) { }
 
     async all(): Promise<Comment[]> {
@@ -90,7 +90,7 @@ export class CommentsService {
         newComment.post = foundPost;
 
         await this.commentRepository.save(newComment);
-        await this.activityLogger.logCommentEvent(foundUser, ActivityType.Create, postId, newComment.id)
+        await this.activityService.logCommentEvent(foundUser, ActivityType.Create, postId, newComment.id)
 
 
         return this.toCommnentDTO(newComment);
@@ -149,7 +149,7 @@ export class CommentsService {
             await queryBuilder
                 .add(loggedUser)
 
-        await this.activityLogger.logCommentEvent(loggedUser, ActivityType.Like, postId, commentId)
+        await this.activityService.logCommentEvent(loggedUser, ActivityType.Like, postId, commentId)
 
 
         return this.toCommnentDTO(comment)
