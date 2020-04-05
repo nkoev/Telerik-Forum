@@ -9,7 +9,7 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { AccessLevel } from '../../common/decorators/roles.decorator';
 import { AuthGuardWithBlacklisting } from '../../common/guards/auth-guard-with-blacklisting.guard';
 import { BanGuard } from '../../common/guards/ban.guard';
-import { ReqUser } from '../../common/decorators/user.decorator';
+import { LoggedUser } from '../../common/decorators/user.decorator';
 import { User } from '../../database/entities/user.entity';
 import { ActivityShowDTO } from '../../models/activity/activity-show.dto';
 
@@ -82,7 +82,7 @@ export class UsersController {
     @HttpCode(HttpStatus.OK)
     async getUserActivity(
         @Param('userId', ParseUUIDPipe) userId: string,
-        @ReqUser() loggedUser: User
+        @LoggedUser() loggedUser: User
     ): Promise<ActivityShowDTO[]> {
 
         return await this.usersService.getUserActivity(loggedUser, userId);

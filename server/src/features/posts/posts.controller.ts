@@ -3,7 +3,7 @@ import { PostsService } from './posts.service';
 import { PostCreateDTO } from '../../models/posts/post-create.dto';
 import { PostShowDTO } from '../../models/posts/post-show.dto';
 import { PostUpdateDTO } from '../../models/posts/post-update.dto';
-import { ReqUser as LoggedUser } from '../../common/decorators/user.decorator';
+import { LoggedUser } from '../../common/decorators/user.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { AuthGuardWithBlacklisting } from '../../common/guards/auth-guard-with-blacklisting.guard';
 import { BanGuard } from '../../common/guards/ban.guard';
