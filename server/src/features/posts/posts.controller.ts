@@ -1,13 +1,13 @@
-import { Controller, Post, Body, Get, Param, HttpCode, HttpStatus, Put, Delete, ValidationPipe, ParseIntPipe, UseGuards, Query, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, HttpCode, HttpStatus, Put, Delete, ValidationPipe, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { PostsService } from './posts.service';
-import { CreatePostDTO } from '../../models/posts/create-post.dto';
-import { PostDTO } from '../../models/posts/post.dto';
-import { UpdatePostDTO } from '../../models/posts/update-post.dto';
-import { User } from '../../common/decorators/user.decorator';
+import { PostCreateDTO } from '../../models/posts/post-create.dto';
+import { PostShowDTO } from '../../models/posts/post-show.dto';
+import { PostUpdateDTO } from '../../models/posts/post-update.dto';
+import { LoggedUser } from '../../common/decorators/user.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import { UserShowDTO } from '../../models/users/user-show.dto';
 import { AuthGuardWithBlacklisting } from '../../common/guards/auth-guard-with-blacklisting.guard';
 import { BanGuard } from '../../common/guards/ban.guard';
+import { User } from '../../database/entities/user.entity';
 
 @Controller('/posts')
 @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
@@ -16,7 +16,7 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) { }
 
   @Get()
-  async getPosts(): Promise<PostDTO[]> {
+  async getPosts(): Promise<PostShowDTO[]> {
 
     return await this.postsService.getPosts();
   }
@@ -25,7 +25,7 @@ export class PostsController {
   async getSinglePost(
     @Param('postId', ParseIntPipe)
     postId: number
-  ): Promise<PostDTO> {
+  ): Promise<PostShowDTO> {
 
     return await this.postsService.getSinglePost(postId);
   }
@@ -34,21 +34,21 @@ export class PostsController {
   @UseGuards(BanGuard)
   @HttpCode(HttpStatus.CREATED)
   async createPost(
-    @User() user: UserShowDTO,
+    @LoggedUser() loggedUser: User,
     @Body(new ValidationPipe({
       whitelist: true,
       transform: true
     }))
-    post: CreatePostDTO
-  ): Promise<PostDTO> {
+    post: PostCreateDTO
+  ): Promise<PostShowDTO> {
 
-    return await this.postsService.createPost(post, user.id);
+    return await this.postsService.createPost(post, loggedUser);
   }
 
   @Put('/:postId')
   @UseGuards(BanGuard)
   async updatePost(
-    @User() user: UserShowDTO,
+    @LoggedUser() loggedUser: User,
     @Param('postId', ParseIntPipe)
     postId: number,
     @Body(new ValidationPipe({
@@ -56,41 +56,41 @@ export class PostsController {
       skipMissingProperties: true,
       transform: true
     }))
-    update: UpdatePostDTO
-  ): Promise<PostDTO> {
+    update: PostUpdateDTO
+  ): Promise<PostShowDTO> {
 
-    return await this.postsService.updatePost(update, user.id, postId);
+    return await this.postsService.updatePost(update, loggedUser, postId);
   }
 
   @Put('/:postId/votes')
   @UseGuards(BanGuard)
   async likePost(
-    @User() user: UserShowDTO,
+    @LoggedUser() loggedUser: User,
     @Param('postId', ParseIntPipe)
     postId: number,
-  ): Promise<PostDTO> {
+  ): Promise<PostShowDTO> {
 
-    return await this.postsService.likePost(user.id, postId)
+    return await this.postsService.likePost(loggedUser, postId)
   }
 
   @Put('/:postId/flag')
   @HttpCode(HttpStatus.OK)
   async flagPost(
-    @User() user: UserShowDTO,
+    @LoggedUser() loggedUser: User,
     @Param('postId', ParseIntPipe) postId: number
-  ): Promise<PostDTO> {
+  ): Promise<PostShowDTO> {
 
-    return await this.postsService.flagPost(user.id, postId);
+    return await this.postsService.flagPost(loggedUser, postId);
   }
 
   @Delete('/:postId')
   @UseGuards(BanGuard)
   async deletePost(
-    @User() user: UserShowDTO,
+    @LoggedUser() loggedUser: User,
     @Param('postId', ParseIntPipe)
     postId: number,
-  ): Promise<PostDTO> {
+  ): Promise<PostShowDTO> {
 
-    return await this.postsService.deletePost(user.id, postId);
+    return await this.postsService.deletePost(loggedUser, postId);
   }
 }

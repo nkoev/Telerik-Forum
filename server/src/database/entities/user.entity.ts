@@ -1,10 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, BeforeInsert, ManyToMany, ManyToOne, JoinColumn, JoinTable, OneToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany, ManyToMany, ManyToOne, JoinColumn, JoinTable, OneToOne } from "typeorm";
 import { Post } from "./post.entity";
 import { Comment } from "./comment.entity";
 import { Role } from "./role.entity";
 import { Expose } from "class-transformer";
 import { Notification } from "./notification.entity";
 import { BanStatus } from "./ban-status.entity";
+import { ActivityRecord } from "./activity.entity";
 
 @Entity('users')
 
@@ -86,6 +87,7 @@ export class User {
     )
     @JoinTable()
     notifications: Notification[]
+
     @OneToOne(
         type => BanStatus,
         banStatus => banStatus.user,
@@ -93,5 +95,11 @@ export class User {
     )
     @JoinColumn()
     banStatus: BanStatus
+
+    @OneToMany(
+        type => ActivityRecord,
+        activity => activity.user,
+    )
+    public activity: Promise<ActivityRecord>;
 
 }

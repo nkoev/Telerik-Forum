@@ -7,6 +7,7 @@ import { SystemExceptionFilter } from './common/filters/system-exception-filter'
 import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
+
   const app = await NestFactory.create(AppModule);
   app.enableCors();
   // app.use(helmet());

@@ -9,7 +9,9 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { AccessLevel } from '../../common/decorators/roles.decorator';
 import { AuthGuardWithBlacklisting } from '../../common/guards/auth-guard-with-blacklisting.guard';
 import { BanGuard } from '../../common/guards/ban.guard';
-import { User } from '../../common/decorators/user.decorator';
+import { LoggedUser } from '../../common/decorators/user.decorator';
+import { User } from '../../database/entities/user.entity';
+import { ActivityShowDTO } from '../../models/activity/activity-show.dto';
 
 @Controller('users')
 @UseGuards(RolesGuard)
@@ -32,7 +34,7 @@ export class UsersController {
     @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
     async sendFriendRequest(
-        @User() user: UserShowDTO,
+        @LoggedUser() user: UserShowDTO,
         @Body(new ValidationPipe({
             transform: true
         })) friendToAdd: AddFriendDTO
@@ -46,7 +48,7 @@ export class UsersController {
     @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
     async acceptFriendRequest(
-        @User() user: UserShowDTO,
+        @LoggedUser() user: UserShowDTO,
         @Body(new ValidationPipe({
             transform: true
         })) friendToAccept: AddFriendDTO
@@ -60,7 +62,7 @@ export class UsersController {
     @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
     async deleteFriendRequest(
-        @User() user: UserShowDTO,
+        @LoggedUser() user: UserShowDTO,
         @Body(new ValidationPipe({
             transform: true
         })) friendToDelete: AddFriendDTO
@@ -74,7 +76,7 @@ export class UsersController {
     @UseGuards(BanGuard, AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.CREATED)
     async removeFriend(
-        @User() user: UserShowDTO,
+        @LoggedUser() user: UserShowDTO,
         @Param('friendId', ParseUUIDPipe) friendId: string
     ): Promise<UserShowDTO> {
 
@@ -86,7 +88,7 @@ export class UsersController {
     @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
     async getFriendRequests(
-        @User() user: UserShowDTO
+        @LoggedUser() user: UserShowDTO
     ): Promise<UserShowDTO[]> {
 
         return await this.usersService.getFriendRequests(user.id);
@@ -97,7 +99,7 @@ export class UsersController {
     @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
     async getFriends(
-        @User() user: UserShowDTO
+        @LoggedUser() user: UserShowDTO
     ): Promise<UserShowDTO[]> {
 
         return await this.usersService.getFriends(user.id);
@@ -109,10 +111,22 @@ export class UsersController {
     @HttpCode(HttpStatus.OK)
     @UseGuards(AuthGuardWithBlacklisting)
     async getNotifications(
-        @User() user: UserShowDTO
+        @LoggedUser() user: UserShowDTO
     ): Promise<ShowNotificationDTO[]> {
 
         return await this.usersService.getNotifications(user.id);
+    }
+
+    // GET USER ACTIVITY
+    @Get('/:userId/activity')
+    @UseGuards(AuthGuardWithBlacklisting)
+    @HttpCode(HttpStatus.OK)
+    async getUserActivity(
+        @Param('userId', ParseUUIDPipe) userId: string,
+        @LoggedUser() loggedUser: User
+    ): Promise<ActivityShowDTO[]> {
+
+        return await this.usersService.getUserActivity(loggedUser, userId);
     }
 
     // BAN USERS

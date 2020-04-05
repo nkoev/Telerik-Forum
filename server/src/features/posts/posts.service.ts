@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm'
-import { CreatePostDTO } from '../../models/posts/create-post.dto';
-import { PostDTO } from '../../models/posts/post.dto';
+import { PostCreateDTO } from '../../models/posts/post-create.dto';
 import { User } from '../../database/entities/user.entity';
 import { Post } from '../../database/entities/post.entity';
-import { UpdatePostDTO } from '../../models/posts/update-post.dto';
+import { PostUpdateDTO } from '../../models/posts/post-update.dto';
 import { Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
 import { ForumSystemException } from '../../common/exceptions/system-exception';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationType } from '../../models/notifications/notifications.enum';
 import { ActionType } from '../../models/notifications/actions.enum';
+import { ActivityService } from '../../common/activity.service';
+import { ActivityType } from '../../models/activity/activity-type.enum';
+import { PostShowDTO } from '../../models/posts/post-show.dto';
 
 @Injectable()
 export class PostsService {
@@ -18,19 +20,20 @@ export class PostsService {
   constructor(
     @InjectRepository(Post) private readonly postsRepo: Repository<Post>,
     @InjectRepository(User) private readonly usersRepo: Repository<User>,
-    private readonly notificationsService: NotificationsService
+    private readonly notificationsService: NotificationsService,
+    private readonly activityLogger: ActivityService
   ) { }
 
-  public async getPosts(): Promise<PostDTO[]> {
+  public async getPosts(): Promise<PostShowDTO[]> {
 
     const posts: Post[] = await this.postsRepo.find({
       where: { isDeleted: false }
     });
 
-    return posts.map(this.toPostDTO);
+    return posts.map(this.toPostShowDTO);
   }
 
-  public async getSinglePost(postId: number): Promise<PostDTO> {
+  public async getSinglePost(postId: number): Promise<PostShowDTO> {
 
     const post: Post = await this.postsRepo.findOne({
       where: {
@@ -43,32 +46,23 @@ export class PostsService {
       throw new ForumSystemException('Post does not exist', 404);
     }
 
-    return this.toPostDTO(post);
+    return this.toPostShowDTO(post);
   }
 
-  public async createPost(createPostDTO: CreatePostDTO, userId: string): Promise<PostDTO> {
+  public async createPost(createPostShowDTO: PostCreateDTO, loggedUser: User): Promise<PostShowDTO> {
 
-    const post: Post = this.postsRepo.create(createPostDTO);
-    const user: User = await this.usersRepo.findOne({
-      where: {
-        id: userId,
-        isDeleted: false
-      }
-    })
+    const post: Post = this.postsRepo.create(createPostShowDTO);
 
-    if (!user) {
-      throw new ForumSystemException('Logged user doesn\'t exist', 400)
-    }
-
-    post.user = user
+    post.user = loggedUser
     post.comments = Promise.resolve([]);
     post.votes = []
     const savedPost = await this.postsRepo.save(post)
+    await this.activityLogger.logPostEvent(loggedUser, ActivityType.Create, savedPost.id)
 
-    return this.toPostDTO(savedPost)
+    return this.toPostShowDTO(savedPost)
   }
 
-  public async updatePost(update: UpdatePostDTO, userId: string, postId: number) {
+  public async updatePost(update: PostUpdateDTO, loggedUser: User, postId: number) {
 
     const post: Post = await this.postsRepo.findOne({
       where: {
@@ -77,19 +71,20 @@ export class PostsService {
       }
     });
 
-    if (post === undefined) {
+    if (!post) {
       throw new ForumSystemException('Post does not exist', 404);
     }
-    if (post.user.id !== userId) {
+    if (post.user !== loggedUser) {
       throw new ForumSystemException('Not allowed to modify other users posts', 403)
     }
 
     const savedPost = await this.postsRepo.save({ ...post, ...update })
+    await this.activityLogger.logPostEvent(loggedUser, ActivityType.Update, savedPost.id)
 
-    return this.toPostDTO(savedPost)
+    return this.toPostShowDTO(savedPost)
   }
 
-  public async likePost(userId: string, postId: number): Promise<PostDTO> {
+  public async likePost(loggedUser: User, postId: number): Promise<PostShowDTO> {
 
     const post: Post = await this.postsRepo.findOne({
       where: {
@@ -98,14 +93,14 @@ export class PostsService {
       }
     });
 
-    if (post === undefined) {
+    if (!post) {
       throw new ForumSystemException('Post does not exist', 404);
     }
-    if (post.user.id === userId) {
+    if (post.user === loggedUser) {
       throw new ForumSystemException('Not allowed to like user\'s own posts', 403)
     }
 
-    const liked: boolean = post.votes.some((user) => user.id === userId)
+    const liked: boolean = post.votes.some((user) => user.id === loggedUser.id)
 
     const postVotes =
       this.postsRepo
@@ -115,20 +110,20 @@ export class PostsService {
 
     liked ?
       await postVotes
-        .remove(userId) :
+        .remove(loggedUser) :
       await postVotes
-        .add(userId)
+        .add(loggedUser)
 
-    // if (!liked) {
-    //   await this.notificationsService.notifyUsers(userId, NotificationType.Post, ActionType.Like, `posts/${postId}`);
-    // }
+    if (liked) {
+      await this.activityLogger.logPostEvent(loggedUser, ActivityType.Unlike, postId);
+    } else {
+      await this.activityLogger.logPostEvent(loggedUser, ActivityType.Like, postId);
+    }
 
-    // await this.notificationsService.notifyUsers(userId, NotificationType.Post, ActionType.Like, `posts/${postId}`);
-
-    return this.toPostDTO(post)
+    return this.toPostShowDTO(post)
   }
 
-  public async flagPost(userId: string, postId: number): Promise<PostDTO> {
+  public async flagPost(loggedUser: User, postId: number): Promise<PostShowDTO> {
 
     const foundPost: Post = await this.postsRepo.findOne({
       where: {
@@ -137,14 +132,14 @@ export class PostsService {
       }
     })
 
-    if (foundPost === undefined) {
+    if (!foundPost) {
       throw new ForumSystemException('Post does not exist', 404);
     }
-    if (foundPost.user.id === userId) {
+    if (foundPost.user === loggedUser) {
       throw new ForumSystemException('Not allowed to flag user\'s own posts', 403)
     }
 
-    const flags: boolean = foundPost.flags.some((user) => user.id === userId)
+    const flags: boolean = foundPost.flags.some((user) => user.id === loggedUser.id)
 
     const postFlags =
       this.postsRepo
@@ -154,20 +149,19 @@ export class PostsService {
 
     flags ?
       await postFlags
-        .remove(userId) :
+        .remove(loggedUser) :
       await postFlags
-        .add(userId)
+        .add(loggedUser)
 
-    // Send notification to admins
     if (!flags) {
       await this.notificationsService.notifyAdmins(NotificationType.Post, ActionType.Flag, `posts/${postId}`);
+      await this.activityLogger.logPostEvent(loggedUser, ActivityType.Flag, postId)
     }
-    // await resourceService(Post).notify(NotificationType.Post, ActionType.Flag, foundPost.id);
 
-    return this.toPostDTO(foundPost)
+    return this.toPostShowDTO(foundPost)
   }
 
-  public async deletePost(userId: string, postId: number): Promise<PostDTO> {
+  public async deletePost(loggedUser: User, postId: number): Promise<PostShowDTO> {
     const post: Post = await this.postsRepo.findOne({
       where: {
         id: postId,
@@ -175,22 +169,23 @@ export class PostsService {
       }
     });
 
-    if (post === undefined) {
+    if (!post) {
       throw new ForumSystemException('Post does not exist', 404);
     }
-    if (post.user.id !== userId) {
+    if (post.user !== loggedUser) {
       throw new ForumSystemException('Not allowed to delete other users posts', 403)
     }
 
     post.isDeleted = true
     const savedPost = await this.postsRepo.save(post);
+    await this.activityLogger.logPostEvent(loggedUser, ActivityType.Remove, postId)
 
-    return this.toPostDTO(savedPost)
+    return this.toPostShowDTO(savedPost)
   }
 
-  private toPostDTO(post: Post): PostDTO {
+  private toPostShowDTO(post: Post): PostShowDTO {
     return plainToClass(
-      PostDTO,
+      PostShowDTO,
       post, {
       excludeExtraneousValues: true
     });

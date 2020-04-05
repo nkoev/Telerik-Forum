@@ -1,8 +1,9 @@
 import { Repository, In, createConnection } from "typeorm";
-import { Role } from "./database/entities/role.entity";
-import { UserRoles } from "./models/users/roles.enum";
-import { User } from "./database/entities/user.entity";
+import { Role } from "../../database/entities/role.entity";
+import { UserRoles } from "../../models/users/roles.enum";
+import { User } from "../../database/entities/user.entity";
 import * as bcrypt from 'bcrypt';
+import { BanStatus } from "../../database/entities/ban-status.entity";
 
 const seedRoles = async (connection: any) => {
   const rolesRepo: Repository<Role> = connection.manager.getRepository(Role);
@@ -24,6 +25,7 @@ const seedRoles = async (connection: any) => {
 const seedAdmin = async (connection: any) => {
   const userRepo: Repository<User> = connection.manager.getRepository(User);
   const rolesRepo: Repository<Role> = connection.manager.getRepository(Role);
+  const banStatusRepo: Repository<BanStatus> = connection.manager.getRepository(BanStatus);
 
   const admin = await userRepo.findOne({
     where: {
@@ -51,11 +53,16 @@ const seedAdmin = async (connection: any) => {
   const username = 'admin';
   const password = 'Aaa123';
   const hashedPassword = await bcrypt.hash(password, 10);
+  const banStatus =
+    await banStatusRepo.save(
+      banStatusRepo.create()
+    )
 
   const newAdmin: User = userRepo.create({
     username,
     password: hashedPassword,
     roles: allUserRoles,
+    banStatus
   });
 
   await userRepo.save(newAdmin);
