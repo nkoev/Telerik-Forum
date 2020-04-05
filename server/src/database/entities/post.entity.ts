@@ -1,8 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, ManyToMany, JoinTable } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, ManyToMany, JoinTable, BeforeUpdate, BeforeInsert } from "typeorm";
 import { User } from "./user.entity";
 import { Comment } from "./comment.entity";
-import { Type, Expose } from "class-transformer";
-import { Notification } from "./notification.entity";
 
 @Entity('posts')
 export class Post {
@@ -49,4 +47,9 @@ export class Post {
     })
     @JoinTable()
     flags: User[];
+
+    @BeforeInsert()
+    updateDates() {
+        console.log('Here you are')
+    }
 }
