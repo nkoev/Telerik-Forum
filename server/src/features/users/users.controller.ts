@@ -70,7 +70,7 @@ export class UsersController {
     }
 
     //  REMOVE FRIEND
-    @Delete('/:userId/friends/:friendId')
+    @Delete('/friends/:friendId')
     @UseGuards(BanGuard, AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.CREATED)
     async removeFriend(
@@ -94,8 +94,8 @@ export class UsersController {
 
     //  GET ALL FRIENDS
     @Get('/friends')
-    @HttpCode(HttpStatus.OK)
     @UseGuards(AuthGuardWithBlacklisting)
+    @HttpCode(HttpStatus.OK)
     async getFriends(
         @User() user: UserShowDTO
     ): Promise<UserShowDTO[]> {
@@ -105,8 +105,8 @@ export class UsersController {
 
     //  GET ALL NOTIFICATIONS
     @Get('/notifications')
-    @HttpCode(HttpStatus.OK)
     @UseGuards(AuthGuardWithBlacklisting)
+    @HttpCode(HttpStatus.OK)
     async getNotifications(
         @User() user: UserShowDTO
     ): Promise<ShowNotificationDTO[]> {
