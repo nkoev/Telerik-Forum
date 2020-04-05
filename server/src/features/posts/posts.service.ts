@@ -74,6 +74,9 @@ export class PostsService {
     if (!post) {
       throw new ForumSystemException('Post does not exist', 404);
     }
+    if (post.isLocked) {
+      throw new ForumSystemException('Post is locked', 403)
+    }
     if (post.user !== loggedUser) {
       throw new ForumSystemException('Not allowed to modify other users posts', 403)
     }
@@ -95,6 +98,9 @@ export class PostsService {
 
     if (!post) {
       throw new ForumSystemException('Post does not exist', 404);
+    }
+    if (post.isLocked) {
+      throw new ForumSystemException('Post is locked', 403)
     }
     if (post.user === loggedUser) {
       throw new ForumSystemException('Not allowed to like user\'s own posts', 403)
@@ -125,27 +131,30 @@ export class PostsService {
 
   public async flagPost(loggedUser: User, postId: number): Promise<PostShowDTO> {
 
-    const foundPost: Post = await this.postsRepo.findOne({
+    const post: Post = await this.postsRepo.findOne({
       where: {
         id: postId,
         isDeleted: false
       }
     })
 
-    if (!foundPost) {
+    if (!post) {
       throw new ForumSystemException('Post does not exist', 404);
     }
-    if (foundPost.user === loggedUser) {
+    if (post.isLocked) {
+      throw new ForumSystemException('Post is locked', 403)
+    }
+    if (post.user === loggedUser) {
       throw new ForumSystemException('Not allowed to flag user\'s own posts', 403)
     }
 
-    const flags: boolean = foundPost.flags.some((user) => user.id === loggedUser.id)
+    const flags: boolean = post.flags.some((user) => user.id === loggedUser.id)
 
     const postFlags =
       this.postsRepo
         .createQueryBuilder()
         .relation('flags')
-        .of(foundPost)
+        .of(post)
 
     flags ?
       await postFlags
@@ -158,7 +167,7 @@ export class PostsService {
       await this.activityLogger.logPostEvent(loggedUser, ActivityType.Flag, postId)
     }
 
-    return this.toPostShowDTO(foundPost)
+    return this.toPostShowDTO(post)
   }
 
   public async deletePost(loggedUser: User, postId: number): Promise<PostShowDTO> {
@@ -181,6 +190,27 @@ export class PostsService {
     await this.activityLogger.logPostEvent(loggedUser, ActivityType.Remove, postId)
 
     return this.toPostShowDTO(savedPost)
+  }
+
+  async lockPost(postId: number): Promise<PostShowDTO> {
+    const post: Post = await this.postsRepo.findOne({
+      where: {
+        id: postId,
+        isDeleted: false
+      }
+    });
+
+    if (!post) {
+      throw new ForumSystemException('Post does not exist', 404);
+    }
+
+    post.isLocked
+      ? post.isLocked = false
+      : post.isLocked = true;
+
+    const updatedPost = await this.postsRepo.save(post);
+
+    return this.toPostShowDTO(updatedPost)
   }
 
   private toPostShowDTO(post: Post): PostShowDTO {

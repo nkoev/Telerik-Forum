@@ -8,6 +8,7 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { AuthGuardWithBlacklisting } from '../../common/guards/auth-guard-with-blacklisting.guard';
 import { BanGuard } from '../../common/guards/ban.guard';
 import { User } from '../../database/entities/user.entity';
+import { AccessLevel } from '../../common/decorators/roles.decorator';
 
 @Controller('/posts')
 @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
@@ -16,15 +17,16 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) { }
 
   @Get()
+  @HttpCode(HttpStatus.OK)
   async getPosts(): Promise<PostShowDTO[]> {
 
     return await this.postsService.getPosts();
   }
 
   @Get('/:postId')
+  @HttpCode(HttpStatus.OK)
   async getSinglePost(
-    @Param('postId', ParseIntPipe)
-    postId: number
+    @Param('postId', ParseIntPipe) postId: number
   ): Promise<PostShowDTO> {
 
     return await this.postsService.getSinglePost(postId);
@@ -38,8 +40,7 @@ export class PostsController {
     @Body(new ValidationPipe({
       whitelist: true,
       transform: true
-    }))
-    post: PostCreateDTO
+    })) post: PostCreateDTO
   ): Promise<PostShowDTO> {
 
     return await this.postsService.createPost(post, loggedUser);
@@ -47,16 +48,15 @@ export class PostsController {
 
   @Put('/:postId')
   @UseGuards(BanGuard)
+  @HttpCode(HttpStatus.OK)
   async updatePost(
     @LoggedUser() loggedUser: User,
-    @Param('postId', ParseIntPipe)
-    postId: number,
+    @Param('postId', ParseIntPipe) postId: number,
     @Body(new ValidationPipe({
       whitelist: true,
       skipMissingProperties: true,
       transform: true
-    }))
-    update: PostUpdateDTO
+    })) update: PostUpdateDTO
   ): Promise<PostShowDTO> {
 
     return await this.postsService.updatePost(update, loggedUser, postId);
@@ -64,16 +64,17 @@ export class PostsController {
 
   @Put('/:postId/votes')
   @UseGuards(BanGuard)
+  @HttpCode(HttpStatus.OK)
   async likePost(
     @LoggedUser() loggedUser: User,
-    @Param('postId', ParseIntPipe)
-    postId: number,
+    @Param('postId', ParseIntPipe) postId: number,
   ): Promise<PostShowDTO> {
 
     return await this.postsService.likePost(loggedUser, postId)
   }
 
   @Put('/:postId/flag')
+  @UseGuards(BanGuard)
   @HttpCode(HttpStatus.OK)
   async flagPost(
     @LoggedUser() loggedUser: User,
@@ -83,12 +84,22 @@ export class PostsController {
     return await this.postsService.flagPost(loggedUser, postId);
   }
 
+  @Put('/:postId/lock')
+  @AccessLevel('Admin')
+  @HttpCode(HttpStatus.OK)
+  async lockPost(
+    @Param('postId', ParseIntPipe) postId: number,
+  ): Promise<PostShowDTO> {
+
+    return await this.postsService.lockPost(postId);
+  }
+
   @Delete('/:postId')
   @UseGuards(BanGuard)
+  @HttpCode(HttpStatus.OK)
   async deletePost(
     @LoggedUser() loggedUser: User,
-    @Param('postId', ParseIntPipe)
-    postId: number,
+    @Param('postId', ParseIntPipe) postId: number,
   ): Promise<PostShowDTO> {
 
     return await this.postsService.deletePost(loggedUser, postId);
