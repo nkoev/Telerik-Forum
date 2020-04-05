@@ -3,5 +3,6 @@ export enum ActivityType {
   Like = 'liked',
   Create = 'created',
   Comment = 'commented',
-  Remove = 'removed'
+  Remove = 'removed',
+  Update = 'updated'
 }

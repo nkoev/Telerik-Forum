@@ -5,7 +5,7 @@ import { Role } from "./role.entity";
 import { Expose } from "class-transformer";
 import { Notification } from "./notification.entity";
 import { BanStatus } from "./ban-status.entity";
-import { Activity } from "./activity.entity";
+import { ActivityRecord } from "./activity.entity";
 
 @Entity('users')
 
@@ -97,9 +97,9 @@ export class User {
     banStatus: BanStatus
 
     @OneToMany(
-        type => Activity,
+        type => ActivityRecord,
         activity => activity.user,
     )
-    public activity: Promise<Activity>;
+    public activity: Promise<ActivityRecord>;
 
 }

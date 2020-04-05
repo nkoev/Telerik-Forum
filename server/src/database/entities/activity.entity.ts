@@ -1,11 +1,11 @@
 import { PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, Entity, JoinColumn } from "typeorm";
 import { User } from "./user.entity";
-import { ActivityType } from "../../models/users/activity-type.enum";
-import { ActivityTarget } from "../../models/users/activity-target.enum";
+import { ActivityType } from "../../models/activity/activity-type.enum";
+import { ActivityTarget } from "../../models/activity/activity-target.enum";
 
-@Entity('activities')
+@Entity('activityrecords')
 
-export class Activity {
+export class ActivityRecord {
 
   @PrimaryGeneratedColumn('increment')
   id: string;

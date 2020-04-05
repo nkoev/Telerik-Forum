@@ -7,10 +7,10 @@ import { User } from '../../database/entities/user.entity';
 import { Notification } from '../../database/entities/notification.entity';
 import { NotificationsService } from '../notifications/notifications.service';
 import { ActivityLogger } from '../../common/activity-logger';
-import { Activity } from '../../database/entities/activity.entity';
+import { ActivityRecord } from '../../database/entities/activity.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Post, User, Notification, Activity])],
+  imports: [TypeOrmModule.forFeature([Post, User, Notification, ActivityRecord])],
   controllers: [PostsController],
   providers: [PostsService, NotificationsService, ActivityLogger]
 })

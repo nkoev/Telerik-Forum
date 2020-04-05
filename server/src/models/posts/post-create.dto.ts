@@ -1,6 +1,6 @@
-import { IsString, IsNotEmpty, MaxLength, MinLength, Length } from 'class-validator';
+import { IsString, IsNotEmpty, Length } from 'class-validator';
 
-export class CreatePostDTO {
+export class PostCreateDTO {
   @IsNotEmpty()
   @IsString()
   @Length(3, 20)
