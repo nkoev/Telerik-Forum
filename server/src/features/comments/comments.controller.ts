@@ -8,6 +8,7 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { BanGuard } from '../../common/guards/ban.guard';
 import { LoggedUser } from '../../common/decorators/user.decorator';
 import { User } from '../../database/entities/user.entity';
+import { IsAdmin } from '../../common/decorators/is-admin.decorator';
 
 @Controller('posts')
 @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
@@ -28,29 +29,32 @@ export class CommentsController {
     @UseGuards(BanGuard)
     @HttpCode(HttpStatus.CREATED)
     async createPostComment(
-        @Query('userId', ParseUUIDPipe) userId: string,
+        @LoggedUser() loggedUser: User,
         @Param('postId', ParseIntPipe) postId: number,
         @Body(new ValidationPipe({
+            whitelist: true,
             transform: true
         })) comment: CreateCommentDTO
     ): Promise<ShowCommentDTO> {
 
-        return await this.commentsService.createPostComment(userId, postId, comment);
+        return await this.commentsService.createPostComment(loggedUser, postId, comment);
     }
 
     @Put('/:postId/comments/:commentId')
     @UseGuards(BanGuard)
     @HttpCode(HttpStatus.OK)
     async updatePostComment(
-        @Query('userId', ParseUUIDPipe) userId: string,
+        @LoggedUser() loggedUser: User,
+        @IsAdmin() isAdmin: boolean,
         @Param('postId', ParseIntPipe) postId: number,
         @Param('commentId', ParseIntPipe) commentId: number,
         @Body(new ValidationPipe({
+            whitelist: true,
             transform: true
         })) comment: UpdateCommentDTO
     ): Promise<ShowCommentDTO> {
 
-        return await this.commentsService.updatePostComment(userId, postId, commentId, comment);
+        return await this.commentsService.updatePostComment(loggedUser, postId, commentId, comment, isAdmin);
     }
 
     @Put('/:postId/comments/:commentId/votes')
@@ -69,11 +73,12 @@ export class CommentsController {
     @UseGuards(BanGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
     async deletePostComment(
-        @Query('userId', ParseUUIDPipe) userId: string,
+        @LoggedUser() loggedUser: User,
+        @IsAdmin() isAdmin: boolean,
         @Param('postId', ParseIntPipe) postId: number,
         @Param('commentId', ParseIntPipe) commentId: number
     ): Promise<ShowCommentDTO> {
 
-        return await this.commentsService.deletePostComment(userId, postId, commentId);
+        return await this.commentsService.deletePostComment(loggedUser, postId, commentId, isAdmin);
     }
 }
