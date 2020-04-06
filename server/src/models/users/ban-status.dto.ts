@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsDate, IsBoolean } from "class-validator";
+import { IsString, IsBoolean, MaxLength } from "class-validator";
 import { Transform } from "class-transformer";
 
 export class BanStatusDTO {
@@ -7,10 +7,11 @@ export class BanStatusDTO {
   @IsBoolean()
   isBanned: boolean
 
-  @IsNotEmpty()
   @IsString()
+  @MaxLength(200)
   description: string;
 
   @IsString()
+  @MaxLength(10)
   expires: string
 }

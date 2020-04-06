@@ -286,6 +286,13 @@ export class UsersService {
             isDeleted: false,
         })
 
+        if (!foundUser) {
+            throw new ForumSystemException('User does not exist', 400);
+        }
+        if (foundUser.banStatus.isBanned) {
+            throw new ForumSystemException('User is already banned', 400);
+        }
+
         const expiryDate = moment(banStatusUpdate.expires, 'DD-MM-YYYY', true)
         const presentDate = moment()
         const expiryMaxDate = moment().add(90, 'd')
@@ -295,12 +302,6 @@ export class UsersService {
         }
         if (!expiryDate.isBetween(presentDate, expiryMaxDate)) {
             throw new ForumSystemException('Ban expiry date should be within 90 days from current date', 400)
-        }
-        if (!foundUser) {
-            throw new ForumSystemException('User does not exist', 400);
-        }
-        if (foundUser.banStatus.isBanned) {
-            throw new ForumSystemException('User is already banned', 400);
         }
 
         await this.banStatusRepository.save({ ...foundUser.banStatus, ...banStatusUpdate })

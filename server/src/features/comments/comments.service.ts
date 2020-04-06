@@ -132,7 +132,7 @@ export class CommentsService {
         if (comment === undefined) {
             throw new BadRequestException('Comment does not exist');
         }
-        if (comment.user === loggedUser) {
+        if (comment.user.id === loggedUser.id) {
             throw new BadRequestException('Not allowed to like user\'s own comments')
         }
 
