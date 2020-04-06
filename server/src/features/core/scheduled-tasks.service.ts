@@ -21,8 +21,4 @@ export class ScheduledTasks {
     })
   }
 
-  @Cron('20 * * * * *')
-  async handleCron1() {
-    console.log('working')
-  }
 }
