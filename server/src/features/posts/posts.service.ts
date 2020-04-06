@@ -55,7 +55,8 @@ export class PostsService {
     post.user = loggedUser
     post.comments = Promise.resolve([]);
     post.votes = []
-    const savedPost = await this.postsRepo.save(post)
+    const savedPost = await this.postsRepo.save(post);
+
     await this.activityService.logPostEvent(loggedUser, ActivityType.Create, savedPost.id)
 
     return this.toPostShowDTO(savedPost)
