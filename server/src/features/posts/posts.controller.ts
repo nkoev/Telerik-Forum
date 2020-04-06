@@ -54,8 +54,8 @@ export class PostsController {
     @Param('postId', ParseIntPipe) postId: number,
     @Body(new ValidationPipe({
       whitelist: true,
-      skipMissingProperties: true,
-      transform: true
+      transform: true,
+      skipMissingProperties: true
     })) update: PostUpdateDTO
   ): Promise<PostShowDTO> {
 

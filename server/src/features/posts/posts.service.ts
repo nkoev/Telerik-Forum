@@ -34,28 +34,23 @@ export class PostsService {
 
   public async getSinglePost(postId: number): Promise<PostShowDTO> {
 
-    const post: Post = await this.postsRepo.findOne({
-      where: {
-        isDeleted: false,
-        id: postId
-      }
-    });
+    const post: Post = await this.getPostEntity(postId);
 
-    if (post === undefined) {
-      throw new ForumSystemException('Post does not exist', 404);
-    }
+    this.validatePost(post);
 
     return this.toPostShowDTO(post);
   }
 
-  public async createPost(createPostShowDTO: PostCreateDTO, loggedUser: User): Promise<PostShowDTO> {
+  public async createPost(postCreateDTO: PostCreateDTO, loggedUser: User): Promise<PostShowDTO> {
 
-    const post: Post = this.postsRepo.create(createPostShowDTO);
+    const newPost: Post = this.postsRepo.create({
+      ...postCreateDTO,
+      user: loggedUser,
+      comments: Promise.resolve([]),
+      votes: []
+    });
+    const savedPost = await this.postsRepo.save(newPost);
 
-    post.user = loggedUser
-    post.comments = Promise.resolve([]);
-    post.votes = []
-    const savedPost = await this.postsRepo.save(post)
     await this.activityService.logPostEvent(loggedUser, ActivityType.Create, savedPost.id)
 
     return this.toPostShowDTO(savedPost)
@@ -63,45 +58,29 @@ export class PostsService {
 
   public async updatePost(update: PostUpdateDTO, loggedUser: User, postId: number) {
 
-    const post: Post = await this.postsRepo.findOne({
-      where: {
-        id: postId,
-        isDeleted: false
-      }
-    });
+    const post: Post = await this.getPostEntity(postId);
 
-    if (!post) {
-      throw new ForumSystemException('Post does not exist', 404);
-    }
-    if (post.isLocked) {
-      throw new ForumSystemException('Post is locked', 403)
-    }
-    if (post.user !== loggedUser) {
-      throw new ForumSystemException('Not allowed to modify other users posts', 403)
+    this.validatePost(post);
+    this.validatePostIsLocked(post);
+
+    if (post.user.id !== loggedUser.id) {
+      throw new ForumSystemException('Not allowed to modify other users posts', 403);
     }
 
-    const savedPost = await this.postsRepo.save({ ...post, ...update })
-    await this.activityService.logPostEvent(loggedUser, ActivityType.Update, savedPost.id)
+    const savedPost = await this.postsRepo.save({ ...post, ...update });
+    await this.activityService.logPostEvent(loggedUser, ActivityType.Update, savedPost.id);
 
-    return this.toPostShowDTO(savedPost)
+    return this.toPostShowDTO(savedPost);
   }
 
   public async likePost(loggedUser: User, postId: number): Promise<PostShowDTO> {
 
-    const post: Post = await this.postsRepo.findOne({
-      where: {
-        id: postId,
-        isDeleted: false
-      }
-    });
+    const post: Post = await this.getPostEntity(postId);
 
-    if (!post) {
-      throw new ForumSystemException('Post does not exist', 404);
-    }
-    if (post.isLocked) {
-      throw new ForumSystemException('Post is locked', 403)
-    }
-    if (post.user === loggedUser) {
+    this.validatePost(post);
+    this.validatePostIsLocked(post);
+
+    if (post.user.id === loggedUser.id) {
       throw new ForumSystemException('Not allowed to like user\'s own posts', 403)
     }
 
@@ -130,20 +109,12 @@ export class PostsService {
 
   public async flagPost(loggedUser: User, postId: number): Promise<PostShowDTO> {
 
-    const post: Post = await this.postsRepo.findOne({
-      where: {
-        id: postId,
-        isDeleted: false
-      }
-    })
+    const post: Post = await this.getPostEntity(postId);
 
-    if (!post) {
-      throw new ForumSystemException('Post does not exist', 404);
-    }
-    if (post.isLocked) {
-      throw new ForumSystemException('Post is locked', 403)
-    }
-    if (post.user === loggedUser) {
+    this.validatePost(post);
+    this.validatePostIsLocked(post);
+
+    if (post.user.id === loggedUser.id) {
       throw new ForumSystemException('Not allowed to flag user\'s own posts', 403)
     }
 
@@ -169,39 +140,10 @@ export class PostsService {
     return this.toPostShowDTO(post)
   }
 
-  public async deletePost(loggedUser: User, postId: number): Promise<PostShowDTO> {
-    const post: Post = await this.postsRepo.findOne({
-      where: {
-        id: postId,
-        isDeleted: false
-      }
-    });
+  public async lockPost(postId: number): Promise<PostShowDTO> {
+    const post: Post = await this.getPostEntity(postId);
 
-    if (!post) {
-      throw new ForumSystemException('Post does not exist', 404);
-    }
-    if (post.user !== loggedUser) {
-      throw new ForumSystemException('Not allowed to delete other users posts', 403)
-    }
-
-    post.isDeleted = true
-    const savedPost = await this.postsRepo.save(post);
-    await this.activityService.logPostEvent(loggedUser, ActivityType.Remove, postId)
-
-    return this.toPostShowDTO(savedPost)
-  }
-
-  async lockPost(postId: number): Promise<PostShowDTO> {
-    const post: Post = await this.postsRepo.findOne({
-      where: {
-        id: postId,
-        isDeleted: false
-      }
-    });
-
-    if (!post) {
-      throw new ForumSystemException('Post does not exist', 404);
-    }
+    this.validatePost(post);
 
     post.isLocked
       ? post.isLocked = false
@@ -212,12 +154,51 @@ export class PostsService {
     return this.toPostShowDTO(updatedPost)
   }
 
+  public async deletePost(loggedUser: User, postId: number): Promise<PostShowDTO> {
+    const post: Post = await this.getPostEntity(postId);
+
+    this.validatePost(post);
+
+    if (post.user.id !== loggedUser.id) {
+      throw new ForumSystemException('Not allowed to delete other users posts', 403)
+    }
+
+    const savedPost = await this.postsRepo.save({
+      ...post,
+      isDeleted: true
+    });
+    await this.activityService.logPostEvent(loggedUser, ActivityType.Remove, postId)
+
+    return this.toPostShowDTO(savedPost)
+  }
+
   private toPostShowDTO(post: Post): PostShowDTO {
     return plainToClass(
       PostShowDTO,
       post, {
       excludeExtraneousValues: true
     });
+  }
+
+  private async getPostEntity(postId: number): Promise<Post> {
+    return await this.postsRepo.findOne({
+      where: {
+        isDeleted: false,
+        id: postId
+      }
+    });
+  }
+
+  private validatePost(post: Post): void {
+    if (!post) {
+      throw new ForumSystemException('Post does not exist', 404);
+    }
+  }
+
+  private validatePostIsLocked(post: Post): void {
+    if (post.isLocked) {
+      throw new ForumSystemException('Post is locked', 403)
+    }
   }
 
 }
