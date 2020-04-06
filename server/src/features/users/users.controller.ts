@@ -13,7 +13,6 @@ import { User } from '../../database/entities/user.entity';
 import { ActivityShowDTO } from '../../models/activity/activity-show.dto';
 
 @Controller('users')
-// @UseGuards(RolesGuard)
 export class UsersController {
 
     constructor(private readonly usersService: UsersService) { }
@@ -31,7 +30,7 @@ export class UsersController {
 
     //  GET ALL NOTIFICATIONS
     @Get('/notifications')
-    @UseGuards(AuthGuardWithBlacklisting)
+    @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
     @HttpCode(HttpStatus.OK)
     async getNotifications(
         @LoggedUser() loggedUser: User
@@ -42,7 +41,7 @@ export class UsersController {
 
     // GET USER ACTIVITY
     @Get('/:userId/activity')
-    @UseGuards(AuthGuardWithBlacklisting)
+    @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
     @HttpCode(HttpStatus.OK)
     async getUserActivity(
         @LoggedUser() loggedUser: User,
@@ -55,7 +54,7 @@ export class UsersController {
     // BAN USERS
     @Put('/:userId/banstatus')
     @AccessLevel('Admin')
-    @UseGuards(BanGuard, AuthGuardWithBlacklisting)
+    @UseGuards(AuthGuardWithBlacklisting, RolesGuard, BanGuard)
     async updateBanStatus(
         @Param('userId', ParseUUIDPipe) userId: string,
         @Body(new ValidationPipe({
@@ -69,8 +68,8 @@ export class UsersController {
 
     // DELETE USER
     @Delete('/:userId')
+    @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
     @AccessLevel('Admin')
-    @UseGuards(AuthGuardWithBlacklisting)
     async deleteUser(
         @Param('userId', ParseUUIDPipe) userId: string
     ): Promise<UserShowDTO> {

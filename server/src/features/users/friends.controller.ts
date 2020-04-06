@@ -8,14 +8,13 @@ import { LoggedUser } from '../../common/decorators/user.decorator';
 import { User } from '../../database/entities/user.entity';
 
 @Controller('users/friends')
-// @UseGuards(RolesGuard)
+@UseGuards(AuthGuardWithBlacklisting, RolesGuard)
 export class FriendsController {
 
     constructor(private readonly friendsService: FriendsService) { }
 
     //  SEND FRIEND REQUEST
     @Post()
-    @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
     async sendFriendRequest(
         @LoggedUser() loggedUser: User,
@@ -30,7 +29,6 @@ export class FriendsController {
 
     //  ACCEPT FRIEND REQUEST
     @Put()
-    @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
     async acceptFriendRequest(
         @LoggedUser() loggedUser: User,
@@ -45,7 +43,6 @@ export class FriendsController {
 
     //  DELETE FRIEND REQUEST
     @Delete()
-    @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
     async deleteFriendRequest(
         @LoggedUser() loggedUser: User,
@@ -60,7 +57,6 @@ export class FriendsController {
 
     //  REMOVE FRIEND
     @Delete('/:friendId')
-    @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.CREATED)
     async removeFriend(
         @LoggedUser() loggedUser: User,
@@ -72,7 +68,6 @@ export class FriendsController {
 
     //  GET ALL FRIEND REQUESTS
     @Get('/requests')
-    @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
     async getFriendRequests(
         @LoggedUser() loggedUser: User
@@ -83,7 +78,6 @@ export class FriendsController {
 
     //  GET ALL FRIENDS
     @Get()
-    @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
     async getFriends(
         @LoggedUser() loggedUser: User
