@@ -11,7 +11,6 @@ export class BanStatusDTO {
   @IsString()
   description: string;
 
-  @Transform(val => new Date(val))
-  @IsDate()
-  expires: Date
+  @IsString()
+  expires: string
 }
