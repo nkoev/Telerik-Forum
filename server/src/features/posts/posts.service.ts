@@ -61,7 +61,7 @@ export class PostsService {
     return this.toPostShowDTO(savedPost)
   }
 
-  public async updatePost(update: PostUpdateDTO, loggedUser: User, postId: number) {
+  public async updatePost(update: PostUpdateDTO, loggedUser: User, postId: number, isAdmin: boolean) {
 
     const post: Post = await this.postsRepo.findOne({
       where: {
@@ -76,7 +76,7 @@ export class PostsService {
     if (post.isLocked) {
       throw new ForumSystemException('Post is locked', 403)
     }
-    if (post.user !== loggedUser) {
+    if (post.user !== loggedUser && !isAdmin) {
       throw new ForumSystemException('Not allowed to modify other users posts', 403)
     }
 
@@ -169,7 +169,7 @@ export class PostsService {
     return this.toPostShowDTO(post)
   }
 
-  public async deletePost(loggedUser: User, postId: number): Promise<PostShowDTO> {
+  public async deletePost(loggedUser: User, postId: number, isAdmin: boolean): Promise<PostShowDTO> {
     const post: Post = await this.postsRepo.findOne({
       where: {
         id: postId,
@@ -180,7 +180,7 @@ export class PostsService {
     if (!post) {
       throw new ForumSystemException('Post does not exist', 404);
     }
-    if (post.user !== loggedUser) {
+    if (post.user !== loggedUser && !isAdmin) {
       throw new ForumSystemException('Not allowed to delete other users posts', 403)
     }
 

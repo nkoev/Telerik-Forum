@@ -34,13 +34,14 @@ export class UsersController {
     @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
     async sendFriendRequest(
-        @LoggedUser() user: UserShowDTO,
+        @LoggedUser() loggedUser: User,
         @Body(new ValidationPipe({
+            whitelist: true,
             transform: true
         })) friendToAdd: AddFriendDTO
     ): Promise<UserShowDTO> {
 
-        return await this.usersService.sendFriendRequest(user.id, friendToAdd);
+        return await this.usersService.sendFriendRequest(loggedUser, friendToAdd);
     }
 
     //  ACCEPT FRIEND REQUEST
@@ -48,13 +49,14 @@ export class UsersController {
     @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
     async acceptFriendRequest(
-        @LoggedUser() user: UserShowDTO,
+        @LoggedUser() loggedUser: User,
         @Body(new ValidationPipe({
+            whitelist: true,
             transform: true
         })) friendToAccept: AddFriendDTO
     ): Promise<UserShowDTO> {
 
-        return await this.usersService.acceptFriendRequest(user.id, friendToAccept);
+        return await this.usersService.acceptFriendRequest(loggedUser, friendToAccept);
     }
 
     //  DELETE FRIEND REQUEST
@@ -62,25 +64,26 @@ export class UsersController {
     @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
     async deleteFriendRequest(
-        @LoggedUser() user: UserShowDTO,
+        @LoggedUser() loggedUser: User,
         @Body(new ValidationPipe({
+            whitelist: true,
             transform: true
         })) friendToDelete: AddFriendDTO
     ): Promise<{ msg: string }> {
 
-        return await this.usersService.deleteFriendRequest(user.id, friendToDelete);
+        return await this.usersService.deleteFriendRequest(loggedUser, friendToDelete);
     }
 
     //  REMOVE FRIEND
     @Delete('/friends/:friendId')
-    @UseGuards(BanGuard, AuthGuardWithBlacklisting)
+    @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.CREATED)
     async removeFriend(
-        @LoggedUser() user: UserShowDTO,
+        @LoggedUser() loggedUser: User,
         @Param('friendId', ParseUUIDPipe) friendId: string
     ): Promise<UserShowDTO> {
 
-        return await this.usersService.removeFriend(user.id, friendId);
+        return await this.usersService.removeFriend(loggedUser, friendId);
     }
 
     //  GET ALL FRIEND REQUESTS
@@ -88,10 +91,10 @@ export class UsersController {
     @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
     async getFriendRequests(
-        @LoggedUser() user: UserShowDTO
+        @LoggedUser() loggedUser: User
     ): Promise<UserShowDTO[]> {
 
-        return await this.usersService.getFriendRequests(user.id);
+        return await this.usersService.getFriendRequests(loggedUser);
     }
 
     //  GET ALL FRIENDS
@@ -99,10 +102,9 @@ export class UsersController {
     @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
     async getFriends(
-        @LoggedUser() user: UserShowDTO
+        @LoggedUser() loggedUser: User
     ): Promise<UserShowDTO[]> {
-
-        return await this.usersService.getFriends(user.id);
+        return await this.usersService.getFriends(loggedUser);
     }
 
     //  GET ALL NOTIFICATIONS
@@ -111,10 +113,10 @@ export class UsersController {
     @HttpCode(HttpStatus.OK)
     @UseGuards(AuthGuardWithBlacklisting)
     async getNotifications(
-        @LoggedUser() user: UserShowDTO
+        @LoggedUser() loggedUser: User
     ): Promise<ShowNotificationDTO[]> {
 
-        return await this.usersService.getNotifications(user.id);
+        return await this.usersService.getNotifications(loggedUser);
     }
 
     // GET USER ACTIVITY
@@ -122,8 +124,8 @@ export class UsersController {
     @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
     async getUserActivity(
-        @Param('userId', ParseUUIDPipe) userId: string,
-        @LoggedUser() loggedUser: User
+        @LoggedUser() loggedUser: User,
+        @Param('userId', ParseUUIDPipe) userId: string
     ): Promise<ActivityShowDTO[]> {
 
         return await this.usersService.getUserActivity(loggedUser, userId);

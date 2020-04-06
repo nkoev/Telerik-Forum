@@ -1,13 +1,13 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { plainToClass } from 'class-transformer';
+import { User } from '../../database/entities/user.entity';
+import { Post } from '../../database/entities/post.entity';
 import { Comment } from '../../database/entities/comment.entity';
 import { CreateCommentDTO } from '../../models/comments/create-comment.dto';
 import { ShowCommentDTO } from '../../models/comments/show-comment.dto';
-import { User } from '../../database/entities/user.entity';
-import { Post } from '../../database/entities/post.entity';
 import { UpdateCommentDTO } from '../../models/comments/update-comment.dto';
-import { plainToClass } from 'class-transformer';
 import { ActivityService } from '../core/activity.service';
 import { ActivityType } from '../../models/activity/activity-type.enum';
 import { ForumSystemException } from '../../common/exceptions/system-exception';
@@ -16,31 +16,14 @@ import { ForumSystemException } from '../../common/exceptions/system-exception';
 export class CommentsService {
 
     constructor(
-        @InjectRepository(Comment) private readonly commentRepository: Repository<Comment>,
-        @InjectRepository(User) private readonly userRepository: Repository<User>,
-        @InjectRepository(Post) private readonly postRepository: Repository<Post>,
-        private readonly activityService: ActivityService
+        @InjectRepository(Comment) private readonly commentsRepository: Repository<Comment>,
+        @InjectRepository(Post) private readonly postsRepository: Repository<Post>,
+        private readonly activityLogger: ActivityService
     ) { }
-
-    async all(): Promise<Comment[]> {
-        return await this.commentRepository.find({});
-    }
-
-    async find(options: Partial<Comment>): Promise<Comment[]> {
-        return await this.commentRepository.find({
-            where: options
-        });
-    }
-
-    async findOne(options: Partial<Comment>): Promise<Comment> {
-        return await this.commentRepository.findOne({
-            where: options
-        });
-    }
 
     public async readPostComments(postId: number): Promise<ShowCommentDTO[]> {
 
-        const foundPost: Post = await this.postRepository.findOne({
+        const foundPost: Post = await this.postsRepository.findOne({
             where: {
                 id: postId,
                 isDeleted: false
@@ -48,138 +31,134 @@ export class CommentsService {
         });
 
         if (foundPost === undefined) {
-            throw new BadRequestException('Post does not exist');
+            throw new ForumSystemException('Post does not exist', 404);
         }
 
-        const comments = await this.commentRepository.find({ where: { post: { id: postId }, isDeleted: false } });
+        const comments = await this.commentsRepository.find({
+            where: {
+                post: { id: postId },
+                isDeleted: false
+            }
+        });
 
-        return comments.map(this.toCommnentDTO);
+        return comments.map(this.toCommentDTO);
     }
 
 
-    public async createPostComment(userId: string, postId: number, comment: CreateCommentDTO): Promise<ShowCommentDTO> {
+    public async createPostComment(loggedUser: User, postId: number, comment: CreateCommentDTO): Promise<ShowCommentDTO> {
 
-        const foundUser: User = await this.userRepository.findOne({
-            id: userId,
-            isDeleted: false
-        });
-
-        if (foundUser === undefined) {
-            throw new BadRequestException('User does not exist');
-        }
-
-        const foundPost: Post = await this.postRepository.findOne({
+        const foundPost: Post = await this.postsRepository.findOne({
             where: {
                 id: postId,
-                user: { id: userId },
                 isDeleted: false
             }
         });
 
         if (foundPost === undefined) {
-            throw new BadRequestException('Post does not exist');
+            throw new ForumSystemException('Post does not exist', 404);
         }
         if (foundPost.isLocked) {
             throw new ForumSystemException('Post is locked', 403)
         }
 
-
-        const newComment: Comment = this.commentRepository.create(comment);
-
-        newComment.user = foundUser;
+        const newComment: Comment = this.commentsRepository.create(comment);
+        newComment.user = loggedUser;
         newComment.post = foundPost;
+        await this.commentsRepository.save(newComment);
 
-        await this.commentRepository.save(newComment);
-        await this.activityService.logCommentEvent(foundUser, ActivityType.Create, postId, newComment.id)
+        await this.activityLogger.logCommentEvent(loggedUser, ActivityType.Create, postId, newComment.id)
 
-
-        return this.toCommnentDTO(newComment);
+        return this.toCommentDTO(newComment);
     }
 
 
-    public async updatePostComment(userId: string, postId: number, commentId: number, comment: UpdateCommentDTO): Promise<ShowCommentDTO> {
+    public async updatePostComment(loggedUser: User, postId: number, commentId: number, comment: UpdateCommentDTO, isAdmin: boolean): Promise<ShowCommentDTO> {
 
-        const foundComment: Comment = await this.commentRepository.findOne({
+        const foundComment: Comment = await this.commentsRepository.findOne({
             where: {
                 id: commentId,
                 post: { id: postId, isDeleted: false },
-                user: { id: userId, isDeleted: false },
                 isDeleted: false
             }
         });
 
         if (foundComment === undefined) {
-            throw new BadRequestException('Comment does not exist');
+            throw new ForumSystemException('Comment does not exist', 404);
+        }
+        if (foundComment.user !== loggedUser && !isAdmin) {
+            throw new ForumSystemException('Not allowed to update other users comments', 403);
         }
 
         const updatedComment: Comment = { ...foundComment, ...comment };
+        await this.commentsRepository.save(updatedComment);
 
-        await this.commentRepository.save(updatedComment);
-        // await this.activityLogger.logCommentEvent(foundUser, ActivityType.Update, postId, commentId)
+        await this.activityLogger.logCommentEvent(loggedUser, ActivityType.Update, postId, commentId);
 
-
-        return this.toCommnentDTO(updatedComment);
+        return this.toCommentDTO(updatedComment);
     }
 
     public async likePostComment(loggedUser: User, postId: number, commentId: number): Promise<ShowCommentDTO> {
-        const comment: Comment = await this.commentRepository.findOne({
+
+        const foundComment: Comment = await this.commentsRepository.findOne({
             where: {
                 id: commentId,
-                isDeleted: false
-            }
-        });
-
-        if (comment === undefined) {
-            throw new BadRequestException('Comment does not exist');
-        }
-        if (comment.user === loggedUser) {
-            throw new BadRequestException('Not allowed to like user\'s own comments')
-        }
-
-        const liked: boolean = comment.votes.some((user) => user === loggedUser)
-        const queryBuilder =
-            this.commentRepository
-                .createQueryBuilder()
-                .relation('votes')
-                .of(comment)
-
-        liked ?
-            await queryBuilder
-                .remove(loggedUser) :
-            await queryBuilder
-                .add(loggedUser)
-
-        await this.activityService.logCommentEvent(loggedUser, ActivityType.Like, postId, commentId)
-
-
-        return this.toCommnentDTO(comment)
-    }
-
-
-    public async deletePostComment(userId: string, postId: number, commentId: number): Promise<ShowCommentDTO> {
-
-        const foundComment: Comment = await this.commentRepository.findOne({
-            where: {
-                id: commentId,
-                post: { id: postId, isDeleted: false },
-                user: { id: userId, isDeleted: false },
                 isDeleted: false
             }
         });
 
         if (foundComment === undefined) {
-            throw new BadRequestException('Comment does not exist');
+            throw new ForumSystemException('Comment does not exist', 404);
+        }
+        if (foundComment.user === loggedUser) {
+            throw new ForumSystemException('Not allowed to like user\'s own comments', 403);
+        }
+
+        const liked: boolean = foundComment.votes.some((user) => user === loggedUser);
+
+        const queryBuilder =
+            this.commentsRepository
+                .createQueryBuilder()
+                .relation('votes')
+                .of(foundComment)
+
+        liked
+            ? await queryBuilder
+                .remove(loggedUser)
+            : await queryBuilder
+                .add(loggedUser)
+
+        await this.activityLogger.logCommentEvent(loggedUser, ActivityType.Like, postId, commentId);
+
+        return this.toCommentDTO(foundComment);
+    }
+
+
+    public async deletePostComment(loggedUser: User, postId: number, commentId: number, isAdmin: boolean): Promise<ShowCommentDTO> {
+
+        const foundComment: Comment = await this.commentsRepository.findOne({
+            where: {
+                id: commentId,
+                post: { id: postId, isDeleted: false },
+                isDeleted: false
+            }
+        });
+
+        if (foundComment === undefined) {
+            throw new ForumSystemException('Comment does not exist', 404);
+        }
+        if (foundComment.user !== loggedUser && !isAdmin) {
+            throw new ForumSystemException('Not allowed to delete other users comments', 403);
         }
 
         const deletedComment: Comment = { ...foundComment, isDeleted: true };
+        await this.commentsRepository.save(deletedComment);
 
-        await this.commentRepository.save(deletedComment);
-        // await this.activityLogger.logCommentEvent(foundUser, ActivityType.Remove, postId, commentId)
+        await this.activityLogger.logCommentEvent(loggedUser, ActivityType.Remove, postId, commentId);
 
-
-        return this.toCommnentDTO(deletedComment);
+        return this.toCommentDTO(deletedComment);
     }
-    private toCommnentDTO(comment: Comment): ShowCommentDTO {
+
+    private toCommentDTO(comment: Comment): ShowCommentDTO {
         return plainToClass(
             ShowCommentDTO,
             comment, {
