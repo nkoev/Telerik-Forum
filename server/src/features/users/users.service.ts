@@ -15,6 +15,7 @@ import { ForumSystemException } from '../../common/exceptions/system-exception';
 import { FriendRequest } from '../../database/entities/friend-request.entity';
 import { ActivityRecord } from '../../database/entities/activity.entity';
 import { ActivityShowDTO } from '../../models/activity/activity-show.dto';
+import moment = require('moment');
 
 @Injectable()
 export class UsersService {
@@ -285,11 +286,18 @@ export class UsersService {
             isDeleted: false,
         })
 
+        const expiryDate = moment(banStatusUpdate.expires)
+        const presentDate = moment(new Date())
+        const expiryMaxDate = presentDate.add(90, 'd')
+
         if (!foundUser) {
             throw new ForumSystemException('User does not exist', 400);
         }
         if (foundUser.banStatus.isBanned) {
             throw new ForumSystemException('User is already banned', 400);
+        }
+        if (!expiryDate.isBetween(presentDate, expiryMaxDate)) {
+            throw new ForumSystemException('Ban expiry date should be within 90 days from current date', 400)
         }
 
         await this.banStatusRepository.save({ ...foundUser.banStatus, ...banStatusUpdate })

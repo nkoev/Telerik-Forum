@@ -14,7 +14,6 @@ import { User } from '../../database/entities/user.entity';
 import { ActivityShowDTO } from '../../models/activity/activity-show.dto';
 
 @Controller('users')
-@UseGuards(RolesGuard)
 export class UsersController {
 
     constructor(private readonly usersService: UsersService) { }
@@ -131,8 +130,8 @@ export class UsersController {
 
     // BAN USERS
     @Put('/:userId/banstatus')
+    @UseGuards(AuthGuardWithBlacklisting, BanGuard, RolesGuard)
     @AccessLevel('Admin')
-    @UseGuards(BanGuard, AuthGuardWithBlacklisting)
     async updateBanStatus(
         @Param('userId', ParseUUIDPipe) userId: string,
         @Body(new ValidationPipe({
