@@ -72,6 +72,22 @@ export class UsersService {
         return this.toUserShowDTO(foundUser)
     }
 
+    // DELETE USER
+    async deleteUser(userId: string): Promise<UserShowDTO> {
+        const foundUser: User = await this.usersRepository.findOne({
+            id: userId,
+            isDeleted: false,
+        })
+
+        if (!foundUser) {
+            throw new ForumSystemException('User does not exist', 404);
+        }
+
+        await this.usersRepository.save({ ...foundUser, isDeleted: true })
+
+        return this.toUserShowDTO(foundUser)
+    }
+
     // GET ALL NOTIFICATIONS
     async getNotifications(loggedUser: User): Promise<ShowNotificationDTO[]> {
         return (await loggedUser.notifications).map(notification => new ShowNotificationDTO(notification));
