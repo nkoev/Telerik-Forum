@@ -66,4 +66,15 @@ export class UsersController {
 
         return await this.usersService.updateBanStatus(userId, banStatusUpdate);
     }
+
+    // DELETE USER
+    @Delete('/:userId')
+    @AccessLevel('Admin')
+    @UseGuards(AuthGuardWithBlacklisting)
+    async deleteUser(
+        @Param('userId', ParseUUIDPipe) userId: string
+    ): Promise<UserShowDTO> {
+
+        return await this.usersService.deleteUser(userId);
+    }
 }
