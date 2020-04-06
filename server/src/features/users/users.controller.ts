@@ -2,7 +2,6 @@ import { Controller, HttpCode, HttpStatus, Body, Post, Delete, ValidationPipe, P
 import { UsersService } from './users.service'
 import { UserRegisterDTO } from '../../models/users/user-register.dto';
 import { UserShowDTO } from '../../models/users/user-show.dto';
-import { AddFriendDTO } from '../../models/users/add-friend.dto';
 import { ShowNotificationDTO } from '../../models/notifications/show-notification.dto';
 import { BanStatusDTO } from '../../models/users/ban-status.dto';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -14,7 +13,7 @@ import { User } from '../../database/entities/user.entity';
 import { ActivityShowDTO } from '../../models/activity/activity-show.dto';
 
 @Controller('users')
-@UseGuards(RolesGuard)
+// @UseGuards(RolesGuard)
 export class UsersController {
 
     constructor(private readonly usersService: UsersService) { }
@@ -30,89 +29,10 @@ export class UsersController {
         return await this.usersService.registerUser(user);
     }
 
-    //  SEND FRIEND REQUEST
-    @Post('/friends')
-    @UseGuards(AuthGuardWithBlacklisting)
-    @HttpCode(HttpStatus.OK)
-    async sendFriendRequest(
-        @LoggedUser() loggedUser: User,
-        @Body(new ValidationPipe({
-            whitelist: true,
-            transform: true
-        })) friendToAdd: AddFriendDTO
-    ): Promise<UserShowDTO> {
-
-        return await this.usersService.sendFriendRequest(loggedUser, friendToAdd);
-    }
-
-    //  ACCEPT FRIEND REQUEST
-    @Put('/friends')
-    @UseGuards(AuthGuardWithBlacklisting)
-    @HttpCode(HttpStatus.OK)
-    async acceptFriendRequest(
-        @LoggedUser() loggedUser: User,
-        @Body(new ValidationPipe({
-            whitelist: true,
-            transform: true
-        })) friendToAccept: AddFriendDTO
-    ): Promise<UserShowDTO> {
-
-        return await this.usersService.acceptFriendRequest(loggedUser, friendToAccept);
-    }
-
-    //  DELETE FRIEND REQUEST
-    @Delete('/friends')
-    @UseGuards(AuthGuardWithBlacklisting)
-    @HttpCode(HttpStatus.OK)
-    async deleteFriendRequest(
-        @LoggedUser() loggedUser: User,
-        @Body(new ValidationPipe({
-            whitelist: true,
-            transform: true
-        })) friendToDelete: AddFriendDTO
-    ): Promise<{ msg: string }> {
-
-        return await this.usersService.deleteFriendRequest(loggedUser, friendToDelete);
-    }
-
-    //  REMOVE FRIEND
-    @Delete('/friends/:friendId')
-    @UseGuards(AuthGuardWithBlacklisting)
-    @HttpCode(HttpStatus.CREATED)
-    async removeFriend(
-        @LoggedUser() loggedUser: User,
-        @Param('friendId', ParseUUIDPipe) friendId: string
-    ): Promise<UserShowDTO> {
-
-        return await this.usersService.removeFriend(loggedUser, friendId);
-    }
-
-    //  GET ALL FRIEND REQUESTS
-    @Get('/friends/requests')
-    @UseGuards(AuthGuardWithBlacklisting)
-    @HttpCode(HttpStatus.OK)
-    async getFriendRequests(
-        @LoggedUser() loggedUser: User
-    ): Promise<UserShowDTO[]> {
-
-        return await this.usersService.getFriendRequests(loggedUser);
-    }
-
-    //  GET ALL FRIENDS
-    @Get('/friends')
-    @UseGuards(AuthGuardWithBlacklisting)
-    @HttpCode(HttpStatus.OK)
-    async getFriends(
-        @LoggedUser() loggedUser: User
-    ): Promise<UserShowDTO[]> {
-        return await this.usersService.getFriends(loggedUser);
-    }
-
     //  GET ALL NOTIFICATIONS
     @Get('/notifications')
     @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
-    @UseGuards(AuthGuardWithBlacklisting)
     async getNotifications(
         @LoggedUser() loggedUser: User
     ): Promise<ShowNotificationDTO[]> {
