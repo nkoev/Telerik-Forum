@@ -9,6 +9,7 @@ import { AuthGuardWithBlacklisting } from '../../common/guards/auth-guard-with-b
 import { BanGuard } from '../../common/guards/ban.guard';
 import { User } from '../../database/entities/user.entity';
 import { AccessLevel } from '../../common/decorators/roles.decorator';
+import { IsAdmin } from '../../common/decorators/is-admin.decorator';
 
 @Controller('/posts')
 @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
@@ -50,6 +51,7 @@ export class PostsController {
   @UseGuards(BanGuard)
   @HttpCode(HttpStatus.OK)
   async updatePost(
+    @IsAdmin() isAdmin: boolean,
     @LoggedUser() loggedUser: User,
     @Param('postId', ParseIntPipe) postId: number,
     @Body(new ValidationPipe({
@@ -59,7 +61,7 @@ export class PostsController {
     })) update: PostUpdateDTO
   ): Promise<PostShowDTO> {
 
-    return await this.postsService.updatePost(update, loggedUser, postId);
+    return await this.postsService.updatePost(update, loggedUser, postId, isAdmin);
   }
 
   @Put('/:postId/votes')
@@ -98,10 +100,11 @@ export class PostsController {
   @UseGuards(BanGuard)
   @HttpCode(HttpStatus.OK)
   async deletePost(
+    @IsAdmin() isAdmin: boolean,
     @LoggedUser() loggedUser: User,
     @Param('postId', ParseIntPipe) postId: number,
   ): Promise<PostShowDTO> {
 
-    return await this.postsService.deletePost(loggedUser, postId);
+    return await this.postsService.deletePost(loggedUser, postId, isAdmin);
   }
 }

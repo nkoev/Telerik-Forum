@@ -56,15 +56,15 @@ export class PostsService {
     return this.toPostShowDTO(savedPost)
   }
 
-  public async updatePost(update: PostUpdateDTO, loggedUser: User, postId: number) {
+  public async updatePost(update: PostUpdateDTO, loggedUser: User, postId: number, isAdmin: boolean) {
 
     const post: Post = await this.getPostEntity(postId);
 
     this.validatePost(post);
     this.validatePostIsLocked(post);
 
-    if (post.user.id !== loggedUser.id) {
-      throw new ForumSystemException('Not allowed to modify other users posts', 403);
+    if (post.user !== loggedUser && !isAdmin) {
+      throw new ForumSystemException('Not allowed to modify other users posts', 403)
     }
 
     const savedPost = await this.postsRepo.save({ ...post, ...update });
@@ -154,12 +154,12 @@ export class PostsService {
     return this.toPostShowDTO(updatedPost)
   }
 
-  public async deletePost(loggedUser: User, postId: number): Promise<PostShowDTO> {
+  public async deletePost(loggedUser: User, postId: number, isAdmin: boolean): Promise<PostShowDTO> {
     const post: Post = await this.getPostEntity(postId);
 
     this.validatePost(post);
 
-    if (post.user.id !== loggedUser.id) {
+    if (post.user.id !== loggedUser.id && !isAdmin) {
       throw new ForumSystemException('Not allowed to delete other users posts', 403)
     }
 
