@@ -6,12 +6,10 @@ import { Post } from '../../database/entities/post.entity';
 import { User } from '../../database/entities/user.entity';
 import { Notification } from '../../database/entities/notification.entity';
 import { NotificationsService } from '../notifications/notifications.service';
-import { ActivityService } from '../../common/activity.service';
-import { ActivityRecord } from '../../database/entities/activity.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Post, User, Notification, ActivityRecord])],
+  imports: [TypeOrmModule.forFeature([Post, User, Notification])],
   controllers: [PostsController],
-  providers: [PostsService, NotificationsService, ActivityService]
+  providers: [PostsService, NotificationsService]
 })
 export class PostsModule { }

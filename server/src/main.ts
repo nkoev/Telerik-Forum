@@ -3,7 +3,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import * as helmet from 'helmet';
 import "reflect-metadata";
-import { SystemExceptionFilter } from './common/filters/system-exception-filter';
+import { SystemExceptionFilter } from './common/filters/system-exception.filter';
 import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
