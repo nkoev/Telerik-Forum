@@ -10,7 +10,7 @@ import { ForumSystemException } from '../../common/exceptions/system-exception';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationType } from '../../models/notifications/notifications.enum';
 import { ActionType } from '../../models/notifications/actions.enum';
-import { ActivityService } from '../../common/activity.service';
+import { ActivityService } from '../core/activity.service';
 import { ActivityType } from '../../models/activity/activity-type.enum';
 import { PostShowDTO } from '../../models/posts/post-show.dto';
 

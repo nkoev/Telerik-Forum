@@ -1,9 +1,9 @@
-import { ActivityRecord } from "../database/entities/activity.entity";
+import { ActivityRecord } from "../../database/entities/activity.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Injectable } from "@nestjs/common";
-import { ActivityType } from "../models/activity/activity-type.enum";
-import { User } from "../database/entities/user.entity";
+import { ActivityType } from "../../models/activity/activity-type.enum";
+import { User } from "../../database/entities/user.entity";
 
 @Injectable()
 export class ActivityService {

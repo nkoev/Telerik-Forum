@@ -14,8 +14,15 @@ export class ScheduledTasks {
     banStatuses.forEach(status => {
       if (status.expires.getTime() < dateTime) {
         status.isBanned = false
+        status.description = null
+        status.expires = null
         this.banStatusRepository.save(status)
       }
     })
+  }
+
+  @Cron('20 * * * * *')
+  async handleCron1() {
+    console.log('working')
   }
 }

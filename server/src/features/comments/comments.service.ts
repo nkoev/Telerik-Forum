@@ -8,7 +8,7 @@ import { User } from '../../database/entities/user.entity';
 import { Post } from '../../database/entities/post.entity';
 import { UpdateCommentDTO } from '../../models/comments/update-comment.dto';
 import { plainToClass } from 'class-transformer';
-import { ActivityService } from '../../common/activity.service';
+import { ActivityService } from '../core/activity.service';
 import { ActivityType } from '../../models/activity/activity-type.enum';
 import { ForumSystemException } from '../../common/exceptions/system-exception';
 
