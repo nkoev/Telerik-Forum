@@ -25,6 +25,8 @@ export class CommentsController {
         return await this.commentsService.readPostComments(postId);
     }
 
+    //GET SINGLE COMMENT
+
     @Post('/:postId/comments')
     @UseGuards(BanGuard)
     @HttpCode(HttpStatus.CREATED)

@@ -1,11 +1,10 @@
 import { Expose } from "class-transformer";
-import { ActivityType } from "./activity-type.enum";
 
 export class ActivityShowDTO {
   @Expose()
-  public action: ActivityType;
+  public action: string;
   @Expose()
-  public target: string;
+  public targetURL: string;
   @Expose()
   public timeStamp: Date;
 }

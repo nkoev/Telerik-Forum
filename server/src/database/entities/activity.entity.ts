@@ -12,14 +12,11 @@ export class ActivityRecord {
   @CreateDateColumn()
   timeStamp: Date;
 
-  @Column({
-    type: 'enum',
-    enum: ActivityType
-  })
-  action: ActivityType;
+  @Column('nvarchar')
+  action: string;
 
   @Column('nvarchar')
-  target: string;
+  targetURL: string;
 
   @ManyToOne(
     type => User,
