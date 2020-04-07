@@ -78,9 +78,12 @@ export class PostsService {
     const post: Post = await this.getPostEntity(postId);
     this.validatePost(post);
     this.validatePostIsLocked(post);
-
     if (post.user.id === loggedUser.id) {
       throw new ForumSystemException('Not allowed to like user\'s own posts', 403)
+    }
+    const currentState: boolean = post.votes.some(user => user.id === loggedUser.id)
+    if (state === currentState) {
+      throw new ForumSystemException('User has already (un)liked this post', 400)
     }
 
     const likes = this.postsRepo
@@ -88,14 +91,15 @@ export class PostsService {
       .relation('votes')
       .of(post)
 
-    try {
-      state
-        ? await likes.add(loggedUser)
-        : await likes.remove(loggedUser)
-    } catch (e) {
-      throw new ForumSystemException('User has already (un)liked this post', 400)
-    }
-    await this.activityService.logPostEvent(loggedUser, ActivityType.Like, postId);
+    state
+      ? (
+        await likes.add(loggedUser),
+        await this.activityService.logPostEvent(loggedUser, ActivityType.Like, postId)
+      )
+      : (
+        await likes.remove(loggedUser),
+        await this.activityService.logPostEvent(loggedUser, ActivityType.Unlike, postId)
+      )
 
     return this.toPostShowDTO(post)
   }
