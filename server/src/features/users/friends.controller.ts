@@ -42,7 +42,7 @@ export class FriendsController {
     }
 
     //  DELETE FRIEND REQUEST
-    @Delete()
+    @Delete('/requests')
     @HttpCode(HttpStatus.OK)
     async deleteFriendRequest(
         @LoggedUser() loggedUser: User,
