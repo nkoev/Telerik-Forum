@@ -82,10 +82,11 @@ export class PostsController {
   @HttpCode(HttpStatus.OK)
   async flagPost(
     @LoggedUser() loggedUser: User,
-    @Param('postId', ParseIntPipe) postId: number
+    @Param('postId', ParseIntPipe) postId: number,
+    @Query('state', ParseBoolPipe) state: boolean
   ): Promise<PostShowDTO> {
 
-    return await this.postsService.flagPost(loggedUser, postId);
+    return await this.postsService.flagPost(loggedUser, postId, state);
   }
 
   @Put('/:postId/lock')
@@ -93,9 +94,10 @@ export class PostsController {
   @HttpCode(HttpStatus.OK)
   async lockPost(
     @Param('postId', ParseIntPipe) postId: number,
+    @Query('state', ParseBoolPipe) state: boolean
   ): Promise<PostShowDTO> {
 
-    return await this.postsService.lockPost(postId);
+    return await this.postsService.lockPost(postId, state);
   }
 
   @Delete('/:postId')
