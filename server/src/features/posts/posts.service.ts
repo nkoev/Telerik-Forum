@@ -55,7 +55,7 @@ export class PostsService {
     return this.toPostShowDTO(savedPost)
   }
 
-  public async updatePost(update: PostUpdateDTO, loggedUser: User, postId: number, isAdmin: boolean) {
+  public async updatePost(update: PostUpdateDTO, postId: number, loggedUser: User, isAdmin: boolean) {
 
     const post: Post = await this.getPostEntity(postId);
     this.validatePost(post);
