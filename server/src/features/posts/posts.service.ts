@@ -35,7 +35,6 @@ export class PostsService {
   public async getSinglePost(postId: number): Promise<PostShowDTO> {
 
     const post: Post = await this.getPostEntity(postId);
-
     this.validatePost(post);
 
     return this.toPostShowDTO(post);
@@ -59,15 +58,17 @@ export class PostsService {
   public async updatePost(update: PostUpdateDTO, loggedUser: User, postId: number, isAdmin: boolean) {
 
     const post: Post = await this.getPostEntity(postId);
-
     this.validatePost(post);
-    this.validatePostIsLocked(post);
-
+    this.validatePostUnlocked(post);
     if (post.user !== loggedUser && !isAdmin) {
       throw new ForumSystemException('Not allowed to modify other users posts', 403)
     }
 
-    const savedPost = await this.postsRepo.save({ ...post, ...update });
+    const savedPost = await this.postsRepo.save({
+      ...post,
+      ...update
+    });
+
     await this.activityService.logPostEvent(loggedUser, ActivityType.Update, savedPost.id);
 
     return this.toPostShowDTO(savedPost);
@@ -77,7 +78,7 @@ export class PostsService {
 
     const post: Post = await this.getPostEntity(postId);
     this.validatePost(post);
-    this.validatePostIsLocked(post);
+    this.validatePostUnlocked(post);
     if (post.user.id === loggedUser.id) {
       throw new ForumSystemException('Not allowed to like user\'s own posts', 403)
     }
@@ -96,66 +97,62 @@ export class PostsService {
         await likes.add(loggedUser),
         await this.activityService.logPostEvent(loggedUser, ActivityType.Like, postId)
       )
-      : (
-        await likes.remove(loggedUser),
-        await this.activityService.logPostEvent(loggedUser, ActivityType.Unlike, postId)
-      )
+      : await likes.remove(loggedUser)
 
     return this.toPostShowDTO(post)
   }
 
-  public async flagPost(loggedUser: User, postId: number): Promise<PostShowDTO> {
+  public async flagPost(loggedUser: User, postId: number, state: boolean): Promise<PostShowDTO> {
 
     const post: Post = await this.getPostEntity(postId);
-
     this.validatePost(post);
-    this.validatePostIsLocked(post);
-
+    this.validatePostUnlocked(post);
     if (post.user.id === loggedUser.id) {
-      throw new ForumSystemException('Not allowed to flag user\'s own posts', 403)
+      throw new ForumSystemException('Not allowed to like user\'s own posts', 403)
+    }
+    const currentState: boolean = post.flags.some(user => user.id === loggedUser.id)
+    if (state === currentState) {
+      throw new ForumSystemException('User has already (un)flagged this post', 400)
     }
 
-    const flagged: boolean = post.flags.some((user) => user === loggedUser)
+    const flags = this.postsRepo
+      .createQueryBuilder()
+      .relation('flags')
+      .of(post)
 
-    const postFlags =
-      this.postsRepo
-        .createQueryBuilder()
-        .relation('flags')
-        .of(post)
+    state
+      ? (
+        await flags.add(loggedUser),
+        await this.activityService.logPostEvent(loggedUser, ActivityType.Like, postId),
+        await this.notificationsService.notifyAdmins(NotificationType.Post, ActionType.Flag, `posts/${postId}`)
+      )
+      : await flags.remove(loggedUser)
 
-    flagged ?
-      await postFlags
-        .remove(loggedUser) :
-      await postFlags
-        .add(loggedUser)
-
-    if (!flagged) {
-      await this.notificationsService.notifyAdmins(NotificationType.Post, ActionType.Flag, `posts/${postId}`);
-      await this.activityService.logPostEvent(loggedUser, ActivityType.Flag, postId)
-    }
-
-    return this.toPostShowDTO(post)
+    return this.toPostShowDTO(post);
   }
 
-  public async lockPost(postId: number): Promise<PostShowDTO> {
-    const post: Post = await this.getPostEntity(postId);
+  public async lockPost(postId: number, state: boolean): Promise<PostShowDTO> {
 
+    const post: Post = await this.getPostEntity(postId);
     this.validatePost(post);
 
-    post.isLocked
-      ? post.isLocked = false
-      : post.isLocked = true;
+    const currentState = post.isLocked;
+    if (state === currentState) {
+      throw new ForumSystemException('This post is already (un)locked', 400)
+    }
 
-    const updatedPost = await this.postsRepo.save(post);
+    const updatedPost = await this.postsRepo.save({
+      ...post,
+      isLocked: state
+    });
 
     return this.toPostShowDTO(updatedPost)
   }
 
   public async deletePost(loggedUser: User, postId: number, isAdmin: boolean): Promise<PostShowDTO> {
+
     const post: Post = await this.getPostEntity(postId);
-
     this.validatePost(post);
-
     if (post.user.id !== loggedUser.id && !isAdmin) {
       throw new ForumSystemException('Not allowed to delete other users posts', 403)
     }
@@ -164,6 +161,7 @@ export class PostsService {
       ...post,
       isDeleted: true
     });
+
     await this.activityService.logPostEvent(loggedUser, ActivityType.Remove, postId)
 
     return this.toPostShowDTO(savedPost)
@@ -192,7 +190,7 @@ export class PostsService {
     }
   }
 
-  private validatePostIsLocked(post: Post): void {
+  private validatePostUnlocked(post: Post): void {
     if (post.isLocked) {
       throw new ForumSystemException('Post is locked', 403)
     }
