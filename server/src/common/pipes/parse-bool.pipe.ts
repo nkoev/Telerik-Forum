@@ -1,28 +1,18 @@
-// import { ArgumentMetadata } from '../index';
-// import { PipeTransform } from '../interfaces/features/pipe-transform.interface';
+import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from '@nestjs/common';
+import { isBoolean } from 'util';
 
-import { PipeTransform, ArgumentMetadata } from "@nestjs/common";
-
-// import { ErrorHttpStatusCode } from '../utils/http-error-by-code.util';
-export interface ParseBoolPipeOptions {
-  exceptionFactory?: (error: string) => any;
-}
-/**
- * Defines the built-in ParseBool Pipe
- *
- * @see [Built-in Pipes](https://docs.nestjs.com/pipes#built-in-pipes)
- *
- * @publicApi
- */
-export declare class ParseBoolPipe implements PipeTransform<string | boolean, Promise<boolean>> {
-  protected exceptionFactory: (error: string) => any;
-  constructor(options?: ParseBoolPipeOptions);
-  /**
-   * Method that accesses and performs optional transformation on argument for
-   * in-flight requests.
-   *
-   * @param value currently processed route argument
-   * @param metadata contains metadata about the currently processed route argument
-   */
-  transform(value: string | boolean, metadata: ArgumentMetadata): Promise<boolean>;
+@Injectable()
+export class ParseBoolPipe implements PipeTransform<string, boolean> {
+  transform(value: string, metadata: ArgumentMetadata): boolean {
+    try {
+      JSON.parse(value);
+    } catch (e) {
+      throw new BadRequestException('Validation failed')
+    }
+    const val = JSON.parse(value)
+    if (!isBoolean(val)) {
+      throw new BadRequestException('Validation failed');
+    }
+    return val;
+  }
 }
