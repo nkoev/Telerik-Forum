@@ -157,14 +157,14 @@ export class PostsService {
       throw new ForumSystemException('Not allowed to delete other users posts', 403)
     }
 
-    const savedPost = await this.postsRepo.save({
+    const deletedPost: Post = await this.postsRepo.save({
       ...post,
       isDeleted: true
     });
 
     await this.activityService.logPostEvent(loggedUser, ActivityType.Remove, postId)
 
-    return this.toPostShowDTO(savedPost)
+    return this.toPostShowDTO(deletedPost)
   }
 
   private toPostShowDTO(post: Post): PostShowDTO {
