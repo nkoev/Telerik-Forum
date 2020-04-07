@@ -7,6 +7,6 @@ export class UserShowDTO {
     public username: string;
     @Expose()
     @Transform((_, obj) => obj.roles?.map((x: any) => x.name))
-    public roles: string[];
+    public roles?: string[];
 
 }
