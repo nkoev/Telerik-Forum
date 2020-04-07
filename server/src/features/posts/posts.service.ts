@@ -55,7 +55,7 @@ export class PostsService {
     return this.toPostShowDTO(savedPost)
   }
 
-  public async updatePost(update: PostUpdateDTO, loggedUser: User, postId: number, isAdmin: boolean) {
+  public async updatePost(update: PostUpdateDTO, postId: number, loggedUser: User, isAdmin: boolean) {
 
     const post: Post = await this.getPostEntity(postId);
     this.validatePost(post);
@@ -157,14 +157,14 @@ export class PostsService {
       throw new ForumSystemException('Not allowed to delete other users posts', 403)
     }
 
-    const savedPost = await this.postsRepo.save({
+    const deletedPost: Post = await this.postsRepo.save({
       ...post,
       isDeleted: true
     });
 
     await this.activityService.logPostEvent(loggedUser, ActivityType.Remove, postId)
 
-    return this.toPostShowDTO(savedPost)
+    return this.toPostShowDTO(deletedPost)
   }
 
   private toPostShowDTO(post: Post): PostShowDTO {

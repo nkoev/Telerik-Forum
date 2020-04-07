@@ -15,22 +15,22 @@ export class ActivityService {
   async logPostEvent(user: User, action: ActivityType, postId: number): Promise<void> {
 
     const newRecord = this.activitiesRepo.create({
-      action,
-      target: `/posts/${postId}`
+      action: `${action} a post`,
+      targetURL: `http://loclahost:3000/posts/${postId}`,
+      user: Promise.resolve(user)
     })
-    newRecord.user = Promise.resolve(user)
-    this.activitiesRepo.save(newRecord)
 
+    this.activitiesRepo.save(newRecord)
   }
 
   async logCommentEvent(user: User, action: ActivityType, postId: number, commentId: number): Promise<void> {
 
     const newRecord = this.activitiesRepo.create({
-      action,
-      target: `/posts/${postId}/comments/${commentId}`
+      action: `${action} a comment`,
+      targetURL: `http://loclahost:3000/posts/${postId}/comments/${commentId}`,
+      user: Promise.resolve(user)
     })
-    newRecord.user = Promise.resolve(user)
-    this.activitiesRepo.save(newRecord)
 
+    this.activitiesRepo.save(newRecord)
   }
 }
