@@ -76,7 +76,6 @@ export class PostsService {
   public async likePost(loggedUser: User, postId: number, state: boolean): Promise<PostShowDTO> {
 
     const post: Post = await this.getPostEntity(postId);
-
     this.validatePost(post);
     this.validatePostIsLocked(post);
 
@@ -84,19 +83,19 @@ export class PostsService {
       throw new ForumSystemException('Not allowed to like user\'s own posts', 403)
     }
 
-    const liked: boolean = post.votes.some((user) => user === loggedUser)
-
-    this.postsRepo
+    const likes = this.postsRepo
       .createQueryBuilder()
       .relation('votes')
       .of(post)
-      .add(loggedUser)
 
-    if (liked) {
-      await this.activityService.logPostEvent(loggedUser, ActivityType.Unlike, postId);
-    } else {
-      await this.activityService.logPostEvent(loggedUser, ActivityType.Like, postId);
+    try {
+      state
+        ? await likes.add(loggedUser)
+        : await likes.remove(loggedUser)
+    } catch (e) {
+      throw new ForumSystemException('User has already (un)liked this post', 400)
     }
+    await this.activityService.logPostEvent(loggedUser, ActivityType.Like, postId);
 
     return this.toPostShowDTO(post)
   }

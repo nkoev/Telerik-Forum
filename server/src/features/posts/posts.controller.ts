@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, HttpCode, HttpStatus, Put, Delete, ValidationPipe, ParseIntPipe, UseGuards, Query, ParseBoolPipe } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, HttpCode, HttpStatus, Put, Delete, ValidationPipe, ParseIntPipe, UseGuards, Query } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PostCreateDTO } from '../../models/posts/post-create.dto';
 import { PostShowDTO } from '../../models/posts/post-show.dto';
@@ -10,6 +10,7 @@ import { BanGuard } from '../../common/guards/ban.guard';
 import { User } from '../../database/entities/user.entity';
 import { AccessLevel } from '../../common/decorators/roles.decorator';
 import { IsAdmin } from '../../common/decorators/is-admin.decorator';
+import { ParseBoolPipe } from '../../common/pipes/parse-bool.pipe';
 
 @Controller('/posts')
 @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
