@@ -125,6 +125,7 @@ export class FriendsService {
         return (await loggedUser.friends).map(this.toUserShowDTO);
     }
 
+
     private validateUser(user: User): void {
         if (!user) {
             throw new ForumSystemException('User not found!', 404);
