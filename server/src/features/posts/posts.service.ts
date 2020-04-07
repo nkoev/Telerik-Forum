@@ -73,7 +73,7 @@ export class PostsService {
     return this.toPostShowDTO(savedPost);
   }
 
-  public async likePost(loggedUser: User, postId: number): Promise<PostShowDTO> {
+  public async likePost(loggedUser: User, postId: number, state: boolean): Promise<PostShowDTO> {
 
     const post: Post = await this.getPostEntity(postId);
 
@@ -86,17 +86,11 @@ export class PostsService {
 
     const liked: boolean = post.votes.some((user) => user === loggedUser)
 
-    const postVotes =
-      this.postsRepo
-        .createQueryBuilder()
-        .relation('votes')
-        .of(post)
-
-    liked ?
-      await postVotes
-        .remove(loggedUser) :
-      await postVotes
-        .add(loggedUser)
+    this.postsRepo
+      .createQueryBuilder()
+      .relation('votes')
+      .of(post)
+      .add(loggedUser)
 
     if (liked) {
       await this.activityService.logPostEvent(loggedUser, ActivityType.Unlike, postId);

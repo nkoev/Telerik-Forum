@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, HttpCode, HttpStatus, Put, Delete, ValidationPipe, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, HttpCode, HttpStatus, Put, Delete, ValidationPipe, ParseIntPipe, UseGuards, Query, ParseBoolPipe } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { PostCreateDTO } from '../../models/posts/post-create.dto';
 import { PostShowDTO } from '../../models/posts/post-show.dto';
@@ -70,9 +70,10 @@ export class PostsController {
   async likePost(
     @LoggedUser() loggedUser: User,
     @Param('postId', ParseIntPipe) postId: number,
+    @Query('state', ParseBoolPipe) state: boolean
   ): Promise<PostShowDTO> {
 
-    return await this.postsService.likePost(loggedUser, postId)
+    return await this.postsService.likePost(loggedUser, postId, state)
   }
 
   @Put('/:postId/flag')
