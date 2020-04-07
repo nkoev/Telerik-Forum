@@ -1,7 +1,7 @@
 import { Expose, Transform } from "class-transformer";
 import { User } from "../../database/entities/user.entity";
 
-export class ShowCommentDTO {
+export class CommentShowDTO {
 
     @Expose()
     public id: number;

@@ -62,7 +62,7 @@ export class PostsController {
     })) update: PostUpdateDTO
   ): Promise<PostShowDTO> {
 
-    return await this.postsService.updatePost(update, loggedUser, postId, isAdmin);
+    return await this.postsService.updatePost(update, postId, loggedUser, isAdmin);
   }
 
   @Put('/:postId/votes')

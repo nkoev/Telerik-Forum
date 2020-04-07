@@ -5,9 +5,9 @@ import { plainToClass } from 'class-transformer';
 import { User } from '../../database/entities/user.entity';
 import { Post } from '../../database/entities/post.entity';
 import { Comment } from '../../database/entities/comment.entity';
-import { CreateCommentDTO } from '../../models/comments/create-comment.dto';
-import { ShowCommentDTO } from '../../models/comments/show-comment.dto';
-import { UpdateCommentDTO } from '../../models/comments/update-comment.dto';
+import { CommentCreateDTO } from '../../models/comments/comment-create.dto';
+import { CommentShowDTO } from '../../models/comments/comment-show.dto';
+import { CommentUpdateDTO } from '../../models/comments/comment-update.dto';
 import { ActivityService } from '../core/activity.service';
 import { ActivityType } from '../../models/activity/activity-type.enum';
 import { ForumSystemException } from '../../common/exceptions/system-exception';
@@ -15,154 +15,158 @@ import { ForumSystemException } from '../../common/exceptions/system-exception';
 @Injectable()
 export class CommentsService {
 
-    constructor(
-        @InjectRepository(Comment) private readonly commentsRepository: Repository<Comment>,
-        @InjectRepository(Post) private readonly postsRepository: Repository<Post>,
-        private readonly activityLogger: ActivityService
-    ) { }
+  constructor(
+    @InjectRepository(Comment) private readonly commentsRepo: Repository<Comment>,
+    @InjectRepository(Post) private readonly postsRepo: Repository<Post>,
+    private readonly activityService: ActivityService
+  ) { }
 
-    public async readPostComments(postId: number): Promise<ShowCommentDTO[]> {
+  public async getComments(postId: number): Promise<CommentShowDTO[]> {
 
-        const foundPost: Post = await this.postsRepository.findOne({
-            where: {
-                id: postId,
-                isDeleted: false
-            }
-        });
+    const post: Post = await this.getPostEntity(postId)
+    this.validatePost(post)
 
-        if (foundPost === undefined) {
-            throw new ForumSystemException('Post does not exist', 404);
-        }
+    const comments = await this.commentsRepo.find({
+      where: {
+        post: { id: postId },
+        isDeleted: false
+      }
+    });
 
-        const comments = await this.commentsRepository.find({
-            where: {
-                post: { id: postId },
-                isDeleted: false
-            }
-        });
+    return comments.map(this.toCommentShowDTO);
+  }
 
-        return comments.map(this.toCommentDTO);
+  public async getSingleComment(postId: number, commentId: number): Promise<CommentShowDTO> {
+
+    const comment: Comment = await this.getCommentEntity(postId, commentId)
+    this.validateComment(comment)
+
+    return this.toCommentShowDTO(comment);
+  }
+
+  public async createPostComment(commentDTO: CommentCreateDTO, postId: number, loggedUser: User): Promise<CommentShowDTO> {
+
+    const post: Post = await this.getPostEntity(postId)
+    this.validatePost(post)
+    if (post.isLocked) {
+      throw new ForumSystemException('Post is locked', 403)
     }
 
+    const newComment: Comment = this.commentsRepo.create({
+      ...commentDTO,
+      user: loggedUser,
+      post,
+      votes: []
+    });
+    await this.commentsRepo.save(newComment);
 
-    public async createPostComment(loggedUser: User, postId: number, comment: CreateCommentDTO): Promise<ShowCommentDTO> {
+    await this.activityService.logCommentEvent(loggedUser, ActivityType.Create, postId, newComment.id)
 
-        const foundPost: Post = await this.postsRepository.findOne({
-            where: {
-                id: postId,
-                isDeleted: false
-            }
-        });
+    return this.toCommentShowDTO(newComment);
+  }
 
-        if (foundPost === undefined) {
-            throw new ForumSystemException('Post does not exist', 404);
-        }
-        if (foundPost.isLocked) {
-            throw new ForumSystemException('Post is locked', 403)
-        }
+  public async updatePostComment(update: CommentUpdateDTO, postId: number, commentId: number, loggedUser: User, isAdmin: boolean): Promise<CommentShowDTO> {
 
-        const newComment: Comment = this.commentsRepository.create(comment);
-        newComment.user = loggedUser;
-        newComment.post = foundPost;
-        await this.commentsRepository.save(newComment);
-
-        await this.activityLogger.logCommentEvent(loggedUser, ActivityType.Create, postId, newComment.id)
-
-        return this.toCommentDTO(newComment);
+    const comment: Comment = await this.getCommentEntity(postId, commentId)
+    this.validateComment(comment)
+    if (comment.user.id !== loggedUser.id && !isAdmin) {
+      throw new ForumSystemException('Not allowed to update other users comments', 403);
     }
 
+    const updatedComment: Comment = {
+      ...comment,
+      ...update
+    };
+    await this.commentsRepo.save(updatedComment);
 
-    public async updatePostComment(loggedUser: User, postId: number, commentId: number, comment: UpdateCommentDTO, isAdmin: boolean): Promise<ShowCommentDTO> {
+    await this.activityService.logCommentEvent(loggedUser, ActivityType.Update, postId, commentId);
 
-        const foundComment: Comment = await this.commentsRepository.findOne({
-            where: {
-                id: commentId,
-                post: { id: postId, isDeleted: false },
-                isDeleted: false
-            }
-        });
+    return this.toCommentShowDTO(updatedComment);
+  }
 
-        if (foundComment === undefined) {
-            throw new ForumSystemException('Comment does not exist', 404);
-        }
-        if (foundComment.user.id !== loggedUser.id && !isAdmin) {
-            throw new ForumSystemException('Not allowed to update other users comments', 403);
-        }
+  public async likePostComment(loggedUser: User, postId: number, commentId: number, state: boolean): Promise<CommentShowDTO> {
 
-        const updatedComment: Comment = { ...foundComment, ...comment };
-        await this.commentsRepository.save(updatedComment);
-
-        await this.activityLogger.logCommentEvent(loggedUser, ActivityType.Update, postId, commentId);
-
-        return this.toCommentDTO(updatedComment);
+    const comment: Comment = await this.getCommentEntity(postId, commentId);
+    this.validateComment(comment);
+    if (comment.user.id === loggedUser.id) {
+      throw new ForumSystemException('Not allowed to like user\'s own comments', 403);
     }
 
-    public async likePostComment(loggedUser: User, postId: number, commentId: number): Promise<ShowCommentDTO> {
-
-        const foundComment: Comment = await this.commentsRepository.findOne({
-            where: {
-                id: commentId,
-                isDeleted: false
-            }
-        });
-
-        if (foundComment === undefined) {
-            throw new ForumSystemException('Comment does not exist', 404);
-        }
-        if (foundComment.user.id === loggedUser.id) {
-            throw new ForumSystemException('Not allowed to like user\'s own comments', 403);
-        }
-
-        const liked: boolean = foundComment.votes.some((user) => user === loggedUser);
-
-        const queryBuilder =
-            this.commentsRepository
-                .createQueryBuilder()
-                .relation('votes')
-                .of(foundComment)
-
-        liked
-            ? await queryBuilder
-                .remove(loggedUser)
-            : await queryBuilder
-                .add(loggedUser)
-
-        await this.activityLogger.logCommentEvent(loggedUser, ActivityType.Like, postId, commentId);
-
-        return this.toCommentDTO(foundComment);
+    const currentState: boolean = comment.votes.some(user => user.id === loggedUser.id)
+    if (state === currentState) {
+      throw new ForumSystemException('User has already (un)liked this comment', 400)
     }
 
+    const likes = this.commentsRepo
+      .createQueryBuilder()
+      .relation('votes')
+      .of(comment)
 
-    public async deletePostComment(loggedUser: User, postId: number, commentId: number, isAdmin: boolean): Promise<ShowCommentDTO> {
+    state
+      ? (
+        await likes.add(loggedUser),
+        await this.activityService.logCommentEvent(loggedUser, ActivityType.Like, postId, commentId)
+      )
+      : await likes.remove(loggedUser)
 
-        const foundComment: Comment = await this.commentsRepository.findOne({
-            where: {
-                id: commentId,
-                post: { id: postId, isDeleted: false },
-                isDeleted: false
-            }
-        });
+    return this.toCommentShowDTO(comment);
+  }
 
-        if (foundComment === undefined) {
-            throw new ForumSystemException('Comment does not exist', 404);
-        }
-        if (foundComment.user.id !== loggedUser.id && !isAdmin) {
-            throw new ForumSystemException('Not allowed to delete other users comments', 403);
-        }
+  public async deletePostComment(loggedUser: User, postId: number, commentId: number, isAdmin: boolean): Promise<CommentShowDTO> {
 
-        const deletedComment: Comment = { ...foundComment, isDeleted: true };
-        await this.commentsRepository.save(deletedComment);
-
-        await this.activityLogger.logCommentEvent(loggedUser, ActivityType.Remove, postId, commentId);
-
-        return this.toCommentDTO(deletedComment);
+    const comment: Comment = await this.getCommentEntity(postId, commentId);
+    this.validateComment(comment);
+    if (comment.user.id !== loggedUser.id && !isAdmin) {
+      throw new ForumSystemException('Not allowed to delete other users comments', 403);
     }
 
-    private toCommentDTO(comment: Comment): ShowCommentDTO {
-        return plainToClass(
-            ShowCommentDTO,
-            comment, {
-            excludeExtraneousValues: true
-        });
+    const deletedComment: Comment = {
+      ...comment,
+      isDeleted: true
+    };
+    await this.commentsRepo.save(deletedComment);
+
+    await this.activityService.logCommentEvent(loggedUser, ActivityType.Remove, postId, commentId);
+
+    return this.toCommentShowDTO(deletedComment);
+  }
+
+  private toCommentShowDTO(comment: Comment): CommentShowDTO {
+    return plainToClass(
+      CommentShowDTO,
+      comment, {
+      excludeExtraneousValues: true
+    });
+  }
+
+  private async getPostEntity(postId: number): Promise<Post> {
+    return await this.postsRepo.findOne({
+      where: {
+        isDeleted: false,
+        id: postId
+      }
+    });
+  }
+
+  private async getCommentEntity(postId: number, commentId: number): Promise<Comment> {
+    return await this.commentsRepo.findOne({
+      where: {
+        id: commentId,
+        post: { id: postId, isDeleted: false },
+        isDeleted: false
+      }
+    });
+  }
+
+  private validatePost(post: Post): void {
+    if (!post) {
+      throw new ForumSystemException('Post does not exist', 404);
     }
+  }
+
+  private validateComment(comment: Comment): void {
+    if (!comment) {
+      throw new ForumSystemException('Comment does not exist', 404);
+    }
+  }
 }
