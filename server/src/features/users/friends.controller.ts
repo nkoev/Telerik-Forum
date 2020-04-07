@@ -1,4 +1,4 @@
-import { Controller, HttpCode, HttpStatus, Body, Post, Delete, ValidationPipe, Param, ParseUUIDPipe, Get, Query, UseGuards, Put } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Body, Post, Delete, ValidationPipe, Param, ParseUUIDPipe, Get, UseGuards, Put } from '@nestjs/common';
 import { FriendsService } from './friends.service'
 import { UserShowDTO } from '../../models/users/user-show.dto';
 import { AddFriendDTO } from '../../models/users/add-friend.dto';
