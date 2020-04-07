@@ -36,8 +36,8 @@ export class FriendsService {
         });
 
         const foundFriendRequest = await this.friendRequestsRepository.findOne({
-            user_a_id: loggedUser.id,
-            user_b_id: friendToAdd.id,
+            userA: loggedUser.id,
+            userB: friendToAdd.id,
             status: false,
         });
 
@@ -46,8 +46,8 @@ export class FriendsService {
         }
 
         const newFriendRequest = await this.friendRequestsRepository.create();
-        newFriendRequest.user_a_id = loggedUser.id;
-        newFriendRequest.user_b_id = foundFriend.id;
+        newFriendRequest.userA = loggedUser.id;
+        newFriendRequest.userB = foundFriend.id;
         await this.friendRequestsRepository.save(newFriendRequest);
 
         return this.toUserShowDTO(foundFriend);
@@ -73,8 +73,8 @@ export class FriendsService {
         });
 
         const foundFriendRequest = await this.friendRequestsRepository.findOne({
-            user_a_id: friendToAccept.id,
-            user_b_id: loggedUser.id,
+            userA: friendToAccept.id,
+            userB: loggedUser.id,
             status: false,
         });
 
@@ -99,8 +99,8 @@ export class FriendsService {
     async deleteFriendRequest(loggedUser: User, friendToDelete: AddFriendDTO): Promise<{ msg: string }> {
 
         const foundFriendRequest = await this.friendRequestsRepository.findOne({
-            user_a_id: friendToDelete.id,
-            user_b_id: loggedUser.id,
+            userA: friendToDelete.id,
+            userB: loggedUser.id,
             status: false,
         });
 
@@ -124,12 +124,12 @@ export class FriendsService {
 
         const foundFriendRequest = await this.friendRequestsRepository.findOne({
             where: [{
-                user_a_id: loggedUser.id,
-                user_b_id: friendId,
+                userA: loggedUser.id,
+                userB: friendId,
                 status: true
             }, {
-                user_a_id: friendId,
-                user_b_id: loggedUser.id,
+                userA: friendId,
+                userB: loggedUser.id,
                 status: true
             }]
         });
@@ -154,7 +154,7 @@ export class FriendsService {
     async getFriendRequests(loggedUser: User): Promise<UserShowDTO[]> {
 
         const foundFriendRequests: FriendRequest[] = await this.friendRequestsRepository.find({
-            user_b_id: loggedUser.id,
+            userB: loggedUser.id,
             status: false
         });
 
@@ -162,7 +162,7 @@ export class FriendsService {
             return [];
         }
 
-        const userIds: string[] = foundFriendRequests.map(request => request.user_a_id);
+        const userIds: string[] = foundFriendRequests.map(request => request.userA);
 
         const usersFromRequests = await this.usersRepository.find({
             where: {
