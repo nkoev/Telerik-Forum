@@ -52,14 +52,14 @@ export class PostsController {
   @UseGuards(BanGuard)
   @HttpCode(HttpStatus.OK)
   async updatePost(
-    @IsAdmin() isAdmin: boolean,
-    @LoggedUser() loggedUser: User,
-    @Param('postId', ParseIntPipe) postId: number,
     @Body(new ValidationPipe({
       whitelist: true,
       transform: true,
       skipMissingProperties: true
-    })) update: PostUpdateDTO
+    })) update: PostUpdateDTO,
+    @Param('postId', ParseIntPipe) postId: number,
+    @LoggedUser() loggedUser: User,
+    @IsAdmin() isAdmin: boolean
   ): Promise<PostShowDTO> {
 
     return await this.postsService.updatePost(update, postId, loggedUser, isAdmin);
@@ -104,9 +104,9 @@ export class PostsController {
   @UseGuards(BanGuard)
   @HttpCode(HttpStatus.OK)
   async deletePost(
-    @IsAdmin() isAdmin: boolean,
     @LoggedUser() loggedUser: User,
     @Param('postId', ParseIntPipe) postId: number,
+    @IsAdmin() isAdmin: boolean,
   ): Promise<PostShowDTO> {
 
     return await this.postsService.deletePost(loggedUser, postId, isAdmin);
