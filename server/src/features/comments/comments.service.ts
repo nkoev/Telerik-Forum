@@ -44,7 +44,7 @@ export class CommentsService {
     return this.toCommentShowDTO(comment);
   }
 
-  public async createPostComment(commentDTO: CommentCreateDTO, postId: number, loggedUser: User): Promise<CommentShowDTO> {
+  public async createComment(loggedUser: User, postId: number, commentDTO: CommentCreateDTO): Promise<CommentShowDTO> {
 
     const post: Post = await this.getPostEntity(postId)
     this.validatePost(post)
@@ -65,7 +65,7 @@ export class CommentsService {
     return this.toCommentShowDTO(newComment);
   }
 
-  public async updatePostComment(update: CommentUpdateDTO, postId: number, commentId: number, loggedUser: User, isAdmin: boolean): Promise<CommentShowDTO> {
+  public async updateComment(loggedUser: User, postId: number, commentId: number, update: CommentUpdateDTO, isAdmin: boolean): Promise<CommentShowDTO> {
 
     const comment: Comment = await this.getCommentEntity(postId, commentId)
     this.validateComment(comment)
@@ -84,7 +84,7 @@ export class CommentsService {
     return this.toCommentShowDTO(updatedComment);
   }
 
-  public async likePostComment(loggedUser: User, postId: number, commentId: number, state: boolean): Promise<CommentShowDTO> {
+  public async likeComment(loggedUser: User, postId: number, commentId: number, state: boolean): Promise<CommentShowDTO> {
 
     const comment: Comment = await this.getCommentEntity(postId, commentId);
     this.validateComment(comment);
@@ -112,7 +112,7 @@ export class CommentsService {
     return this.toCommentShowDTO(comment);
   }
 
-  public async deletePostComment(loggedUser: User, postId: number, commentId: number, isAdmin: boolean): Promise<CommentShowDTO> {
+  public async deleteComment(loggedUser: User, postId: number, commentId: number, isAdmin: boolean): Promise<CommentShowDTO> {
 
     const comment: Comment = await this.getCommentEntity(postId, commentId);
     this.validateComment(comment);
