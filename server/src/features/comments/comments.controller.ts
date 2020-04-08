@@ -39,7 +39,7 @@ export class CommentsController {
     @Post()
     @UseGuards(BanGuard)
     @HttpCode(HttpStatus.CREATED)
-    async createPostComment(
+    async createComment(
         @LoggedUser() loggedUser: User,
         @Param('postId', ParseIntPipe) postId: number,
         @Body(new ValidationPipe({
@@ -48,13 +48,13 @@ export class CommentsController {
         })) comment: CommentCreateDTO
     ): Promise<CommentShowDTO> {
 
-        return await this.commentsService.createPostComment(comment, postId, loggedUser);
+        return await this.commentsService.createComment(loggedUser, postId, comment);
     }
 
     @Put('/:commentId')
     @UseGuards(BanGuard)
     @HttpCode(HttpStatus.OK)
-    async updatePostComment(
+    async updateComment(
         @LoggedUser() loggedUser: User,
         @IsAdmin() isAdmin: boolean,
         @Param('postId', ParseIntPipe) postId: number,
@@ -65,7 +65,7 @@ export class CommentsController {
         })) update: CommentUpdateDTO
     ): Promise<CommentShowDTO> {
 
-        return await this.commentsService.updatePostComment(update, postId, commentId, loggedUser, isAdmin);
+        return await this.commentsService.updateComment(loggedUser, postId, commentId, update, isAdmin);
     }
 
     @Put('/:commentId/votes')
@@ -78,19 +78,19 @@ export class CommentsController {
         @Query('state', ParseBoolPipe) state: boolean
     ): Promise<CommentShowDTO> {
 
-        return await this.commentsService.likePostComment(loggedUser, postId, commentId, state);
+        return await this.commentsService.likeComment(loggedUser, postId, commentId, state);
     }
 
     @Delete('/:commentId')
     @UseGuards(BanGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
-    async deletePostComment(
+    async deleteComment(
         @LoggedUser() loggedUser: User,
         @IsAdmin() isAdmin: boolean,
         @Param('postId', ParseIntPipe) postId: number,
         @Param('commentId', ParseIntPipe) commentId: number
     ): Promise<CommentShowDTO> {
 
-        return await this.commentsService.deletePostComment(loggedUser, postId, commentId, isAdmin);
+        return await this.commentsService.deleteComment(loggedUser, postId, commentId, isAdmin);
     }
 }
