@@ -1,5 +1,6 @@
-import { Expose, Transform } from "class-transformer";
+import { Expose, Transform, plainToClass } from "class-transformer";
 import { User } from "../../database/entities/user.entity";
+import { UserShowDTO } from "../users/user-show.dto";
 
 export class PostShowDTO {
   @Expose()
@@ -9,10 +10,9 @@ export class PostShowDTO {
   @Expose()
   public content: string;
   @Expose()
-  public user: User;
+  public user: UserShowDTO;
   @Expose()
-  @Transform(votes => votes.length)
-  public votes: number;
+  public votes: UserShowDTO[];
 
 }
 

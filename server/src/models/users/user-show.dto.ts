@@ -1,4 +1,5 @@
 import { Expose, Transform } from "class-transformer";
+import { Role } from "../../database/entities/role.entity";
 
 export class UserShowDTO {
     @Expose()
@@ -6,7 +7,7 @@ export class UserShowDTO {
     @Expose()
     public username: string;
     @Expose()
-    @Transform((_, obj) => obj.roles?.map((x: any) => x.name))
-    public roles?: string[];
+    @Transform(roles => roles.map((role: any) => role.name))
+    public roles: Role[];
 
 }
