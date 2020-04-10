@@ -3,6 +3,7 @@ import { AuthService } from "./auth.service";
 import { UserLoginDTO } from "../../models/users/user-login.dto";
 import { Token } from "../../common/decorators/token.decorator";
 import { AuthGuardWithBlacklisting } from "../../common/guards/auth-guard-with-blacklisting.guard";
+import { ApiBearerAuth } from "@nestjs/swagger";
 
 @Controller('session')
 export class AuthController {
@@ -23,6 +24,7 @@ export class AuthController {
     }
 
     @Delete()
+    @ApiBearerAuth()
     @UseGuards(AuthGuardWithBlacklisting)
     @HttpCode(HttpStatus.OK)
     async logout(@Token() token: string): Promise<{ msg: string }> {

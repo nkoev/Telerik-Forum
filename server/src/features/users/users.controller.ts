@@ -11,6 +11,7 @@ import { BanGuard } from '../../common/guards/ban.guard';
 import { LoggedUser } from '../../common/decorators/user.decorator';
 import { User } from '../../database/entities/user.entity';
 import { ActivityShowDTO } from '../../models/activity/activity-show.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
@@ -30,6 +31,7 @@ export class UsersController {
 
     //  GET ALL NOTIFICATIONS
     @Get('/notifications')
+    @ApiBearerAuth()
     @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
     @HttpCode(HttpStatus.OK)
     async getNotifications(
@@ -41,6 +43,7 @@ export class UsersController {
 
     // GET USER ACTIVITY
     @Get('/:userId/activity')
+    @ApiBearerAuth()
     @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
     @HttpCode(HttpStatus.OK)
     async getUserActivity(
@@ -53,6 +56,7 @@ export class UsersController {
 
     // BAN USERS
     @Put('/:userId/banstatus')
+    @ApiBearerAuth()
     @UseGuards(AuthGuardWithBlacklisting, BanGuard, RolesGuard)
     @AccessLevel('Admin')
     async updateBanStatus(
@@ -68,6 +72,7 @@ export class UsersController {
 
     // DELETE USER
     @Delete('/:userId')
+    @ApiBearerAuth()
     @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
     @AccessLevel('Admin')
     async deleteUser(
