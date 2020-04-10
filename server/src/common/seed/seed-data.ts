@@ -59,12 +59,13 @@ const seedUsers = async (connection: any) => {
 
         seededUsers.push(newUser);
         await userRepo.save(newUser);
-        console.log(`Seeded user${i} successfully!`);
+        console.log(`Seeded ${newUser.username} successfully!`);
     }
 };
 
 const seedPosts = async (connection: any) => {
     const postsRepo: Repository<Post> = connection.manager.getRepository(Post);
+    const userRepo: Repository<User> = connection.manager.getRepository(User);
     const activityRepo: Repository<ActivityRecord> = connection.manager.getRepository(ActivityRecord);
 
     if (seededUsers.length === 0) {
@@ -75,7 +76,11 @@ const seedPosts = async (connection: any) => {
     for (let i = 1; i < 5; i++) {
         const title = `<< My cool post >>`;
         const content = `This is my cool post!`;
-        const user = seededUsers[i - 1];
+        const user = await userRepo.findOne({
+            where: {
+                id: seededUsers[i - 1].id
+            }
+        });
         const comments = Promise.resolve([]);
         const votes = [];
 
@@ -89,21 +94,23 @@ const seedPosts = async (connection: any) => {
 
         await postsRepo.save(newPost);
         seededPosts.push(newPost);
-        console.log(`Seeded post by user${i} successfully!`);
+        console.log(`Seeded post by ${user.username} successfully!`);
 
-        // const newRecord = activityRepo.create({
-        //     action: `${ActivityType.Create} a post`,
-        //     targetURL: `http://loclahost:3000/posts/${newPost.id}`,
-        //     user: Promise.resolve(user)
-        // });
+        const newRecord = activityRepo.create({
+            action: `${ActivityType.Create} a post`,
+            targetURL: `http://loclahost:3000/posts/${newPost.id}`,
+            user: user
+        });
 
-        // await activityRepo.save(newRecord);
-        // console.log(`Seeded new activity by user${i} successfully!`);
+        await activityRepo.save(newRecord);
+        console.log(`Seeded new activity "Create Post" by ${user.username} successfully!`);
     }
 };
 
 const seedComments = async (connection: any) => {
     const commentsRepo: Repository<Comment> = connection.manager.getRepository(Comment);
+    const postsRepo: Repository<Post> = connection.manager.getRepository(Post);
+    const userRepo: Repository<User> = connection.manager.getRepository(User);
     const activityRepo: Repository<ActivityRecord> = connection.manager.getRepository(ActivityRecord);
 
     if (seededPosts.length === 0) {
@@ -113,34 +120,44 @@ const seedComments = async (connection: any) => {
 
     for (let i = 1; i < 5; i++) {
         const content = `Please like this comment for no reason!`;
-        const user = seededUsers[i - 1];
-        const post = seededPosts[i];
+        const user = await userRepo.findOne({
+            where: {
+                id: seededUsers[i - 1].id
+            }
+        });
+        const post = await postsRepo.findOne({
+            where: {
+                id: seededPosts[i - 1].id
+            }
+        });
         const votes = [];
 
-        const newComment: Comment = commentsRepo.create({
+        const newComment: Comment = await commentsRepo.create({
             content: content,
             user: user,
             post: post,
             votes: votes
         });
 
+        console.log();
         await commentsRepo.save(newComment);
         seededComments.push(newComment);
-        console.log(`Seeded comment by user${i} successfully!`);
+        console.log(`Seeded comment by ${user.username} successfully!`);
 
-        // const newRecord = activityRepo.create({
-        //     action: `${ActivityType.Create} a comment`,
-        //     targetURL: `http://loclahost:3000/posts/${post.id}/comments/${newComment.id}`,
-        //     user: Promise.resolve(user)
-        // });
+        const newRecord = await activityRepo.create({
+            action: `${ActivityType.Create} a comment`,
+            targetURL: `http://loclahost:3000/posts/${post.id}/comments/${newComment.id}`,
+            user: user
+        });
 
-        // await activityRepo.save(newRecord);
-        // console.log(`Seeded new activity by user${i} successfully!`);
+        await activityRepo.save(newRecord);
+        console.log(`Seeded new activity "Create Comment" by ${user.username} successfully!`);
     }
 };
 
 const seedPostLikes = async (connection: any) => {
     const postsRepo: Repository<Post> = connection.manager.getRepository(Post);
+    const userRepo: Repository<User> = connection.manager.getRepository(User);
     const activityRepo: Repository<ActivityRecord> = connection.manager.getRepository(ActivityRecord);
 
     if (seededPosts.length === 0) {
@@ -149,25 +166,35 @@ const seedPostLikes = async (connection: any) => {
     }
 
     for (let i = 1; i < 5; i++) {
-        const post = seededPosts[i - 1];
+        const post = await postsRepo.findOne({
+            where: {
+                id: seededPosts[i - 1].id
+            }
+        });
+        const user = await userRepo.findOne({
+            where: {
+                id: seededUsers[seededUsers.length - i].id
+            }
+        });
 
-        post.votes.push(seededUsers[seededUsers.length - i]);
+        post.votes.push(user);
         await postsRepo.save(post);
-        console.log(`Seeded post like by user${seededUsers.length - i + 1} successfully!`);
+        console.log(`Seeded post like by ${user.username} successfully!`);
 
-        // const newRecord = activityRepo.create({
-        //     action: `${ActivityType.Like} a post`,
-        //     targetURL: `http://loclahost:3000/posts/${post.id}`,
-        //     user: Promise.resolve(seededUsers[seededUsers.length - i])
-        // });
+        const newRecord = activityRepo.create({
+            action: `${ActivityType.Like} a post`,
+            targetURL: `http://loclahost:3000/posts/${post.id}`,
+            user: seededUsers[seededUsers.length - i]
+        });
 
-        // await activityRepo.save(newRecord);
-        // console.log(`Seeded new activity by user${seededUsers.length - i + 1} successfully!`);
+        await activityRepo.save(newRecord);
+        console.log(`Seeded new activity "Like Post" by ${user.username} successfully!`);
     }
 };
 
 const seedCommentLikes = async (connection: any) => {
     const commentsRepo: Repository<Comment> = connection.manager.getRepository(Comment);
+    const userRepo: Repository<User> = connection.manager.getRepository(User);
     const activityRepo: Repository<ActivityRecord> = connection.manager.getRepository(ActivityRecord);
 
     if (seededComments.length === 0) {
@@ -176,25 +203,35 @@ const seedCommentLikes = async (connection: any) => {
     }
 
     for (let i = 1; i < 5; i++) {
-        const comment = seededComments[i - 1];
+        const comment = await commentsRepo.findOne({
+            where: {
+                id: seededComments[i - 1].id
+            }
+        });
+        const user = await userRepo.findOne({
+            where: {
+                id: seededUsers[seededUsers.length - i].id
+            }
+        });
 
-        comment.votes.push(seededUsers[seededUsers.length - i]);
+        comment.votes.push(user);
         await commentsRepo.save(comment);
-        console.log(`Seeded comment like by user${seededUsers.length - i + 1} successfully!`);
+        console.log(`Seeded comment like by ${user.username} successfully!`);
 
-        // const newRecord = activityRepo.create({
-        //     action: `${ActivityType.Like} a comment`,
-        //     targetURL: `http://loclahost:3000/posts/${comment.post.id}/comments/${comment.id}`,
-        //     user: Promise.resolve(seededUsers[seededUsers.length - i])
-        // });
+        const newRecord = activityRepo.create({
+            action: `${ActivityType.Like} a comment`,
+            targetURL: `http://loclahost:3000/posts/${comment.post.id}/comments/${comment.id}`,
+            user: seededUsers[seededUsers.length - i]
+        });
 
-        // await activityRepo.save(newRecord);
-        // console.log(`Seeded new activity by user${seededUsers.length - i + 1} successfully!`);
+        await activityRepo.save(newRecord);
+        console.log(`Seeded new activity "Like Comment" by ${user.username} successfully!`);
     }
 };
 
 const seedFriendRequests = async (connection: any) => {
     const friendsRepo: Repository<FriendRequest> = connection.manager.getRepository(FriendRequest);
+    const userRepo: Repository<User> = connection.manager.getRepository(User);
 
     if (seededUsers.length === 0) {
         console.log('ERROR: The DB does not have any users!');
@@ -202,9 +239,17 @@ const seedFriendRequests = async (connection: any) => {
     }
 
     for (let i = 0; i < 2; i++) {
-        const user = seededUsers[i];
+        const user = await userRepo.findOne({
+            where: {
+                id: seededUsers[i].id
+            }
+        });
         for (let j = 0; j < seededUsers.length - i - 1; j++) {
-            const friend = seededUsers[i + j + 1];
+            const friend = await userRepo.findOne({
+                where: {
+                    id: seededUsers[i + j + 1].id
+                }
+            });
 
             const newFriendRequest: FriendRequest = friendsRepo.create({
                 userA: user.id,
@@ -227,8 +272,16 @@ const seedFriends = async (connection: any) => {
     }
 
     for (let i = 1; i < 4; i++) {
-        const user = seededUsers[i];
-        const friend = seededUsers[0];
+        const user = await userRepo.findOne({
+            where: {
+                id: seededUsers[i].id
+            }
+        });
+        const friend = await userRepo.findOne({
+            where: {
+                id: seededUsers[0].id
+            }
+        });
 
         const foundFriendRequest: FriendRequest = await friendsRepo.findOne({
             userA: friend.id,
