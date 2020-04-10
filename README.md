@@ -70,6 +70,15 @@ npm install
 
 ```
 {
+    "type": "mysql",
+  "host": "localhost",
+  "port": 3306,
+  "username": "root",
+  "password": "1234",
+  "database": "forumdb",
+  "entities": [
+    "src/database/entities/**/*.ts"
+  ],
   "migrations": [
     "src/database/migration/**/*.ts"
   ],

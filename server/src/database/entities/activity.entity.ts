@@ -21,7 +21,10 @@ export class ActivityRecord {
   @ManyToOne(
     type => User,
     user => user.activity,
+    {
+      eager: true
+    }
   )
   @JoinColumn()
-  public user: Promise<User>;
+  public user: User;
 }
