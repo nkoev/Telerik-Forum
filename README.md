@@ -2,14 +2,14 @@
 <a href="https://imgbb.com/"><img src="https://i.ibb.co/FVMhT54/1dbb7cb4-1adf-4ce1-a07c-94f1600e4af0-200x2001.png" alt="1dbb7cb4-1adf-4ce1-a07c-94f1600e4af0-200x2001" border="0"></a>
 <a href="https://imgbb.com/"><img src="https://i.ibb.co/Mk0qwJJ/10d5f16c-efbf-4cab-8024-5a47998b080e-200x200.png" alt="10d5f16c-efbf-4cab-8024-5a47998b080e-200x200" border="0"></a> -->
 
-<a href="https://imgbb.com/"><img src="https://i.ibb.co/Mk0qwJJ/10d5f16c-efbf-4cab-8024-5a47998b080e-200x200.png" alt="10d5f16c-efbf-4cab-8024-5a47998b080e-200x200" align="left" border="0"></a>
-<br>
-<h1 align="center"><b>Telerik Forum Next</b></h1>
-<h4 align="center"><i>
+<div>
+<h1><b>Telerik Forum Next</b></h1>
+<h4><i>
 A Telerik Academy students project on typescript, built with NestJS, TypeORM and MySQL
 </i></h4>
-<br>
-<br>
+</div>
+<img align="right" border="0" src="https://i.ibb.co/Mk0qwJJ/10d5f16c-efbf-4cab-8024-5a47998b080e-200x200.png" alt="10d5f16c-efbf-4cab-8024-5a47998b080e-200x200">
+
 <p> 
 This is the backend for our Telerik Forum Next training project aiming to deliver safe and effective RESTful web service for our forum application.
 It was built in a completely modular manner :
@@ -22,11 +22,12 @@ It was built in a completely modular manner :
 <li>Core Module (global provider)</li>
 <li>App Module (straps everything together)</li>
 </ul>
-</p>
+
 
 <h2>Team</h2>
 
-This project is being developed by <a href="https://gitlab.com/0ligotann">Tanya</a> and <a href="https://gitlab.com/nkoev">Nikolay</a>, proud Bulgaria's Telerik Academy students with the unestimated support of our technical trainers Rosen, Stoyan and Edo.
+This project is being developed by <a href="https://gitlab.com/0ligotann">Tanya</a> and <a href="https://gitlab.com/nkoev">Nikolay</a>,
+proud Bulgaria's Telerik Academy students under the guidance of our technical trainers Rosen, Stoyan and Edo and the unestimated mental support of Boyan Hadjiev.
 
 <h2>Features</h2>
 
@@ -115,7 +116,15 @@ npm run seed:data
 <li>Ready to play with API on localhost:3000/api</li>
 </ol>
 
-<a href="https://imgbb.com/"><img src="https://i.ibb.co/FVMhT54/1dbb7cb4-1adf-4ce1-a07c-94f1600e4af0-200x2001.png" alt="1dbb7cb4-1adf-4ce1-a07c-94f1600e4af0-200x2001" border="0" align="right"></a>
-
+<div>
+<img border="0" align="right" src="https://i.ibb.co/FVMhT54/1dbb7cb4-1adf-4ce1-a07c-94f1600e4af0-200x2001.png" alt="1dbb7cb4-1adf-4ce1-a07c-94f1600e4af0-200x2001">
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
 
