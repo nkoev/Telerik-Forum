@@ -5,7 +5,8 @@
   "author": "",
   "license": "MIT",
   "scripts": {
-    "seed": "ts-node ./src/common/seed/seed.ts",
+    "seed:admin": "ts-node ./src/common/seed/seed.ts",
+    "seed:data": "ts-node ./src/common/seed/seed.ts",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
