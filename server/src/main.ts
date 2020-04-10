@@ -13,10 +13,10 @@ async function bootstrap() {
   // app.use(helmet());
 
   const options = new DocumentBuilder()
-    .setTitle('Telerik Forum')
+    .setTitle('Telerik Forum Next')
     .setDescription('Forum API description')
     .setVersion('1.0')
-    .addTag('Telerik forum')
+    .addTag('forum')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, options);
