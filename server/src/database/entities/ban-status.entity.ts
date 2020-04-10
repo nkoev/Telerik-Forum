@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, AfterLoad } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from "typeorm"
 import { User } from "./user.entity"
 
 @Entity('banstatuses')

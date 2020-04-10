@@ -120,11 +120,10 @@ export class CommentsService {
       throw new ForumSystemException('Not allowed to delete other users comments', 403);
     }
 
-    const deletedComment: Comment = {
+    const deletedComment: Comment = await this.commentsRepo.save({
       ...comment,
       isDeleted: true
-    };
-    await this.commentsRepo.save(deletedComment);
+    });
 
     await this.activityService.logCommentEvent(loggedUser, ActivityType.Remove, postId, commentId);
 

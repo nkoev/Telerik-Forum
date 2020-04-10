@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, ManyToMany, JoinTable } from "typeorm";
 import { User } from "./user.entity";
 import { Comment } from "./comment.entity";
+import { Expose } from "class-transformer";
 
 @Entity('posts')
 export class Post {
@@ -29,12 +30,6 @@ export class Post {
     )
     comments: Promise<Comment[]>;
 
-    @ManyToOne(
-        type => User, {
-        eager: true
-    })
-    user: User;
-
     @ManyToMany(
         type => User,
         user => user.likedPosts, {
@@ -50,5 +45,11 @@ export class Post {
     })
     @JoinTable()
     flags: User[];
+
+    @ManyToOne(
+        type => User, {
+        eager: true
+    })
+    user: User;
 
 }
