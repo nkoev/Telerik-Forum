@@ -27,7 +27,7 @@ It was built in a completely modular manner :
 <h2>Team</h2>
 
 This project is being developed by <a href="https://gitlab.com/0ligotann">Tanya</a> and <a href="https://gitlab.com/nkoev">Nikolay</a>,
-proud Bulgaria's Telerik Academy students under the guidance of our technical trainers Rosen, Stoyan and Edo and the unestimated mental support of Boyan Hadjiev.
+proud Bulgaria's Telerik Academy students under the guidance of our technical trainers Rosen, Stoyan and Edo and the inestimable mental support of Boyan Hadjiev.
 
 <h2>Features</h2>
 
