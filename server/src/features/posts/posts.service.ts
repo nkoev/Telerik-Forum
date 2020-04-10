@@ -108,7 +108,7 @@ export class PostsService {
     this.validatePost(post);
     this.validatePostUnlocked(post);
     if (post.user.id === loggedUser.id) {
-      throw new ForumSystemException('Not allowed to like user\'s own posts', 403)
+      throw new ForumSystemException('Not allowed to flag user\'s own posts', 403)
     }
     const currentState: boolean = post.flags.some(user => user.id === loggedUser.id)
     if (state === currentState) {
@@ -123,7 +123,7 @@ export class PostsService {
     state
       ? (
         await flags.add(loggedUser),
-        await this.activityService.logPostEvent(loggedUser, ActivityType.Like, postId),
+        await this.activityService.logPostEvent(loggedUser, ActivityType.Flag, postId),
         await this.notificationsService.notifyAdmins(NotificationType.Post, ActionType.Flag, `posts/${postId}`)
       )
       : await flags.remove(loggedUser)
@@ -157,14 +157,14 @@ export class PostsService {
       throw new ForumSystemException('Not allowed to delete other users posts', 403)
     }
 
-    const savedPost = await this.postsRepo.save({
+    const deletedPost: Post = await this.postsRepo.save({
       ...post,
       isDeleted: true
     });
 
     await this.activityService.logPostEvent(loggedUser, ActivityType.Remove, postId)
 
-    return this.toPostShowDTO(savedPost)
+    return this.toPostShowDTO(deletedPost)
   }
 
   private toPostShowDTO(post: Post): PostShowDTO {

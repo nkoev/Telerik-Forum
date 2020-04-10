@@ -1,16 +1,17 @@
-import { Controller, HttpCode, HttpStatus, Body, Post, Delete, ValidationPipe, Param, ParseUUIDPipe, Get, Query, UseGuards, Put } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Body, Post, Delete, ValidationPipe, Param, ParseUUIDPipe, Get, UseGuards, Put } from '@nestjs/common';
 import { FriendsService } from './friends.service'
+import { User } from '../../database/entities/user.entity';
 import { UserShowDTO } from '../../models/users/user-show.dto';
 import { AddFriendDTO } from '../../models/users/add-friend.dto';
-import { RolesGuard } from '../../common/guards/roles.guard';
 import { AuthGuardWithBlacklisting } from '../../common/guards/auth-guard-with-blacklisting.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { BanGuard } from '../../common/guards/ban.guard';
 import { LoggedUser } from '../../common/decorators/user.decorator';
-import { User } from '../../database/entities/user.entity';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('users/friends')
 @ApiBearerAuth()
-@UseGuards(AuthGuardWithBlacklisting, RolesGuard)
+@UseGuards(AuthGuardWithBlacklisting, RolesGuard, BanGuard)
 export class FriendsController {
 
     constructor(private readonly friendsService: FriendsService) { }
@@ -44,7 +45,7 @@ export class FriendsController {
     }
 
     //  DELETE FRIEND REQUEST
-    @Delete()
+    @Delete('/requests')
     @HttpCode(HttpStatus.OK)
     async deleteFriendRequest(
         @LoggedUser() loggedUser: User,

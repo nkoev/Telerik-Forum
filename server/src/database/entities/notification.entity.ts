@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, ManyToOne, JoinTable } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from "typeorm";
 import { NotificationType } from "../../models/notifications/notifications.enum";
 import { ActionType } from "../../models/notifications/actions.enum";
 import { User } from "./user.entity";

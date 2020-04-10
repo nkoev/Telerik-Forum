@@ -6,11 +6,11 @@ export class FriendRequest {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
-    @Column('uuid')
-    user_a_id: string;
+    @Column('uuid', { name: "user_a_id" })
+    userA: string;
 
-    @Column('uuid')
-    user_b_id: string;
+    @Column('uuid', { name: "user_b_id" })
+    userB: string;
 
     @Column('boolean', { default: false })
     status: boolean
