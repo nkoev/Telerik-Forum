@@ -14,13 +14,13 @@ import { ParseBoolPipe } from '../../common/pipes/parse-bool.pipe';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('/posts')
+@ApiBearerAuth()
 @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
 export class PostsController {
 
   constructor(private readonly postsService: PostsService) { }
 
   @Get()
-  @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
   async getPosts(): Promise<PostShowDTO[]> {
 

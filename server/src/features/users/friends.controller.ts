@@ -6,8 +6,10 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { AuthGuardWithBlacklisting } from '../../common/guards/auth-guard-with-blacklisting.guard';
 import { LoggedUser } from '../../common/decorators/user.decorator';
 import { User } from '../../database/entities/user.entity';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('users/friends')
+@ApiBearerAuth()
 @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
 export class FriendsController {
 
