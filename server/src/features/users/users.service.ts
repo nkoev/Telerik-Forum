@@ -11,7 +11,6 @@ import { ShowNotificationDTO } from '../../models/notifications/show-notificatio
 import { BanStatus } from '../../database/entities/ban-status.entity';
 import { BanStatusDTO } from '../../models/users/ban-status.dto';
 import { ForumSystemException } from '../../common/exceptions/system-exception';
-import { FriendRequest } from '../../database/entities/friend-request.entity';
 import { ActivityRecord } from '../../database/entities/activity.entity';
 import { ActivityShowDTO } from '../../models/activity/activity-show.dto';
 import moment = require('moment');
@@ -23,7 +22,6 @@ export class UsersService {
         @InjectRepository(Role) private readonly rolesRepository: Repository<Role>,
         @InjectRepository(User) private readonly usersRepository: Repository<User>,
         @InjectRepository(BanStatus) private readonly banStatusRepository: Repository<BanStatus>,
-        @InjectRepository(FriendRequest) private readonly friendRequestsRepository: Repository<FriendRequest>,
     ) { }
 
     // REGISTER
