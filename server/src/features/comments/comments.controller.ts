@@ -10,8 +10,10 @@ import { LoggedUser } from '../../common/decorators/user.decorator';
 import { User } from '../../database/entities/user.entity';
 import { IsAdmin } from '../../common/decorators/is-admin.decorator';
 import { ParseBoolPipe } from '../../common/pipes/parse-bool.pipe';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('posts/:postId/comments')
+@ApiBearerAuth()
 @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
 export class CommentsController {
 

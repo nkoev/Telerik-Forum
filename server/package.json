@@ -5,8 +5,8 @@
   "author": "",
   "license": "MIT",
   "scripts": {
-    "seed:admin": "ts-node ./src/common/seed/seed-roles.ts",
-    "seed:data": "ts-node ./src/common/seed/seed-data.ts",
+    "seed:admin": "ts-node ./src/common/seed/seed.ts",
+    "seed:data": "ts-node ./src/common/seed/seed.ts",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -20,6 +20,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "majestic": "majestic"
   },
   "dependencies": {

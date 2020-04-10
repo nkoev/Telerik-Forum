@@ -11,8 +11,10 @@ import { User } from '../../database/entities/user.entity';
 import { AccessLevel } from '../../common/decorators/roles.decorator';
 import { IsAdmin } from '../../common/decorators/is-admin.decorator';
 import { ParseBoolPipe } from '../../common/pipes/parse-bool.pipe';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('/posts')
+@ApiBearerAuth()
 @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
 export class PostsController {
 
