@@ -23,8 +23,7 @@ export class CommentsService {
 
   public async getComments(postId: number): Promise<CommentShowDTO[]> {
 
-    const post: Post = await this.getPostEntity(postId)
-    this.validatePost(post)
+    await this.getPostEntity(postId);
 
     const comments = await this.commentsRepo.find({
       where: {
@@ -38,18 +37,16 @@ export class CommentsService {
 
   public async getSingleComment(postId: number, commentId: number): Promise<CommentShowDTO> {
 
-    const comment: Comment = await this.getCommentEntity(postId, commentId)
-    this.validateComment(comment)
+    const comment: Comment = await this.getCommentEntity(postId, commentId);
 
     return this.toCommentShowDTO(comment);
   }
 
   public async createComment(loggedUser: User, postId: number, commentDTO: CommentCreateDTO): Promise<CommentShowDTO> {
 
-    const post: Post = await this.getPostEntity(postId)
-    this.validatePost(post)
+    const post: Post = await this.getPostEntity(postId);
     if (post.isLocked) {
-      throw new ForumSystemException('Post is locked', 403)
+      throw new ForumSystemException('Post is locked', 403);
     }
 
     const newComment: Comment = this.commentsRepo.create({
@@ -67,8 +64,7 @@ export class CommentsService {
 
   public async updateComment(loggedUser: User, postId: number, commentId: number, update: CommentUpdateDTO, isAdmin: boolean): Promise<CommentShowDTO> {
 
-    const comment: Comment = await this.getCommentEntity(postId, commentId)
-    this.validateComment(comment)
+    const comment: Comment = await this.getCommentEntity(postId, commentId);
     if (comment.user.id !== loggedUser.id && !isAdmin) {
       throw new ForumSystemException('Not allowed to update other users comments', 403);
     }
@@ -87,7 +83,6 @@ export class CommentsService {
   public async likeComment(loggedUser: User, postId: number, commentId: number, state: boolean): Promise<CommentShowDTO> {
 
     const comment: Comment = await this.getCommentEntity(postId, commentId);
-    this.validateComment(comment);
     if (comment.user.id === loggedUser.id) {
       throw new ForumSystemException('Not allowed to like user\'s own comments', 403);
     }
@@ -115,7 +110,6 @@ export class CommentsService {
   public async deleteComment(loggedUser: User, postId: number, commentId: number, isAdmin: boolean): Promise<CommentShowDTO> {
 
     const comment: Comment = await this.getCommentEntity(postId, commentId);
-    this.validateComment(comment);
     if (comment.user.id !== loggedUser.id && !isAdmin) {
       throw new ForumSystemException('Not allowed to delete other users comments', 403);
     }
@@ -138,34 +132,42 @@ export class CommentsService {
     });
   }
 
-  private async getPostEntity(postId: number): Promise<Post> {
-    return await this.postsRepo.findOne({
-      where: {
-        isDeleted: false,
-        id: postId
-      }
-    });
-  }
-
-  private async getCommentEntity(postId: number, commentId: number): Promise<Comment> {
-    return await this.commentsRepo.findOne({
-      where: {
-        id: commentId,
-        post: { id: postId, isDeleted: false },
-        isDeleted: false
-      }
-    });
-  }
-
   private validatePost(post: Post): void {
     if (!post) {
       throw new ForumSystemException('Post does not exist', 404);
     }
   }
 
+  private async getPostEntity(postId: number): Promise<Post> {
+    const foundPost = await this.postsRepo.findOne({
+      where: {
+        isDeleted: false,
+        id: postId
+      }
+    });
+
+    this.validatePost(foundPost);
+
+    return foundPost;
+  }
+
   private validateComment(comment: Comment): void {
     if (!comment) {
       throw new ForumSystemException('Comment does not exist', 404);
     }
+  }
+
+  private async getCommentEntity(postId: number, commentId: number): Promise<Comment> {
+    const foundComment = await this.commentsRepo.findOne({
+      where: {
+        id: commentId,
+        post: { id: postId, isDeleted: false },
+        isDeleted: false
+      }
+    });
+
+    this.validateComment(foundComment);
+
+    return foundComment;
   }
 }
