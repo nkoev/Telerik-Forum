@@ -8,9 +8,10 @@ import { AppMaterialModule } from './material/material.module';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './login/login.component';
+import { CarouselComponent } from './carousel/carousel.component';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent],
+  declarations: [AppComponent, LoginComponent, CarouselComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

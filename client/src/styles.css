@@ -10,10 +10,7 @@ COLORS:
 html,
 body {
   height: 100%;
-}
-body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
-  display: flex;
-  justify-content: center;
+  background-color: #474b4f;
 }
