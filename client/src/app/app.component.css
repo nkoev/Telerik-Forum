@@ -1,12 +1,1 @@
-.root {
-  position: relative;
-}
 
-.login-container {
-  position: absolute;
-  width: 40%;
-  top: 10%;
-  left: 30%;
-  text-align: center;
-  z-index: 100;
-}

@@ -9,9 +9,10 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './login/login.component';
 import { CarouselComponent } from './carousel/carousel.component';
+import { RegisterComponent } from './register/register.component';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, CarouselComponent],
+  declarations: [AppComponent, LoginComponent, CarouselComponent, RegisterComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
