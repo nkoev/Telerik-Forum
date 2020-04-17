@@ -1,5 +1,12 @@
 .wrapper {
   position: relative;
+  height: 100%;
+}
+
+.carousel-container {
+  position: absolute;
+  width: 100%;
+  z-index: 1;
 }
 
 .login-container {
@@ -8,7 +15,7 @@
   top: 10%;
   left: 30%;
   text-align: center;
-  z-index: 100;
+  z-index: 2;
 }
 
 #login-button {
@@ -19,4 +26,13 @@
 #signup-button {
   color: white;
   background-color: #61892f;
+}
+
+.register-popup {
+  position: absolute;
+  width: 50%;
+  top: 10%;
+  left: 25%;
+  text-align: center;
+  z-index: 3;
 }

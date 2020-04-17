@@ -13,6 +13,7 @@ export class LoginComponent {
   constructor(private http: HttpClient) {}
 
   login() {
+    console.log(this.username);
     const body = {
       username: this.username,
       password: this.password,

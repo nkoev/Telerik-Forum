@@ -6,12 +6,11 @@ import { LoginComponent } from './login/login.component';
 
 const routes: Routes = [
   {
-    path: 'register',
-    component: RegisterComponent,
-  },
-  {
     path: 'login',
     component: LoginComponent,
+    children: [
+      { path: 'register', component: RegisterComponent, outlet: 'popup' },
+    ],
   },
 ];
 

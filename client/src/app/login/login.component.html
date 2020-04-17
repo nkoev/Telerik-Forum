@@ -3,7 +3,7 @@
     <mat-card>
       <mat-form-field>
         <mat-label>Username</mat-label>
-        <input id="test" matInput [(ngModel)]="username" />
+        <input matInput [(ngModel)]="username" />
       </mat-form-field>
       <br />
       <mat-form-field>
@@ -23,8 +23,7 @@
       <button
         id="signup-button"
         mat-raised-button
-        routerLink="/register"
-        routerLinkActive="active"
+        [routerLink]="[{ outlets: { popup: ['register'] } }]"
       >
         Sign up
       </button>
@@ -32,5 +31,8 @@
   </div>
   <div class="carousel-container">
     <app-carousel></app-carousel>
+  </div>
+  <div class="register-popup">
+    <router-outlet name="popup"></router-outlet>
   </div>
 </div>

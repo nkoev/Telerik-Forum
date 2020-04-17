@@ -1,1 +1,28 @@
-<p>register works!</p>
+<mat-card>
+  <mat-card-title id="title">Please, fill in your details</mat-card-title>
+  <form #registerForm="ngForm" (submit)="onSubmit()">
+    <mat-form-field>
+      <mat-label>Username</mat-label>
+      <input matInput type="text" [(ngModel)]="username" name="username" />
+    </mat-form-field>
+    <br />
+    <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input matInput type="password" [(ngModel)]="password" name="password" />
+    </mat-form-field>
+    <br />
+    <mat-form-field>
+      <mat-label>Re-enter password</mat-label>
+      <input
+        matInput
+        type="password"
+        [(ngModel)]="confirmPassword"
+        name="confirmPassword"
+      />
+    </mat-form-field>
+    <br />
+    <button type="submit" id="register-button" mat-raised-button>
+      Submit
+    </button>
+  </form>
+</mat-card>
