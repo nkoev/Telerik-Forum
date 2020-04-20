@@ -1,6 +1,6 @@
 <mat-card>
   <mat-card-title id="title">Please, fill in your details</mat-card-title>
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit(registerForm.value)">
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit(registerForm)">
     <mat-form-field>
       <mat-label>Username</mat-label>
       <input
@@ -58,8 +58,14 @@
       Passwords do not match
     </mat-error>
     <br />
-    <button type="submit" id="register-button" mat-raised-button>
+    <button
+      class="dark-green-button"
+      type="submit"
+      id="register-button"
+      mat-raised-button
+    >
       Submit
     </button>
+    <div *ngIf="invalid">Please check if all the fields are correct</div>
   </form>
 </mat-card>

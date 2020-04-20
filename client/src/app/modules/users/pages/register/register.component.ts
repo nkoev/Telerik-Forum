@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators, NgForm, FormBuilder } from '@angular/forms';
-import { passwordsValidator } from 'src/validators/confirm-password';
+import { passwordsValidator } from 'src/app/modules/users/shared/passwords.directive';
 
 @Component({
   selector: 'app-register',
@@ -10,6 +10,7 @@ import { passwordsValidator } from 'src/validators/confirm-password';
 export class RegisterComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
   registerForm: FormGroup;
+  invalid = false;
 
   ngOnInit() {
     this.registerForm = this.fb.group(
@@ -32,7 +33,11 @@ export class RegisterComponent implements OnInit {
     return this.registerForm.get('confirmPassword');
   }
 
-  onSubmit(form: NgForm) {
-    console.log(form);
+  onSubmit(form: FormGroup) {
+    if (form.invalid) {
+      this.invalid = true;
+    } else {
+      this.invalid = false;
+    }
   }
 }
