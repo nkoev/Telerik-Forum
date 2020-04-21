@@ -1,38 +1,33 @@
-<div class="wrapper">
-  <div class="login-container">
-    <mat-card>
-      <mat-form-field>
-        <mat-label>Username</mat-label>
-        <input matInput [(ngModel)]="username" />
-      </mat-form-field>
-      <br />
-      <mat-form-field>
-        <mat-label>Password</mat-label>
-        <input type="password" matInput [(ngModel)]="password" />
-      </mat-form-field>
-      <br />
-      <button id="login-button" mat-raised-button (click)="login()">
-        Login
-      </button>
-    </mat-card>
+<div class="login-container">
+  <mat-card>
+    <mat-form-field>
+      <mat-label>Username</mat-label>
+      <input matInput [(ngModel)]="username" />
+    </mat-form-field>
     <br />
-    <mat-card>
-      Not registered?
-      <br />
-      <br />
-      <button
-        class="dark-green-button"
-        mat-raised-button
-        [routerLink]="[{ outlets: { popup: ['register'] } }]"
-      >
-        Sign up
-      </button>
-    </mat-card>
-  </div>
-  <div class="carousel-container">
-    <app-carousel></app-carousel>
-  </div>
-  <div class="register-popup">
-    <router-outlet name="popup"></router-outlet>
-  </div>
+    <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input type="password" matInput [(ngModel)]="password" />
+    </mat-form-field>
+    <br />
+    <button id="login-button" mat-raised-button (click)="login()">
+      Login
+    </button>
+  </mat-card>
+  <br />
+  <mat-card>
+    Not registered?
+    <br />
+    <br />
+    <button
+      class="dark-green-button"
+      mat-raised-button
+      [routerLink]="[{ outlets: { popup: ['register'] } }]"
+    >
+      Sign up
+    </button>
+  </mat-card>
+</div>
+<div class="carousel-container">
+  <app-carousel></app-carousel>
 </div>

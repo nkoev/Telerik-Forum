@@ -66,6 +66,11 @@
     >
       Submit
     </button>
-    <div *ngIf="invalid">Please check if all the fields are correct</div>
+    <div class="fail" *ngIf="invalid === true">
+      Please check if all the fields are correct
+    </div>
+    <div class="success" *ngIf="invalid === false">
+      You have registered successfully!
+    </div>
   </form>
 </mat-card>

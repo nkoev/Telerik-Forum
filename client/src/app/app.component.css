@@ -1,1 +1,13 @@
+.wrapper {
+  position: relative;
+  height: 100%;
+}
 
+.register-popup {
+  position: absolute;
+  width: 50%;
+  top: 10%;
+  left: 25%;
+  text-align: center;
+  z-index: 30;
+}
