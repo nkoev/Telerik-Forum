@@ -1,5 +1,18 @@
-import { Controller, HttpCode, HttpStatus, Body, Post, Delete, ValidationPipe, Param, ParseUUIDPipe, Get, UseGuards, Put } from '@nestjs/common';
-import { UsersService } from './users.service'
+import {
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Body,
+  Post,
+  Delete,
+  ValidationPipe,
+  Param,
+  ParseUUIDPipe,
+  Get,
+  UseGuards,
+  Put,
+} from '@nestjs/common';
+import { UsersService } from './users.service';
 import { UserRegisterDTO } from '../../models/users/user-register.dto';
 import { UserShowDTO } from '../../models/users/user-show.dto';
 import { ShowNotificationDTO } from '../../models/notifications/show-notification.dto';
@@ -15,70 +28,79 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
 
-    constructor(private readonly usersService: UsersService) { }
+  // GET ALL USERS
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  async getUsers(): Promise<UserShowDTO[]> {
+    return await this.usersService.getUsers();
+  }
 
-
-    //  REGISTER
-    @Post()
-    @HttpCode(HttpStatus.CREATED)
-    async registerUser(@Body(new ValidationPipe({
+  //  REGISTER
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  async registerUser(
+    @Body(
+      new ValidationPipe({
         whitelist: true,
-        transform: true
-    })) user: UserRegisterDTO) {
-        return await this.usersService.registerUser(user);
-    }
+        transform: true,
+      }),
+    )
+    user: UserRegisterDTO,
+  ) {
+    return await this.usersService.registerUser(user);
+  }
 
-    //  GET ALL NOTIFICATIONS
-    @Get('/notifications')
-    @ApiBearerAuth()
-    @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
-    @HttpCode(HttpStatus.OK)
-    async getNotifications(
-        @LoggedUser() loggedUser: User
-    ): Promise<ShowNotificationDTO[]> {
+  //  GET ALL NOTIFICATIONS
+  @Get('/notifications')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
+  @HttpCode(HttpStatus.OK)
+  async getNotifications(
+    @LoggedUser() loggedUser: User,
+  ): Promise<ShowNotificationDTO[]> {
+    return await this.usersService.getNotifications(loggedUser);
+  }
 
-        return await this.usersService.getNotifications(loggedUser);
-    }
+  // GET USER ACTIVITY
+  @Get('/:userId/activity')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
+  @HttpCode(HttpStatus.OK)
+  async getUserActivity(
+    @LoggedUser() loggedUser: User,
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ): Promise<ActivityShowDTO[]> {
+    return await this.usersService.getUserActivity(loggedUser, userId);
+  }
 
-    // GET USER ACTIVITY
-    @Get('/:userId/activity')
-    @ApiBearerAuth()
-    @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
-    @HttpCode(HttpStatus.OK)
-    async getUserActivity(
-        @LoggedUser() loggedUser: User,
-        @Param('userId', ParseUUIDPipe) userId: string
-    ): Promise<ActivityShowDTO[]> {
+  // BAN USERS
+  @Put('/:userId/banstatus')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuardWithBlacklisting, BanGuard, RolesGuard)
+  @AccessLevel('Admin')
+  async updateBanStatus(
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @Body(
+      new ValidationPipe({
+        whitelist: true,
+        transform: true,
+      }),
+    )
+    banStatusUpdate: BanStatusDTO,
+  ): Promise<UserShowDTO> {
+    return await this.usersService.updateBanStatus(userId, banStatusUpdate);
+  }
 
-        return await this.usersService.getUserActivity(loggedUser, userId);
-    }
-
-    // BAN USERS
-    @Put('/:userId/banstatus')
-    @ApiBearerAuth()
-    @UseGuards(AuthGuardWithBlacklisting, BanGuard, RolesGuard)
-    @AccessLevel('Admin')
-    async updateBanStatus(
-        @Param('userId', ParseUUIDPipe) userId: string,
-        @Body(new ValidationPipe({
-            whitelist: true,
-            transform: true
-        })) banStatusUpdate: BanStatusDTO
-    ): Promise<UserShowDTO> {
-
-        return await this.usersService.updateBanStatus(userId, banStatusUpdate);
-    }
-
-    // DELETE USER
-    @Delete('/:userId')
-    @ApiBearerAuth()
-    @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
-    @AccessLevel('Admin')
-    async deleteUser(
-        @Param('userId', ParseUUIDPipe) userId: string
-    ): Promise<UserShowDTO> {
-
-        return await this.usersService.deleteUser(userId);
-    }
+  // DELETE USER
+  @Delete('/:userId')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuardWithBlacklisting, RolesGuard)
+  @AccessLevel('Admin')
+  async deleteUser(
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ): Promise<UserShowDTO> {
+    return await this.usersService.deleteUser(userId);
+  }
 }

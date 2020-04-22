@@ -17,128 +17,149 @@ import moment = require('moment');
 
 @Injectable()
 export class UsersService {
+  constructor(
+    @InjectRepository(Role) private readonly rolesRepository: Repository<Role>,
+    @InjectRepository(User) private readonly usersRepository: Repository<User>,
+    @InjectRepository(BanStatus)
+    private readonly banStatusRepository: Repository<BanStatus>,
+  ) {}
 
-    constructor(
-        @InjectRepository(Role) private readonly rolesRepository: Repository<Role>,
-        @InjectRepository(User) private readonly usersRepository: Repository<User>,
-        @InjectRepository(BanStatus) private readonly banStatusRepository: Repository<BanStatus>,
-    ) { }
+  // GET ALL USERS
+  async getUsers() {
+    const users: User[] = await this.usersRepository.find();
+    return users.map(this.toUserShowDTO);
+  }
 
-    // REGISTER
-    async registerUser(user: UserRegisterDTO): Promise<UserShowDTO> {
+  // REGISTER
+  async registerUser(user: UserRegisterDTO): Promise<UserShowDTO> {
+    const existingUser = await this.usersRepository.findOne({
+      where: { username: user.username },
+    });
 
-        const existingUser = await this.usersRepository.findOne({
-            where: { username: user.username }
-        });
-
-        if (existingUser !== undefined) {
-            throw new ForumSystemException('Username taken', 409);
-        }
-
-        user.password = await bcrypt.hash(user.password, 10);
-        const newUser: User = this.usersRepository.create(user);
-        newUser.posts = Promise.resolve([]);
-        newUser.comments = Promise.resolve([]);
-        newUser.roles = [
-            await this.rolesRepository.findOne({
-                where: { name: 'Basic' }
-            })]
-        newUser.banStatus =
-            await this.banStatusRepository.save(
-                this.banStatusRepository.create()
-            );
-        await this.usersRepository.save(newUser);
-
-        return this.toUserShowDTO(newUser);
+    if (existingUser !== undefined) {
+      throw new ForumSystemException('Username taken', 409);
     }
 
-    // BAN USERS
-    async updateBanStatus(userId: string, banStatusUpdate: BanStatusDTO): Promise<UserShowDTO> {
-        const foundUser: User = await this.usersRepository.findOne({
-            id: userId,
-            isDeleted: false,
-        })
+    user.password = await bcrypt.hash(user.password, 10);
+    const newUser: User = this.usersRepository.create(user);
+    newUser.posts = Promise.resolve([]);
+    newUser.comments = Promise.resolve([]);
+    newUser.roles = [
+      await this.rolesRepository.findOne({
+        where: { name: 'Basic' },
+      }),
+    ];
+    newUser.banStatus = await this.banStatusRepository.save(
+      this.banStatusRepository.create(),
+    );
+    await this.usersRepository.save(newUser);
 
-        if (!foundUser) {
-            throw new ForumSystemException('User does not exist', 404);
-        }
-        if (foundUser.banStatus.isBanned) {
-            throw new ForumSystemException('User is already banned', 400);
-        }
+    return this.toUserShowDTO(newUser);
+  }
 
-        const expiryDate = moment(banStatusUpdate.expires, 'DD-MM-YYYY', true)
-        const presentDate = moment()
-        const expiryMaxDate = moment().add(90, 'd')
+  // BAN USERS
+  async updateBanStatus(
+    userId: string,
+    banStatusUpdate: BanStatusDTO,
+  ): Promise<UserShowDTO> {
+    const foundUser: User = await this.usersRepository.findOne({
+      id: userId,
+      isDeleted: false,
+    });
 
-        if (!expiryDate.isValid()) {
-            throw new ForumSystemException('Expiry date should be in format DD-MM-YYYY', 400)
-        }
-        if (!expiryDate.isBetween(presentDate, expiryMaxDate)) {
-            throw new ForumSystemException('Ban expiry date should be within 90 days from current date', 400)
-        }
-
-        await this.banStatusRepository.save({ ...foundUser.banStatus, ...banStatusUpdate })
-
-        return this.toUserShowDTO(foundUser)
+    if (!foundUser) {
+      throw new ForumSystemException('User does not exist', 404);
+    }
+    if (foundUser.banStatus.isBanned) {
+      throw new ForumSystemException('User is already banned', 400);
     }
 
-    // DELETE USER
-    async deleteUser(userId: string): Promise<UserShowDTO> {
-        const foundUser: User = await this.usersRepository.findOne({
-            id: userId,
-            isDeleted: false,
-        })
+    const expiryDate = moment(banStatusUpdate.expires, 'DD-MM-YYYY', true);
+    const presentDate = moment();
+    const expiryMaxDate = moment().add(90, 'd');
 
-        if (!foundUser) {
-            throw new ForumSystemException('User does not exist', 404);
-        }
-
-        await this.usersRepository.save({ ...foundUser, isDeleted: true })
-
-        return this.toUserShowDTO(foundUser)
+    if (!expiryDate.isValid()) {
+      throw new ForumSystemException(
+        'Expiry date should be in format DD-MM-YYYY',
+        400,
+      );
+    }
+    if (!expiryDate.isBetween(presentDate, expiryMaxDate)) {
+      throw new ForumSystemException(
+        'Ban expiry date should be within 90 days from current date',
+        400,
+      );
     }
 
-    // GET ALL NOTIFICATIONS
-    async getNotifications(loggedUser: User): Promise<ShowNotificationDTO[]> {
-        return (await loggedUser.notifications).map(notification => new ShowNotificationDTO(notification));
+    await this.banStatusRepository.save({
+      ...foundUser.banStatus,
+      ...banStatusUpdate,
+    });
+
+    return this.toUserShowDTO(foundUser);
+  }
+
+  // DELETE USER
+  async deleteUser(userId: string): Promise<UserShowDTO> {
+    const foundUser: User = await this.usersRepository.findOne({
+      id: userId,
+      isDeleted: false,
+    });
+
+    if (!foundUser) {
+      throw new ForumSystemException('User does not exist', 404);
     }
 
-    // GET USER ACTIVITY
-    async getUserActivity(loggedUser: User, userId: string): Promise<ActivityShowDTO[]> {
-        const user = await getConnection().manager.findOne(User, userId);
-        const loggedUserRoles = loggedUser.roles.map(role => role.name)
+    await this.usersRepository.save({ ...foundUser, isDeleted: true });
 
-        if (!loggedUserRoles.includes('Admin')) {
-            if (loggedUser.id !== user.id) {
-                throw new ForumSystemException('Not allowed to read other users\' activity log', 401);
-            }
-        }
-        if (!user) {
-            throw new ForumSystemException('User does not exist', 404);
-        }
+    return this.toUserShowDTO(foundUser);
+  }
 
-        const records = await getConnection()
-            .createQueryBuilder()
-            .relation(User, "activity")
-            .of(user)
-            .loadMany();
+  // GET ALL NOTIFICATIONS
+  async getNotifications(loggedUser: User): Promise<ShowNotificationDTO[]> {
+    return (await loggedUser.notifications).map(
+      notification => new ShowNotificationDTO(notification),
+    );
+  }
 
-        return records.map(this.toActivityShowDTO)
+  // GET USER ACTIVITY
+  async getUserActivity(
+    loggedUser: User,
+    userId: string,
+  ): Promise<ActivityShowDTO[]> {
+    const user = await getConnection().manager.findOne(User, userId);
+    const loggedUserRoles = loggedUser.roles.map(role => role.name);
+
+    if (!loggedUserRoles.includes('Admin')) {
+      if (loggedUser.id !== user.id) {
+        throw new ForumSystemException(
+          "Not allowed to read other users' activity log",
+          401,
+        );
+      }
+    }
+    if (!user) {
+      throw new ForumSystemException('User does not exist', 404);
     }
 
-    private toUserShowDTO(user: User): UserShowDTO {
-        return plainToClass(
-            UserShowDTO,
-            user, {
-            excludeExtraneousValues: true
-        });
-    }
+    const records = await getConnection()
+      .createQueryBuilder()
+      .relation(User, 'activity')
+      .of(user)
+      .loadMany();
 
-    private toActivityShowDTO(record: ActivityRecord): ActivityShowDTO {
-        return plainToClass(
-            ActivityShowDTO,
-            record, {
-            excludeExtraneousValues: true
-        });
-    }
+    return records.map(this.toActivityShowDTO);
+  }
+
+  private toUserShowDTO(user: User): UserShowDTO {
+    return plainToClass(UserShowDTO, user, {
+      excludeExtraneousValues: true,
+    });
+  }
+
+  private toActivityShowDTO(record: ActivityRecord): ActivityShowDTO {
+    return plainToClass(ActivityShowDTO, record, {
+      excludeExtraneousValues: true,
+    });
+  }
 }
