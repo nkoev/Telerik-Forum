@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { passwordsValidator } from 'src/app/modules/users/validators/match-passwords';
 import { Router } from '@angular/router';
-import { RegisterService } from '../../services/register.service';
+import { UsersDataService } from '../../services/users-data.service';
 
 @Component({
   selector: 'app-register',
@@ -13,7 +13,7 @@ export class RegisterComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private registerService: RegisterService
+    private registerService: UsersDataService
   ) {}
   registerForm: FormGroup;
   invalid: boolean;

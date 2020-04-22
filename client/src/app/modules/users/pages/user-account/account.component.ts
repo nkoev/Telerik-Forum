@@ -1,15 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { UsersDataService } from '../../services/users-data.service';
 
 @Component({
-  selector: 'app-account',
+  selector: 'app-user-account',
   templateUrl: './account.component.html',
-  styleUrls: ['./account.component.css']
+  styleUrls: ['./account.component.css'],
 })
-export class AccountComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+export class UserAccountComponent implements OnInit {
+  constructor() {}
+  ngOnInit(): void {}
 }

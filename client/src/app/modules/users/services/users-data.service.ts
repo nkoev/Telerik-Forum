@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
 @Injectable()
-export class RegisterService {
+export class UsersDataService {
   constructor(private http: HttpClient) {}
 
   private usersUrl = 'http://localhost:3000/users';
@@ -23,5 +23,11 @@ export class RegisterService {
           users.includes((user) => user.username === username)
         )
       );
+  }
+
+  getUserActivity(userId: string) {
+    return this.http.get(`${this.usersUrl}/${userId}/activity`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('jwt')}` },
+    });
   }
 }

@@ -7,8 +7,8 @@ import { RegisterComponent } from './pages/register/register.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
 import { AppMaterialModule } from 'src/app/shared/modules/material.module';
-import { RegisterService } from './services/register.service';
-import { AccountComponent } from './pages/user-account/account.component';
+import { UsersDataService } from './services/users-data.service';
+import { UserAccountComponent } from './pages/user-account/account.component';
 import { UserActivityComponent } from './components/user-activity/user-activity.component';
 
 @NgModule({
@@ -16,7 +16,7 @@ import { UserActivityComponent } from './components/user-activity/user-activity.
     LoginComponent,
     CarouselComponent,
     RegisterComponent,
-    AccountComponent,
+    UserAccountComponent,
     UserActivityComponent,
   ],
   imports: [
@@ -27,6 +27,6 @@ import { UserActivityComponent } from './components/user-activity/user-activity.
     FormsModule,
     ReactiveFormsModule,
   ],
-  providers: [RegisterService],
+  providers: [UsersDataService],
 })
 export class UsersModule {}

@@ -1,1 +1,5 @@
-<p>user-activity works!</p>
+<ul>
+  <li *ngFor="let activity of userActivity">
+    {{ activity.action }} on {{ activity.timeStamp | date }}
+  </li>
+</ul>

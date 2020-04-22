@@ -5,9 +5,9 @@ import { Error404PageComponent } from './pages/error404-page/error404-page.compo
 import { AuthGuardService } from './modules/core/services/auth-guard.service';
 
 const appRoutes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '', redirectTo: '/users/login', pathMatch: 'full' },
   {
-    path: 'login',
+    path: 'users',
     loadChildren: () =>
       import('./modules/users/users.module').then((m) => m.UsersModule),
   },
