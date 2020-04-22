@@ -8,13 +8,21 @@ import { Error404PageComponent } from './pages/error404-page/error404-page.compo
 import { CoreModule } from './modules/core/core.module';
 import { AuthService } from './modules/core/services/auth.service';
 import { HttpClientModule } from '@angular/common/http';
+import { NavigationComponent } from './shared/components/navigation/navigation.component';
+import { AppMaterialModule } from './shared/modules/material.module';
 
 @NgModule({
-  declarations: [AppComponent, HomePageComponent, Error404PageComponent],
+  declarations: [
+    AppComponent,
+    HomePageComponent,
+    Error404PageComponent,
+    NavigationComponent,
+  ],
   imports: [
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
+    AppMaterialModule,
     UsersModule,
     CoreModule,
   ],

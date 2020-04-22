@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class RegisterService {
@@ -14,11 +15,13 @@ export class RegisterService {
     });
   }
 
-  // checkUsernameNotTaken(username: string) {
-  //   return this.http.get(this.usersUrl).pipe(
-  //     map((res: any) => res.json()),
-  //     map((users) => users.filter((user) => user.username === username)),
-  //     map((users) => !users.length)
-  //   );
-  // }
+  checkUsernameTaken(username: string) {
+    return this.http
+      .get(this.usersUrl)
+      .pipe(
+        map((users: any) =>
+          users.includes((user) => user.username === username)
+        )
+      );
+  }
 }

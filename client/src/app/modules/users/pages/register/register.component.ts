@@ -17,7 +17,6 @@ export class RegisterComponent implements OnInit {
   ) {}
   registerForm: FormGroup;
   invalid: boolean;
-  usernameTaken: boolean;
 
   ngOnInit() {
     this.registerForm = this.fb.group(
@@ -47,7 +46,7 @@ export class RegisterComponent implements OnInit {
       this.registerService
         .register(this.username.value, this.password.value)
         .subscribe(
-          (res) => {
+          () => {
             this.invalid = false;
             setTimeout(() => this.router.navigateByUrl('login'), 3000);
           },
