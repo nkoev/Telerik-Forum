@@ -1,16 +1,23 @@
-import { PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, Entity, JoinColumn } from "typeorm";
-import { User } from "./user.entity";
-import { ActivityType } from "../../models/activity/activity-type.enum";
+import {
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  ManyToOne,
+  Entity,
+  JoinColumn,
+} from 'typeorm';
+import { User } from './user.entity';
 
 @Entity('activityrecords')
-
 export class ActivityRecord {
-
   @PrimaryGeneratedColumn('increment')
   id: string;
 
   @CreateDateColumn()
   timeStamp: Date;
+
+  @Column('nvarchar')
+  username: string;
 
   @Column('nvarchar')
   action: string;
@@ -22,8 +29,8 @@ export class ActivityRecord {
     type => User,
     user => user.activity,
     {
-      eager: true
-    }
+      eager: true,
+    },
   )
   @JoinColumn()
   public user: User;
