@@ -7,11 +7,13 @@ import * as moment from 'moment';
   providedIn: 'root',
 })
 export class AuthService {
+  private authUrl = 'http://localhost:3000/session';
+
   constructor(private http: HttpClient) {}
 
   login(username: string, password: string) {
     return this.http
-      .post('http://localhost:3000/session', {
+      .post(this.authUrl, {
         username,
         password,
       })
@@ -19,7 +21,9 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('jwt');
+    return this.http
+      .delete(this.authUrl)
+      .pipe(tap(() => localStorage.removeItem('jwt')));
   }
 
   isLoggedIn() {

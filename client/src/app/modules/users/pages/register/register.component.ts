@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, Validators, NgForm, FormBuilder } from '@angular/forms';
-import { passwordsValidator } from 'src/app/modules/users/shared/passwords.directive';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { passwordsValidator } from 'src/app/modules/users/validators/match-passwords';
 import { Router } from '@angular/router';
-import { UsersDataService } from '../../services/users-data.service';
+import { RegisterService } from '../../services/register.service';
 
 @Component({
   selector: 'app-register',
@@ -13,10 +13,11 @@ export class RegisterComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private usersDataService: UsersDataService
+    private registerService: RegisterService
   ) {}
   registerForm: FormGroup;
   invalid: boolean;
+  usernameTaken: boolean;
 
   ngOnInit() {
     this.registerForm = this.fb.group(
@@ -43,14 +44,14 @@ export class RegisterComponent implements OnInit {
     if (form.invalid) {
       this.invalid = true;
     } else {
-      this.usersDataService
+      this.registerService
         .register(this.username.value, this.password.value)
         .subscribe(
-          () => {
+          (res) => {
             this.invalid = false;
             setTimeout(() => this.router.navigateByUrl('login'), 3000);
           },
-          (err) => console.log(err.message)
+          (err) => console.log(err)
         );
     }
   }

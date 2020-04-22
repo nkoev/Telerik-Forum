@@ -7,10 +7,17 @@ import { HomePageComponent } from './pages/home-page/home-page.component';
 import { Error404PageComponent } from './pages/error404-page/error404-page.component';
 import { CoreModule } from './modules/core/core.module';
 import { AuthService } from './modules/core/services/auth.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent, HomePageComponent, Error404PageComponent],
-  imports: [BrowserAnimationsModule, AppRoutingModule, UsersModule, CoreModule],
+  imports: [
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    HttpClientModule,
+    UsersModule,
+    CoreModule,
+  ],
   providers: [AuthService],
   bootstrap: [AppComponent],
 })

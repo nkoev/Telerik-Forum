@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { UsersDataService } from '../../services/users-data.service';
 import { AuthService } from 'src/app/modules/core/services/auth.service';
 import { Router } from '@angular/router';
 
