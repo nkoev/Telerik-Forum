@@ -10,13 +10,14 @@ import { UsersDataService } from '../../services/users-data.service';
   styleUrls: ['./register.component.css'],
 })
 export class RegisterComponent implements OnInit {
+  registerForm: FormGroup;
+  invalid: boolean;
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private registerService: UsersDataService
   ) {}
-  registerForm: FormGroup;
-  invalid: boolean;
 
   ngOnInit() {
     this.registerForm = this.fb.group(

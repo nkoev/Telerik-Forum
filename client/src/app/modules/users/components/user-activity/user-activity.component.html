@@ -1,6 +1,9 @@
-<ul>
-  <li *ngFor="let activity of userActivity">
-    {{ activity.username }} {{ activity.action }} on
-    {{ activity.timeStamp | date }}
-  </li>
-</ul>
+<mat-card>
+  <mat-card-title>Your recent activity:</mat-card-title>
+  <ul>
+    <li *ngFor="let activity of userActivity">
+      {{ activity.username }} {{ activity.action }} on
+      {{ activity.timeStamp | date }}
+    </li>
+  </ul>
+</mat-card>

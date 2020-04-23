@@ -8,10 +8,12 @@ import { AuthService } from 'src/app/modules/core/services/auth.service';
 })
 export class NavigationComponent implements OnInit {
   constructor(private authService: AuthService) {}
-
-  ngOnInit(): void {}
+  loggedUser: string;
+  ngOnInit(): void {
+    this.loggedUser = localStorage.getItem('username');
+  }
 
   logout() {
-    this.authService.logout();
+    this.authService.logout().subscribe();
   }
 }

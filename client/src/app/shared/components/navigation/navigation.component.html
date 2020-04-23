@@ -1,16 +1,12 @@
-<div class="nav-container">
+<mat-toolbar class="navigation">
+  <div *ngIf="loggedUser">Hello {{ loggedUser }}!</div>
   <button class="light-green-button" mat-raised-button>
     Create post
   </button>
-
-  <button
-    class="dark-green-button"
-    mat-raised-button
-    routerLink="/users/account"
-  >
+  <button class="dark-green-button" mat-raised-button routerLink="/account">
     Account
   </button>
   <button class="dark-green-button" (click)="logout()" mat-raised-button>
     Logout
   </button>
-</div>
+</mat-toolbar>
