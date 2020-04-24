@@ -43,10 +43,12 @@ export class AuthService {
       throw new UnauthorizedException('Wrong credentials!');
     }
 
-    const payload: UserShowDTO = plainToClass(UserShowDTO, user, {
-      excludeExtraneousValues: true,
-    });
-
+    const payload: UserShowDTO = Object.assign(
+      {},
+      plainToClass(UserShowDTO, user, {
+        excludeExtraneousValues: true,
+      }),
+    );
     const token = await this.jwtService.signAsync(payload);
 
     return {

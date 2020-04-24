@@ -1,5 +1,6 @@
 import { Expose, Transform } from 'class-transformer';
 import { Role } from '../../database/entities/role.entity';
+import { BanStatus } from '../../database/entities/ban-status.entity';
 
 export class UserShowDTO {
   @Expose()
@@ -8,7 +9,8 @@ export class UserShowDTO {
   public username: string;
   @Expose()
   @Transform(roles => roles.map((role: any) => role.name))
-  public roles: Role[];
+  public roles: string[];
   @Expose()
-  public isBanned: boolean;
+  @Transform((banStatus: BanStatus) => banStatus.isBanned)
+  public banStatus: boolean;
 }

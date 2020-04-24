@@ -14,6 +14,10 @@ export class StorageService {
     return value && value !== 'undefined' ? value : null;
   }
 
+  public check(key: string): boolean {
+    return localStorage.getItem(key) ? true : false;
+  }
+
   public delete(key: string) {
     localStorage.removeItem(key);
   }

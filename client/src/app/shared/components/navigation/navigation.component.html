@@ -1,5 +1,5 @@
 <mat-toolbar class="navigation">
-  <div *ngIf="loggedUser">Hello {{ loggedUser }}!</div>
+  <div *ngIf="isLoggedIn">Hello {{ loggedUser.username }}!</div>
   <a mat-icon-button routerLink="/home"><mat-icon>home</mat-icon></a>
   <button class="light-green-button" mat-raised-button>
     Create post

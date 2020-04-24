@@ -3,11 +3,22 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from './services/auth.service';
 import { AuthGuard } from './services/auth.guard';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { StorageService } from './services/storage.service';
+import { TokenInterceptorService } from './services/token-interceptor.service';
 
 @NgModule({
   declarations: [],
-  providers: [AuthService, AuthGuard],
+  providers: [
+    AuthService,
+    AuthGuard,
+    StorageService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptorService,
+      multi: true,
+    },
+  ],
   imports: [BrowserAnimationsModule, HttpClientModule],
   exports: [BrowserAnimationsModule, HttpClientModule],
 })

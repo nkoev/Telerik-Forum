@@ -26,8 +26,6 @@ export class UsersDataService {
   }
 
   getUserActivity(userId: string) {
-    return this.http.get(`${this.usersUrl}/${userId}/activity`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('jwt')}` },
-    });
+    return this.http.get(`${this.usersUrl}/${userId}/activity`);
   }
 }

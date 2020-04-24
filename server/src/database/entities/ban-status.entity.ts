@@ -1,24 +1,24 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from "typeorm"
-import { User } from "./user.entity"
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import { User } from './user.entity';
+import { Expose } from 'class-transformer';
 
 @Entity('banstatuses')
 export class BanStatus {
   @PrimaryGeneratedColumn('increment')
-  id: number
-
+  id: number;
+  @Expose()
   @Column('bool', { default: false })
-  isBanned: boolean
+  isBanned: boolean;
 
   @Column('nvarchar', { nullable: true })
-  description: string
+  description: string;
 
   @Column({ nullable: true })
-  expires: Date
+  expires: Date;
 
   @OneToOne(
     type => User,
     user => user.banStatus,
   )
-  user: Promise<User>
-
+  user: Promise<User>;
 }
