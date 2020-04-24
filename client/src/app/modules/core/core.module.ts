@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from './services/auth.service';
 import { AuthGuardService } from './services/auth-guard.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [],
   providers: [AuthService, AuthGuardService],
-  imports: [BrowserAnimationsModule],
-  exports: [BrowserAnimationsModule],
+  imports: [BrowserAnimationsModule, HttpClientModule],
+  exports: [BrowserAnimationsModule, HttpClientModule],
 })
 export class CoreModule {
   constructor(@Optional() @SkipSelf() parent: CoreModule) {
