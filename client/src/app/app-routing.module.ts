@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
-import { AuthGuardService } from './modules/core/services/auth-guard.service';
+import { AuthGuard } from './modules/core/services/auth.guard';
 import { LoginComponent } from './modules/users/pages/login-page/login.component';
 import { RegisterComponent } from './modules/users/pages/register/register.component';
 import { UserAccountComponent } from './modules/users/pages/user-account/account.component';
@@ -24,9 +24,13 @@ const appRoutes: Routes = [
   {
     path: 'home',
     component: HomePageComponent,
-    canActivate: [AuthGuardService],
+    canActivate: [AuthGuard],
   },
-  { path: 'posts', loadChildren: () => import('./modules/posts/posts.module').then(m => m.PostsModule) },
+  {
+    path: 'posts',
+    loadChildren: () =>
+      import('./modules/posts/posts.module').then((m) => m.PostsModule),
+  },
   { path: '404', component: NotFoundComponent },
   { path: '**', redirectTo: '/404', pathMatch: 'full' },
 ];
@@ -35,4 +39,4 @@ const appRoutes: Routes = [
   imports: [RouterModule.forRoot(appRoutes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

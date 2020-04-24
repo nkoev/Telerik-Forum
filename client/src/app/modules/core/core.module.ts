@@ -1,13 +1,13 @@
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './services/auth.service';
-import { AuthGuardService } from './services/auth-guard.service';
+import { AuthGuard } from './services/auth.guard';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [],
-  providers: [AuthService, AuthGuardService],
+  providers: [AuthService, AuthGuard],
   imports: [BrowserAnimationsModule, HttpClientModule],
   exports: [BrowserAnimationsModule, HttpClientModule],
 })

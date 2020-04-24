@@ -5,7 +5,8 @@ import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserLoginDTO } from '../../models/users/user-login.dto';
-import { JWTPayload } from '../../models/payload/jwt-payload';
+import { UserShowDTO } from '../../models/users/user-show.dto';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class AuthService {
@@ -42,10 +43,9 @@ export class AuthService {
       throw new UnauthorizedException('Wrong credentials!');
     }
 
-    const payload: JWTPayload = {
-      id: user.id,
-      username: user.username,
-    };
+    const payload: UserShowDTO = plainToClass(UserShowDTO, user, {
+      excludeExtraneousValues: true,
+    });
 
     const token = await this.jwtService.signAsync(payload);
 
