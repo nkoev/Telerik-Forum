@@ -1,0 +1,32 @@
+<div class="single-post-container" *ngIf="post">
+    <div class="single-post-card" [ngClass]="{'opened': commentsOpened}">
+        <div class="card-image">
+            <div class="avatar"></div>
+            <div class="username">@{{post?.user.username}}</div>
+        </div>
+        <div class="card-text">
+            <div class="icons">
+                <div class="flag" (click)="flagPost($event)" [ngClass]="{'full': postFlagged}"></div>
+                <div class="pencil" (click)="updatePost($event)"></div>
+                <div class="bin" (click)="deletePost($event)"></div>
+                <div class="padlock" (click)="lockPost($event)" [ngClass]="{'full': post?.isLocked}"></div>
+            </div>
+            <span class="date">{{post?.createdOn |date}}</span>
+            <h2>{{post?.title}}</h2>
+            <p>{{post?.content}}</p>
+        </div>
+        <div class="card-stats" [ngClass]="{'opened': commentsOpened}">
+            <div class="stat left" (click)="commentsOpened=!commentsOpened" [ngClass]="{'opened': commentsOpened}">
+                <div class="value">{{post?.commentsCount}}</div>
+                <div class="type">comments</div>
+            </div>
+            <div class="stat right" (click)="likePost($event)" [ngClass]="{'opened': commentsOpened}">
+                <div class="value">{{post?.votes.length}}</div>
+                <div class="type">likes</div>
+                <div class="heart" [ngClass]="{'full': postLiked}"></div>
+            </div>
+        </div>
+    </div>
+
+    <app-comments class="comments-section" [ngClass]="{'opened': commentsOpened}" [postId]="post.id"></app-comments>
+</div>

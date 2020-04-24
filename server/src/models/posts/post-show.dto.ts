@@ -1,5 +1,4 @@
 import { Expose, Transform, plainToClass } from "class-transformer";
-import { User } from "../../database/entities/user.entity";
 import { UserShowDTO } from "../users/user-show.dto";
 
 export class PostShowDTO {
@@ -13,6 +12,12 @@ export class PostShowDTO {
   public user: UserShowDTO;
   @Expose()
   public votes: UserShowDTO[];
+  @Expose()
+  public flags: UserShowDTO[];
+  @Expose()
+  public createdOn: Date;
+  @Expose()
+  public isLocked: boolean;
 
 }
 
