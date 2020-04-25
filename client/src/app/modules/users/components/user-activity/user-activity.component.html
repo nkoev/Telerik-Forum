@@ -1,9 +1,17 @@
-<mat-card>
-  <mat-card-title>Your recent activity:</mat-card-title>
-  <ul>
-    <li *ngFor="let activity of userActivity">
+<div *ngIf="userActivity.length; else elseBlock">
+  <h2>Your recent activity:</h2>
+  <ul *ngFor="let activity of userActivity">
+    <li>
       {{ activity.username }} {{ activity.action }} on
       {{ activity.timeStamp | date }}
     </li>
   </ul>
-</mat-card>
+</div>
+<ng-template #elseBlock>
+  <h2>
+    Looks like you haven't been very active lately.
+  </h2>
+  <h1>
+    Hit the forum now!
+  </h1>
+</ng-template>

@@ -24,7 +24,7 @@ const appRoutes: Routes = [
   {
     path: 'home',
     component: HomePageComponent,
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
   },
   {
     path: 'posts',

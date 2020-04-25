@@ -40,7 +40,7 @@ export class AuthService {
         try {
           this.storage.save('token', res.token);
           const loggedUser: User = jwt_decode(res.token);
-          this.isLoggedInSubject$.next(false);
+          this.isLoggedInSubject$.next(true);
           this.loggedUserSubject$.next(loggedUser);
         } catch (err) {
           console.log(err);

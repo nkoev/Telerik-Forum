@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { User } from 'src/app/models/user';
 
 @Injectable()
 export class UsersDataService {
@@ -27,5 +28,9 @@ export class UsersDataService {
 
   getUserActivity(userId: string) {
     return this.http.get(`${this.usersUrl}/${userId}/activity`);
+  }
+
+  getUserFriends(userId: string) {
+    return this.http.get<User[]>(`${this.usersUrl}/friends`);
   }
 }

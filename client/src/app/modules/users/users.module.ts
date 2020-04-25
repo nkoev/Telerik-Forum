@@ -7,6 +7,7 @@ import { UserAccountComponent } from './pages/user-account/account.component';
 import { UserActivityComponent } from './components/user-activity/user-activity.component';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { UserFriendsComponent } from './components/user-friends/users-friends.component';
 
 @NgModule({
   declarations: [
@@ -15,8 +16,10 @@ import { ReactiveFormsModule } from '@angular/forms';
     RegisterComponent,
     UserAccountComponent,
     UserActivityComponent,
+    UserFriendsComponent,
   ],
   imports: [ReactiveFormsModule, SharedModule],
   providers: [UsersDataService],
+  entryComponents: [UserActivityComponent],
 })
 export class UsersModule {}
