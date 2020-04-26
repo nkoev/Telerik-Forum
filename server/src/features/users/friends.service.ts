@@ -43,7 +43,7 @@ export class FriendsService {
   // ACCEPT FRIEND REQUEST
   async acceptFriendRequest(
     loggedUser: User,
-    friendToAcceptId,
+    friendToAcceptId: string,
   ): Promise<UserShowDTO> {
     const foundFriend: User = await this.getFriend(friendToAcceptId);
     await this.checkIfFriends(loggedUser, foundFriend);
@@ -119,8 +119,8 @@ export class FriendsService {
     return this.toUserShowDTO(foundFriend);
   }
 
-  // GET ALL FRIEND REQUESTS
-  async getFriendRequests(loggedUser: User): Promise<UserShowDTO[]> {
+  // GET ALL RECEIVED FRIEND REQUESTS
+  async getReceivedFriendRequests(loggedUser: User): Promise<UserShowDTO[]> {
     const foundFriendRequests: FriendRequest[] = await this.friendRequestsRepository.find(
       {
         userB: loggedUser.id,
@@ -133,6 +133,30 @@ export class FriendsService {
     }
 
     const userIds: string[] = foundFriendRequests.map(request => request.userA);
+    const usersFromRequests = await this.usersRepository.find({
+      where: {
+        id: In(userIds),
+      },
+    });
+
+    return usersFromRequests.map(this.toUserShowDTO);
+  }
+
+  // GET ALL SENT FRIENDS REQUESTS
+
+  async getSentFriendRequests(loggedUser: User): Promise<UserShowDTO[]> {
+    const foundFriendRequests: FriendRequest[] = await this.friendRequestsRepository.find(
+      {
+        userA: loggedUser.id,
+        status: false,
+      },
+    );
+
+    if (foundFriendRequests.length < 1) {
+      return [];
+    }
+
+    const userIds: string[] = foundFriendRequests.map(request => request.userB);
     const usersFromRequests = await this.usersRepository.find({
       where: {
         id: In(userIds),

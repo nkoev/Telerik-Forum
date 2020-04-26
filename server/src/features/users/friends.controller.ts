@@ -26,7 +26,7 @@ export class FriendsController {
   constructor(private readonly friendsService: FriendsService) {}
 
   //  SEND FRIEND REQUEST
-  @Get('/:userId')
+  @Post('requests/:userId')
   @HttpCode(HttpStatus.OK)
   async sendFriendRequest(
     @LoggedUser() loggedUser: User,
@@ -39,7 +39,7 @@ export class FriendsController {
   }
 
   //  ACCEPT FRIEND REQUEST
-  @Put('/:userId')
+  @Put('requests/:userId')
   @HttpCode(HttpStatus.OK)
   async acceptFriendRequest(
     @LoggedUser() loggedUser: User,
@@ -74,13 +74,22 @@ export class FriendsController {
     return await this.friendsService.removeFriend(loggedUser, friendId);
   }
 
-  //  GET ALL FRIEND REQUESTS
-  @Get('/requests')
+  //  GET ALL RECEIVED FRIEND REQUESTS
+  @Get('/requests/received')
   @HttpCode(HttpStatus.OK)
-  async getFriendRequests(
+  async getRaceivedFriendRequests(
     @LoggedUser() loggedUser: User,
   ): Promise<UserShowDTO[]> {
-    return await this.friendsService.getFriendRequests(loggedUser);
+    return await this.friendsService.getReceivedFriendRequests(loggedUser);
+  }
+
+  //  GET ALL  SENT FRIEND REQUESTS
+  @Get('/requests/sent')
+  @HttpCode(HttpStatus.OK)
+  async getSentFriendRequests(
+    @LoggedUser() loggedUser: User,
+  ): Promise<UserShowDTO[]> {
+    return await this.friendsService.getSentFriendRequests(loggedUser);
   }
 
   //  GET ALL FRIENDS

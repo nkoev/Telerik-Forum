@@ -8,9 +8,22 @@
   <p>I'm visible because I am open</p>
 </mat-expansion-panel>
 <button
-  *ngIf="loggedUser.id !== profileOwnerId"
+  *ngIf="
+    loggedUser.id !== profileOwnerId &&
+    !areFriends &&
+    !friendRequestSent &&
+    !friendRequestWaiting
+  "
   mat-raised-button
   (click)="sendFriendRequest(profileOwnerId)"
 >
   Send friend request
 </button>
+<div *ngIf="friendRequestWaiting">
+  <button mat-raised-button (click)="acceptFriendRequest(profileOwnerId)">
+    Accept friend request
+  </button>
+  <button mat-raised-button (click)="deleteFriendRequest(profileOwnerId)">
+    Delete friend request
+  </button>
+</div>

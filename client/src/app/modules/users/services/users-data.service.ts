@@ -28,11 +28,17 @@ export class UsersDataService {
     return this.http.get<User[]>(`${this.usersUrl}/friends`);
   }
 
-  getFriendRequests() {
-    return this.http.get<User[]>(`${this.usersUrl}/friends/requests`);
+  getSentFriendRequests() {
+    return this.http.get<User[]>(`${this.usersUrl}/friends/requests/sent`);
+  }
+
+  getReceivedFriendRequests() {
+    return this.http.get<User[]>(`${this.usersUrl}/friends/requests/received`);
   }
 
   sendFriendRequest(userId: string) {
-    return this.http.get(`${this.usersUrl}/friends/${userId}`);
+    return this.http.post(`${this.usersUrl}/friends/requests/${userId}`, {
+      body: {},
+    });
   }
 }
