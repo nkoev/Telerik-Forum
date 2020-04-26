@@ -8,6 +8,7 @@ import { UserActivityComponent } from './components/user-activity/user-activity.
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UserFriendsComponent } from './components/user-friends/users-friends.component';
+import { AllUsersComponent } from './components/all-users/all-users.component';
 
 @NgModule({
   declarations: [
@@ -17,9 +18,10 @@ import { UserFriendsComponent } from './components/user-friends/users-friends.co
     UserProfileComponent,
     UserActivityComponent,
     UserFriendsComponent,
+    AllUsersComponent,
   ],
   imports: [ReactiveFormsModule, SharedModule],
   providers: [UsersDataService],
-  entryComponents: [UserFriendsComponent, UserActivityComponent],
+  exports: [AllUsersComponent],
 })
 export class UsersModule {}

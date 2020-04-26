@@ -16,14 +16,8 @@ export class UsersDataService {
     });
   }
 
-  checkUsernameTaken(username: string) {
-    return this.http
-      .get(this.usersUrl)
-      .pipe(
-        map((users: any) =>
-          users.includes((user) => user.username === username)
-        )
-      );
+  getAllUsers() {
+    return this.http.get(this.usersUrl);
   }
 
   getUserActivity(userId: string) {
@@ -36,5 +30,9 @@ export class UsersDataService {
 
   getFriendRequests() {
     return this.http.get<User[]>(`${this.usersUrl}/friends/requests`);
+  }
+
+  sendFriendRequest(userId: string) {
+    return this.http.get(`${this.usersUrl}/friends/${userId}`);
   }
 }

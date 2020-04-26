@@ -26,7 +26,7 @@ export class FriendsController {
   constructor(private readonly friendsService: FriendsService) {}
 
   //  SEND FRIEND REQUEST
-  @Post('/:userId')
+  @Get('/:userId')
   @HttpCode(HttpStatus.OK)
   async sendFriendRequest(
     @LoggedUser() loggedUser: User,

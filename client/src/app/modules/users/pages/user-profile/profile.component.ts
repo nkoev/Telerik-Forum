@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { User } from 'src/app/models/user';
 import { AuthService } from 'src/app/modules/core/services/auth.service';
+import { UsersDataService } from '../../services/users-data.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -14,7 +15,8 @@ export class UserProfileComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    private usersDataService: UsersDataService
   ) {}
 
   ngOnInit(): void {
@@ -24,5 +26,7 @@ export class UserProfileComponent implements OnInit {
     this.authService.loggedUser$.subscribe((res) => (this.loggedUser = res));
   }
 
-  sendFriendRequest() {}
+  sendFriendRequest(userId: string) {
+    this.usersDataService.sendFriendRequest(userId).subscribe();
+  }
 }
