@@ -5,7 +5,7 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { AuthGuard } from './modules/core/services/auth.guard';
 import { LoginComponent } from './modules/users/pages/login-page/login.component';
 import { RegisterComponent } from './modules/users/pages/register/register.component';
-import { UserAccountComponent } from './modules/users/pages/user-account/account.component';
+import { UserProfileComponent } from './modules/users/pages/user-profile/profile.component';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -20,7 +20,7 @@ const appRoutes: Routes = [
       },
     ],
   },
-  { path: 'account', component: UserAccountComponent },
+  { path: 'profile', component: UserProfileComponent },
   {
     path: 'home',
     component: HomePageComponent,

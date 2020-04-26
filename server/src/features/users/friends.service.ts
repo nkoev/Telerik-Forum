@@ -10,190 +10,238 @@ import { FriendRequest } from '../../database/entities/friend-request.entity';
 
 @Injectable()
 export class FriendsService {
+  constructor(
+    @InjectRepository(User) private readonly usersRepository: Repository<User>,
+    @InjectRepository(FriendRequest)
+    private readonly friendRequestsRepository: Repository<FriendRequest>,
+  ) {}
 
-    constructor(
-        @InjectRepository(User) private readonly usersRepository: Repository<User>,
-        @InjectRepository(FriendRequest) private readonly friendRequestsRepository: Repository<FriendRequest>,
-    ) { }
+  // SEND FRIEND REQUEST
+  async sendFriendRequest(
+    loggedUser: User,
+    friendToAdd: AddFriendDTO,
+  ): Promise<UserShowDTO> {
+    const foundFriend: User = await this.getFriend(friendToAdd);
+    await this.checkIfFriends(loggedUser, foundFriend);
 
-    // SEND FRIEND REQUEST
-    async sendFriendRequest(loggedUser: User, friendToAdd: AddFriendDTO): Promise<UserShowDTO> {
+    const foundFriendRequest = await this.getFriendRequest(
+      loggedUser.id,
+      foundFriend.id,
+      false,
+      true,
+    );
+    this.validateFriendRequest(foundFriendRequest, false);
 
-        const foundFriend: User = await this.getFriend(friendToAdd);
-        await this.checkIfFriends(loggedUser, foundFriend);
+    const newFriendRequest = await this.friendRequestsRepository.create();
+    newFriendRequest.userA = loggedUser.id;
+    newFriendRequest.userB = foundFriend.id;
+    await this.friendRequestsRepository.save(newFriendRequest);
 
-        const foundFriendRequest = await this.getFriendRequest(loggedUser.id, foundFriend.id, false, true);
-        this.validateFriendRequest(foundFriendRequest, false);
+    return this.toUserShowDTO(foundFriend);
+  }
 
-        const newFriendRequest = await this.friendRequestsRepository.create();
-        newFriendRequest.userA = loggedUser.id;
-        newFriendRequest.userB = foundFriend.id;
-        await this.friendRequestsRepository.save(newFriendRequest);
+  // ACCEPT FRIEND REQUEST
+  async acceptFriendRequest(
+    loggedUser: User,
+    friendToAccept: AddFriendDTO,
+  ): Promise<UserShowDTO> {
+    const foundFriend: User = await this.getFriend(friendToAccept);
+    await this.checkIfFriends(loggedUser, foundFriend);
 
-        return this.toUserShowDTO(foundFriend);
+    const foundFriendRequest = await this.getFriendRequest(
+      foundFriend.id,
+      loggedUser.id,
+      true,
+      false,
+    );
+    this.validateFriendRequest(foundFriendRequest, true);
+    await this.friendRequestsRepository.save({
+      ...foundFriendRequest,
+      status: true,
+    });
+
+    // Both users are added to their friends lists
+    (await loggedUser.friends).push(foundFriend);
+    (await foundFriend.friends).push(loggedUser);
+
+    await this.usersRepository.save(loggedUser);
+    await this.usersRepository.save(foundFriend);
+
+    return this.toUserShowDTO(foundFriend);
+  }
+
+  // DELETE FRIEND REQUEST
+  async deleteFriendRequest(
+    loggedUser: User,
+    friendToDelete: AddFriendDTO,
+  ): Promise<{ msg: string }> {
+    const foundFriendRequest = await this.getFriendRequest(
+      friendToDelete.id,
+      loggedUser.id,
+      false,
+      false,
+    );
+    this.validateFriendRequest(foundFriendRequest, true);
+    await this.friendRequestsRepository.delete(foundFriendRequest);
+
+    return { msg: 'Request deleted!' };
+  }
+
+  // REMOVE FRIEND
+  async removeFriend(loggedUser: User, friendId: string): Promise<UserShowDTO> {
+    const foundFriend: User = (await loggedUser.friends).filter(
+      friend => friend.id === friendId,
+    )[0];
+    this.validateUser(foundFriend);
+
+    const foundFriendRequest = await this.getFriendRequest(
+      loggedUser.id,
+      foundFriend.id,
+      true,
+      true,
+    );
+    this.validateFriendRequest(foundFriendRequest, true);
+    await this.friendRequestsRepository.delete(foundFriendRequest);
+
+    // Both users are removed from their friends lists
+    (await loggedUser.friends).splice(
+      (await loggedUser.friends).indexOf(foundFriend),
+      1,
+    );
+    (await foundFriend.friends).splice(
+      (await foundFriend.friends).indexOf(loggedUser),
+      1,
+    );
+
+    await this.usersRepository.save(loggedUser);
+    await this.usersRepository.save(foundFriend);
+
+    return this.toUserShowDTO(foundFriend);
+  }
+
+  // GET ALL FRIEND REQUESTS
+  async getFriendRequests(loggedUser: User): Promise<UserShowDTO[]> {
+    const foundFriendRequests: FriendRequest[] = await this.friendRequestsRepository.find(
+      {
+        userB: loggedUser.id,
+        status: false,
+      },
+    );
+
+    if (foundFriendRequests.length < 1) {
+      return [];
     }
 
-    // ACCEPT FRIEND REQUEST
-    async acceptFriendRequest(loggedUser: User, friendToAccept: AddFriendDTO): Promise<UserShowDTO> {
+    const userIds: string[] = foundFriendRequests.map(request => request.userA);
+    const usersFromRequests = await this.usersRepository.find({
+      where: {
+        id: In(userIds),
+      },
+    });
 
-        const foundFriend: User = await this.getFriend(friendToAccept);
-        await this.checkIfFriends(loggedUser, foundFriend);
+    return usersFromRequests.map(this.toUserShowDTO);
+  }
 
-        const foundFriendRequest = await this.getFriendRequest(foundFriend.id, loggedUser.id, true, false);
-        this.validateFriendRequest(foundFriendRequest, true);
-        await this.friendRequestsRepository.save({ ...foundFriendRequest, status: true });
-
-        // Both users are added to their friends lists
-        (await loggedUser.friends).push(foundFriend);
-        (await foundFriend.friends).push(loggedUser);
-
-        await this.usersRepository.save(loggedUser);
-        await this.usersRepository.save(foundFriend);
-
-        return this.toUserShowDTO(foundFriend);
+  // GET ALL FRIENDS
+  async getFriends(loggedUser: User): Promise<UserShowDTO[]> {
+    if ((await loggedUser.friends).length < 1) {
+      return [];
     }
 
-    // DELETE FRIEND REQUEST
-    async deleteFriendRequest(loggedUser: User, friendToDelete: AddFriendDTO): Promise<{ msg: string }> {
+    const friendIds: string[] = (await loggedUser.friends).map(
+      friend => friend.id,
+    );
 
-        const foundFriendRequest = await this.getFriendRequest(friendToDelete.id, loggedUser.id, false, false);
-        this.validateFriendRequest(foundFriendRequest, true);
-        await this.friendRequestsRepository.delete(foundFriendRequest);
+    const foundFriends = await this.usersRepository.find({
+      where: {
+        id: In(friendIds),
+      },
+    });
 
-        return { msg: 'Request deleted!' }
+    return foundFriends.map(this.toUserShowDTO);
+
+    // return (await loggedUser.friends).map(this.toUserShowDTO);
+  }
+
+  private validateUser(user: User): void {
+    if (!user) {
+      throw new ForumSystemException('User not found!', 404);
+    }
+  }
+
+  private async getFriend(user: AddFriendDTO): Promise<User> {
+    const foundFriend = await this.usersRepository.findOne({
+      id: user.id,
+      username: user.username,
+      isDeleted: false,
+    });
+
+    this.validateUser(foundFriend);
+
+    return foundFriend;
+  }
+
+  private async checkIfFriends(user: User, friend: User): Promise<void> {
+    (await friend.friends).some(friend => {
+      if (friend.id === user.id) {
+        throw new ForumSystemException(
+          'The user is already added as a friend',
+          409,
+        );
+      }
+    });
+  }
+
+  private validateFriendRequest(
+    request: FriendRequest,
+    shouldExist: boolean,
+  ): void {
+    if (shouldExist === true && request === undefined) {
+      throw new ForumSystemException('Friend request does not exist', 404);
+    } else if (shouldExist === false && request !== undefined) {
+      throw new ForumSystemException('Friend request already exists', 403);
+    }
+  }
+
+  private async getFriendRequest(
+    userAID: string,
+    userBID: string,
+    status: boolean,
+    inBothDirections: boolean,
+  ): Promise<FriendRequest> {
+    let foundFriendRequest: FriendRequest;
+
+    if (inBothDirections) {
+      foundFriendRequest = await this.friendRequestsRepository.findOne({
+        where: [
+          {
+            userA: userAID,
+            userB: userBID,
+            status: status,
+          },
+          {
+            userA: userBID,
+            userB: userAID,
+            status: status,
+          },
+        ],
+      });
+    } else {
+      foundFriendRequest = await this.friendRequestsRepository.findOne({
+        where: {
+          userA: userAID,
+          userB: userBID,
+          status: status,
+        },
+      });
     }
 
-    // REMOVE FRIEND
-    async removeFriend(loggedUser: User, friendId: string): Promise<UserShowDTO> {
+    return foundFriendRequest;
+  }
 
-        const foundFriend: User = (await loggedUser.friends).filter(friend => friend.id === friendId)[0];
-        this.validateUser(foundFriend);
-
-        const foundFriendRequest = await this.getFriendRequest(loggedUser.id, foundFriend.id, true, true);
-        this.validateFriendRequest(foundFriendRequest, true);
-        await this.friendRequestsRepository.delete(foundFriendRequest);
-
-        // Both users are removed from their friends lists
-        (await loggedUser.friends).splice((await loggedUser.friends).indexOf(foundFriend), 1);
-        (await foundFriend.friends).splice((await foundFriend.friends).indexOf(loggedUser), 1);
-
-        await this.usersRepository.save(loggedUser);
-        await this.usersRepository.save(foundFriend);
-
-        return this.toUserShowDTO(foundFriend);
-    }
-
-    // GET ALL FRIEND REQUESTS
-    async getFriendRequests(loggedUser: User): Promise<UserShowDTO[]> {
-
-        const foundFriendRequests: FriendRequest[] = await this.friendRequestsRepository.find({
-            userB: loggedUser.id,
-            status: false
-        });
-
-        if (foundFriendRequests.length < 1) {
-            return [];
-        }
-
-        const userIds: string[] = foundFriendRequests.map(request => request.userA);
-        const usersFromRequests = await this.usersRepository.find({
-            where: {
-                id: In(userIds)
-            }
-        })
-
-        return usersFromRequests.map(this.toUserShowDTO);
-    }
-
-
-    // GET ALL FRIENDS
-    async getFriends(loggedUser: User): Promise<UserShowDTO[]> {
-        // if ((await loggedUser.friends).length < 1) {
-        //     return [];
-        // }
-
-        // const friendIds: string[] = (await loggedUser.friends).map(friend => friend.id);
-
-        // const foundFriends = await this.usersRepository.find({
-        //     where: {
-        //         id: In(friendIds)
-        //     }
-        // });
-
-        // return foundFriends.map(this.toUserShowDTO);
-
-        return (await loggedUser.friends).map(this.toUserShowDTO);
-    }
-
-
-    private validateUser(user: User): void {
-        if (!user) {
-            throw new ForumSystemException('User not found!', 404);
-        }
-    }
-
-    private async getFriend(user: AddFriendDTO): Promise<User> {
-        const foundFriend = await this.usersRepository.findOne({
-            id: user.id,
-            username: user.username,
-            isDeleted: false
-        });
-
-        this.validateUser(foundFriend);
-
-        return foundFriend;
-    }
-
-    private async checkIfFriends(user: User, friend: User): Promise<void> {
-        (await friend.friends).some(friend => {
-            if (friend.id === user.id) {
-                throw new ForumSystemException('The user is already added as a friend', 409);
-            }
-        });
-    }
-
-    private validateFriendRequest(request: FriendRequest, shouldExist: boolean): void {
-        if (shouldExist === true && request === undefined) {
-            throw new ForumSystemException('Friend request does not exist', 404);
-        } else if (shouldExist === false && request !== undefined) {
-            throw new ForumSystemException('Friend request already exists', 403);
-        }
-    }
-
-    private async getFriendRequest(userAID: string, userBID: string, status: boolean, inBothDirections: boolean): Promise<FriendRequest> {
-
-        let foundFriendRequest: FriendRequest;
-
-        if (inBothDirections) {
-            foundFriendRequest = await this.friendRequestsRepository.findOne({
-                where: [{
-                    userA: userAID,
-                    userB: userBID,
-                    status: status
-                }, {
-                    userA: userBID,
-                    userB: userAID,
-                    status: status
-                }]
-            });
-        } else {
-            foundFriendRequest = await this.friendRequestsRepository.findOne({
-                where: {
-                    userA: userAID,
-                    userB: userBID,
-                    status: status,
-                }
-            });
-        }
-
-        return foundFriendRequest;
-    }
-
-    private toUserShowDTO(user: User): UserShowDTO {
-        return plainToClass(
-            UserShowDTO,
-            user, {
-            excludeExtraneousValues: true
-        });
-    }
+  private toUserShowDTO(user: User): UserShowDTO {
+    return plainToClass(UserShowDTO, user, {
+      excludeExtraneousValues: true,
+    });
+  }
 }

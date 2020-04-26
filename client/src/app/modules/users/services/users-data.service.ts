@@ -5,9 +5,9 @@ import { User } from 'src/app/models/user';
 
 @Injectable()
 export class UsersDataService {
-  constructor(private http: HttpClient) {}
-
   private usersUrl = 'http://localhost:3000/users';
+
+  constructor(private http: HttpClient) {}
 
   register(username: string, password: string) {
     return this.http.post(this.usersUrl, {
@@ -30,7 +30,11 @@ export class UsersDataService {
     return this.http.get(`${this.usersUrl}/${userId}/activity`);
   }
 
-  getUserFriends(userId: string) {
+  getUserFriends() {
     return this.http.get<User[]>(`${this.usersUrl}/friends`);
+  }
+
+  getFriendRequests() {
+    return this.http.get<User[]>(`${this.usersUrl}/friends/requests`);
   }
 }

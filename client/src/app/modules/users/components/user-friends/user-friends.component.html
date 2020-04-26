@@ -1,3 +1,25 @@
-<li>
-  {{ friend.username }}
-</li>
+<div *ngIf="userFriends?.length; else elseBlock">
+  <h2>Your friends list:</h2>
+  <ul *ngFor="let friend of userFriends">
+    <li>
+      {{ friend.username }}
+    </li>
+  </ul>
+</div>
+<ng-template #elseBlock>
+  <h2>
+    Looks like you don't have any friends yet.
+  </h2>
+  <h1>
+    Go find some now!
+  </h1>
+</ng-template>
+
+<div *ngIf="friendRequests?.length">
+  <h2>Friend requests:</h2>
+  <ul *ngFor="let request of friendRequests">
+    <li>
+      {{ request.username }} <button>accept</button><button>delete</button>
+    </li>
+  </ul>
+</div>

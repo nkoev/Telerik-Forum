@@ -3,6 +3,10 @@ import { AuthService } from 'src/app/modules/core/services/auth.service';
 import { User } from 'src/app/models/user';
 import { MatDialogConfig, MatDialog } from '@angular/material/dialog';
 import { UserActivityComponent } from 'src/app/modules/users/components/user-activity/user-activity.component';
+import { UserFriendsComponent } from 'src/app/modules/users/components/user-friends/users-friends.component';
+import { transition } from '@angular/animations';
+import { UsersDataService } from 'src/app/modules/users/services/users-data.service';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-navigation',
@@ -10,7 +14,11 @@ import { UserActivityComponent } from 'src/app/modules/users/components/user-act
   styleUrls: ['./navigation.component.css'],
 })
 export class NavigationComponent implements OnInit {
-  constructor(private authService: AuthService, private matDialog: MatDialog) {}
+  constructor(
+    private authService: AuthService,
+    private matDialog: MatDialog,
+    private usersDataService: UsersDataService
+  ) {}
   isLoggedIn: boolean;
   loggedUser: User;
 
@@ -24,10 +32,36 @@ export class NavigationComponent implements OnInit {
   }
 
   openActivity() {
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.id = 'modal-component';
-    dialogConfig.height = 'auto';
-    dialogConfig.width = 'auto';
-    this.matDialog.open(UserActivityComponent, dialogConfig);
+    this.usersDataService
+      .getUserActivity(this.loggedUser.id)
+      .pipe(
+        map((data) => {
+          const dialogConfig = new MatDialogConfig();
+          dialogConfig.id = 'modal-component';
+          dialogConfig.height = 'auto';
+          dialogConfig.width = 'auto';
+          dialogConfig.panelClass = 'dialog';
+          dialogConfig.data = data;
+          return this.matDialog.open(UserActivityComponent, dialogConfig);
+        })
+      )
+      .subscribe();
+  }
+
+  openFriends() {
+    this.usersDataService
+      .getUserFriends()
+      .pipe(
+        map((data) => {
+          const dialogConfig = new MatDialogConfig();
+          dialogConfig.id = 'modal-component';
+          dialogConfig.height = 'auto';
+          dialogConfig.width = 'auto';
+          dialogConfig.panelClass = 'dialog';
+          dialogConfig.data = data;
+          return this.matDialog.open(UserFriendsComponent, dialogConfig);
+        })
+      )
+      .subscribe();
   }
 }

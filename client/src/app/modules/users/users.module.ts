@@ -3,7 +3,7 @@ import { LoginComponent } from './pages/login-page/login.component';
 import { CarouselComponent } from './components/carousel/carousel.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { UsersDataService } from './services/users-data.service';
-import { UserAccountComponent } from './pages/user-account/account.component';
+import { UserProfileComponent } from './pages/user-profile/profile.component';
 import { UserActivityComponent } from './components/user-activity/user-activity.component';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -14,12 +14,12 @@ import { UserFriendsComponent } from './components/user-friends/users-friends.co
     LoginComponent,
     CarouselComponent,
     RegisterComponent,
-    UserAccountComponent,
+    UserProfileComponent,
     UserActivityComponent,
     UserFriendsComponent,
   ],
   imports: [ReactiveFormsModule, SharedModule],
   providers: [UsersDataService],
-  entryComponents: [UserActivityComponent],
+  entryComponents: [UserFriendsComponent, UserActivityComponent],
 })
 export class UsersModule {}

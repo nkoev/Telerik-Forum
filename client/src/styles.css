@@ -24,3 +24,7 @@ body {
   color: white;
   background-color: #86c232;
 }
+
+.dialog > mat-dialog-container {
+  background-color: white;
+}

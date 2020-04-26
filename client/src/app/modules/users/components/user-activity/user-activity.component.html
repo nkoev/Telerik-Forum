@@ -1,11 +1,11 @@
-<div *ngIf="userActivity.length; else elseBlock">
+<div *ngIf="userActivity?.length; else elseBlock">
   <h2>Your recent activity:</h2>
-  <ul *ngFor="let activity of userActivity">
-    <li>
+  <mat-list *ngFor="let activity of userActivity">
+    <mat-list-item>
       {{ activity.username }} {{ activity.action }} on
       {{ activity.timeStamp | date }}
-    </li>
-  </ul>
+    </mat-list-item>
+  </mat-list>
 </div>
 <ng-template #elseBlock>
   <h2>

@@ -13,10 +13,9 @@
 </mat-toolbar>
 
 <mat-menu #appMenu="matMenu">
-  <button mat-menu-item>Profile</button>
+  <button mat-menu-item routerLink="/profile">Profile</button>
   <button mat-menu-item (click)="openActivity()">Recent activity</button>
-  <button mat-menu-item>Friends</button>
-  <button mat-menu-item>Friend Requests</button>
+  <button mat-menu-item (click)="openFriends()">Friends</button>
   <button mat-menu-item (click)="logout()" style="color: red;">
     Logout
   </button>
