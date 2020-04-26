@@ -1,10 +1,14 @@
 <div *ngIf="userFriends?.length; else elseBlock">
   <h2>Your friends list:</h2>
-  <ul *ngFor="let friend of userFriends">
-    <li>
-      {{ friend.username }}
-    </li>
-  </ul>
+  <mat-list *ngFor="let friend of userFriends">
+    <mat-list-item>
+      <a [routerLink]="['/profile/', friend.id]">{{ friend.username }}</a>
+      &nbsp; &nbsp;
+      <button mat-button>
+        remove
+      </button>
+    </mat-list-item>
+  </mat-list>
 </div>
 <ng-template #elseBlock>
   <h2>

@@ -1,7 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { User } from 'src/app/models/user';
 
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-friends',
@@ -11,7 +12,13 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class UserFriendsComponent implements OnInit {
   public friendRequests: User[];
 
-  constructor(@Inject(MAT_DIALOG_DATA) public userFriends: string) {}
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public userFriends: string,
+    private dialogRef: MatDialogRef<UserFriendsComponent>,
+    private router: Router
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.router.events.subscribe(() => this.dialogRef.close());
+  }
 }

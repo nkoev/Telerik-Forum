@@ -1,8 +1,18 @@
-import { Controller, HttpCode, HttpStatus, Body, Post, Delete, ValidationPipe, Param, ParseUUIDPipe, Get, UseGuards, Put } from '@nestjs/common';
-import { FriendsService } from './friends.service'
+import {
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Delete,
+  Param,
+  ParseUUIDPipe,
+  Get,
+  UseGuards,
+  Put,
+} from '@nestjs/common';
+import { FriendsService } from './friends.service';
 import { User } from '../../database/entities/user.entity';
 import { UserShowDTO } from '../../models/users/user-show.dto';
-import { AddFriendDTO } from '../../models/users/add-friend.dto';
 import { AuthGuardWithBlacklisting } from '../../common/guards/auth-guard-with-blacklisting.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { BanGuard } from '../../common/guards/ban.guard';
@@ -13,78 +23,70 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 @ApiBearerAuth()
 @UseGuards(AuthGuardWithBlacklisting, RolesGuard, BanGuard)
 export class FriendsController {
+  constructor(private readonly friendsService: FriendsService) {}
 
-    constructor(private readonly friendsService: FriendsService) { }
+  //  SEND FRIEND REQUEST
+  @Post('/:userId')
+  @HttpCode(HttpStatus.OK)
+  async sendFriendRequest(
+    @LoggedUser() loggedUser: User,
+    @Param('userId', ParseUUIDPipe) friendToAddId: string,
+  ): Promise<UserShowDTO> {
+    return await this.friendsService.sendFriendRequest(
+      loggedUser,
+      friendToAddId,
+    );
+  }
 
-    //  SEND FRIEND REQUEST
-    @Post()
-    @HttpCode(HttpStatus.OK)
-    async sendFriendRequest(
-        @LoggedUser() loggedUser: User,
-        @Body(new ValidationPipe({
-            whitelist: true,
-            transform: true
-        })) friendToAdd: AddFriendDTO
-    ): Promise<UserShowDTO> {
+  //  ACCEPT FRIEND REQUEST
+  @Put('/:userId')
+  @HttpCode(HttpStatus.OK)
+  async acceptFriendRequest(
+    @LoggedUser() loggedUser: User,
+    @Param('userId', ParseUUIDPipe) friendToAcceptId: string,
+  ): Promise<UserShowDTO> {
+    return await this.friendsService.acceptFriendRequest(
+      loggedUser,
+      friendToAcceptId,
+    );
+  }
 
-        return await this.friendsService.sendFriendRequest(loggedUser, friendToAdd);
-    }
+  //  DELETE FRIEND REQUEST
+  @Delete('/requests/:userId')
+  @HttpCode(HttpStatus.OK)
+  async deleteFriendRequest(
+    @LoggedUser() loggedUser: User,
+    @Param('userId', ParseUUIDPipe) friendToDeleteId: string,
+  ): Promise<{ msg: string }> {
+    return await this.friendsService.deleteFriendRequest(
+      loggedUser,
+      friendToDeleteId,
+    );
+  }
 
-    //  ACCEPT FRIEND REQUEST
-    @Put()
-    @HttpCode(HttpStatus.OK)
-    async acceptFriendRequest(
-        @LoggedUser() loggedUser: User,
-        @Body(new ValidationPipe({
-            whitelist: true,
-            transform: true
-        })) friendToAccept: AddFriendDTO
-    ): Promise<UserShowDTO> {
+  //  REMOVE FRIEND
+  @Delete('/:friendId')
+  @HttpCode(HttpStatus.CREATED)
+  async removeFriend(
+    @LoggedUser() loggedUser: User,
+    @Param('friendId', ParseUUIDPipe) friendId: string,
+  ): Promise<UserShowDTO> {
+    return await this.friendsService.removeFriend(loggedUser, friendId);
+  }
 
-        return await this.friendsService.acceptFriendRequest(loggedUser, friendToAccept);
-    }
+  //  GET ALL FRIEND REQUESTS
+  @Get('/requests')
+  @HttpCode(HttpStatus.OK)
+  async getFriendRequests(
+    @LoggedUser() loggedUser: User,
+  ): Promise<UserShowDTO[]> {
+    return await this.friendsService.getFriendRequests(loggedUser);
+  }
 
-    //  DELETE FRIEND REQUEST
-    @Delete('/requests')
-    @HttpCode(HttpStatus.OK)
-    async deleteFriendRequest(
-        @LoggedUser() loggedUser: User,
-        @Body(new ValidationPipe({
-            whitelist: true,
-            transform: true
-        })) friendToDelete: AddFriendDTO
-    ): Promise<{ msg: string }> {
-
-        return await this.friendsService.deleteFriendRequest(loggedUser, friendToDelete);
-    }
-
-    //  REMOVE FRIEND
-    @Delete('/:friendId')
-    @HttpCode(HttpStatus.CREATED)
-    async removeFriend(
-        @LoggedUser() loggedUser: User,
-        @Param('friendId', ParseUUIDPipe) friendId: string
-    ): Promise<UserShowDTO> {
-
-        return await this.friendsService.removeFriend(loggedUser, friendId);
-    }
-
-    //  GET ALL FRIEND REQUESTS
-    @Get('/requests')
-    @HttpCode(HttpStatus.OK)
-    async getFriendRequests(
-        @LoggedUser() loggedUser: User
-    ): Promise<UserShowDTO[]> {
-
-        return await this.friendsService.getFriendRequests(loggedUser);
-    }
-
-    //  GET ALL FRIENDS
-    @Get()
-    @HttpCode(HttpStatus.OK)
-    async getFriends(
-        @LoggedUser() loggedUser: User
-    ): Promise<UserShowDTO[]> {
-        return await this.friendsService.getFriends(loggedUser);
-    }
+  //  GET ALL FRIENDS
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  async getFriends(@LoggedUser() loggedUser: User): Promise<UserShowDTO[]> {
+    return await this.friendsService.getFriends(loggedUser);
+  }
 }

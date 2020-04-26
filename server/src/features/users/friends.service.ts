@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { User } from '../../database/entities/user.entity';
 import { UserShowDTO } from '../../models/users/user-show.dto';
-import { AddFriendDTO } from '../../models/users/add-friend.dto';
+// import { AddFriendDTO } from '../../models/users/add-friend.dto';
 import { plainToClass } from 'class-transformer';
 import { ForumSystemException } from '../../common/exceptions/system-exception';
 import { FriendRequest } from '../../database/entities/friend-request.entity';
@@ -19,9 +19,9 @@ export class FriendsService {
   // SEND FRIEND REQUEST
   async sendFriendRequest(
     loggedUser: User,
-    friendToAdd: AddFriendDTO,
+    friendToAddId: string,
   ): Promise<UserShowDTO> {
-    const foundFriend: User = await this.getFriend(friendToAdd);
+    const foundFriend: User = await this.getFriend(friendToAddId);
     await this.checkIfFriends(loggedUser, foundFriend);
 
     const foundFriendRequest = await this.getFriendRequest(
@@ -43,9 +43,9 @@ export class FriendsService {
   // ACCEPT FRIEND REQUEST
   async acceptFriendRequest(
     loggedUser: User,
-    friendToAccept: AddFriendDTO,
+    friendToAcceptId,
   ): Promise<UserShowDTO> {
-    const foundFriend: User = await this.getFriend(friendToAccept);
+    const foundFriend: User = await this.getFriend(friendToAcceptId);
     await this.checkIfFriends(loggedUser, foundFriend);
 
     const foundFriendRequest = await this.getFriendRequest(
@@ -73,10 +73,10 @@ export class FriendsService {
   // DELETE FRIEND REQUEST
   async deleteFriendRequest(
     loggedUser: User,
-    friendToDelete: AddFriendDTO,
+    friendToDeleteId: string,
   ): Promise<{ msg: string }> {
     const foundFriendRequest = await this.getFriendRequest(
-      friendToDelete.id,
+      friendToDeleteId,
       loggedUser.id,
       false,
       false,
@@ -169,10 +169,9 @@ export class FriendsService {
     }
   }
 
-  private async getFriend(user: AddFriendDTO): Promise<User> {
+  private async getFriend(userId: string): Promise<User> {
     const foundFriend = await this.usersRepository.findOne({
-      id: user.id,
-      username: user.username,
+      id: userId,
       isDeleted: false,
     });
 

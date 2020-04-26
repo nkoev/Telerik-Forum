@@ -20,7 +20,7 @@ const appRoutes: Routes = [
       },
     ],
   },
-  { path: 'profile', component: UserProfileComponent },
+  { path: 'profile/:userId', component: UserProfileComponent },
   {
     path: 'home',
     component: HomePageComponent,
