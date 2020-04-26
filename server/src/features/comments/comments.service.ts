@@ -49,6 +49,15 @@ export class CommentsService {
       throw new ForumSystemException('Post is locked', 403);
     }
 
+    await this.postsRepo
+      .createQueryBuilder("post")
+      .update()
+      .set({
+        commentsCount: () => "commentsCount + 1"
+      })
+      .where("id = :id", { id: post.id })
+      .execute();
+
     const newComment: Comment = this.commentsRepo.create({
       ...commentDTO,
       user: loggedUser,
@@ -113,6 +122,15 @@ export class CommentsService {
     if (comment.user.id !== loggedUser.id && !isAdmin) {
       throw new ForumSystemException('Not allowed to delete other users comments', 403);
     }
+
+    await this.postsRepo
+      .createQueryBuilder("post")
+      .update()
+      .set({
+        commentsCount: () => "commentsCount - 1"
+      })
+      .where("id = :id", { id: postId })
+      .execute();
 
     const deletedComment: Comment = await this.commentsRepo.save({
       ...comment,

@@ -2,17 +2,15 @@ import { NgModule } from '@angular/core';
 import { AllPostsComponent } from './components/all-posts/all-posts.component';
 import { PostsRoutingModule } from './posts-routing.module';
 import { SinglePostComponent } from './components/single-post/single-post.component';
-import { PostDataService } from './post-data.service';
-import { CommentDataService } from '../comments/comment-data.service';
 import { CommentsModule } from '../comments/comments.module';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
-
-
+import { UpdatePostComponent } from './components/update-post/update-post.component';
 
 @NgModule({
   declarations: [
     AllPostsComponent,
     SinglePostComponent,
+    UpdatePostComponent,
   ],
   imports: [
     SharedModule,
@@ -20,8 +18,7 @@ import { SharedModule } from 'src/app/shared/modules/shared.module';
     CommentsModule
   ],
   providers: [
-    PostDataService,
-    CommentDataService
-  ]
+
+  ],
 })
 export class PostsModule { }

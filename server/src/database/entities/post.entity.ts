@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, ManyToMany, JoinTable } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany, ManyToMany, JoinTable, BeforeUpdate } from "typeorm";
 import { User } from "./user.entity";
 import { Comment } from "./comment.entity";
 import { Expose } from "class-transformer";
@@ -29,6 +29,9 @@ export class Post {
         comment => comment.post,
     )
     comments: Promise<Comment[]>;
+
+    @Column({ type: 'int', default: 0 })
+    commentsCount: number;
 
     @ManyToMany(
         type => User,

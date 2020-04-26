@@ -11,6 +11,8 @@ export class PostShowDTO {
   @Expose()
   public user: UserShowDTO;
   @Expose()
+  public commentsCount: number;
+  @Expose()
   public votes: UserShowDTO[];
   @Expose()
   public flags: UserShowDTO[];

@@ -17,9 +17,15 @@ describe('Comments Service', () => {
     const activityService: Partial<ActivityService> = {
         logCommentEvent: jest.fn()
     };
-    const postsRepository: Partial<Repository<Post>> = {
+    const postsRepository = {
         find() { return null; },
         findOne() { return null; },
+        createQueryBuilder: jest.fn(() => ({
+            update: jest.fn().mockReturnThis(),
+            set: jest.fn().mockReturnThis(),
+            where: jest.fn().mockReturnThis(),
+            execute: jest.fn().mockReturnThis(),
+        })),
     };
     const commentsRepository = {
         find() { return null; },
@@ -42,7 +48,8 @@ describe('Comments Service', () => {
         id: 2,
         content: 'Random Content',
         user: new User(),
-        votes: 0,
+        votes: [],
+        createdOn: fakeDate,
     };
 
     beforeEach(async () => {
@@ -77,6 +84,7 @@ describe('Comments Service', () => {
             isDeleted: false,
             isLocked: false,
             comments: Promise.resolve([]),
+            commentsCount: 0,
             flags: [],
         };
         fakeComment = {
@@ -371,7 +379,8 @@ describe('Comments Service', () => {
             id: 2,
             content: 'New Content',
             user: new User(),
-            votes: 0,
+            votes: [],
+            createdOn: fakeDate,
         };
 
         it('should call commentsRepository findOne() once with correct filtering object', async () => {

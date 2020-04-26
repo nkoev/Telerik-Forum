@@ -59,6 +59,7 @@ describe('PostsService', () => {
       isDeleted: false,
       isLocked: false,
       comments: Promise.resolve([]),
+      commentsCount: 0,
       votes: [],
       flags: [],
       user: new User()
@@ -139,6 +140,7 @@ describe('PostsService', () => {
         title: 'test title',
         content: 'test content',
         comments: Promise.resolve([]),
+        commentsCount: 0,
         votes: []
       });
     });

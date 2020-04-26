@@ -60,7 +60,7 @@ export class PostsService {
     const post: Post = await this.getPostEntity(postId);
     this.validatePost(post);
     this.validatePostUnlocked(post);
-    if (post.user !== loggedUser && !isAdmin) {
+    if (post.user.id !== loggedUser.id && !isAdmin) {
       throw new ForumSystemException('Not allowed to modify other users posts', 403)
     }
 

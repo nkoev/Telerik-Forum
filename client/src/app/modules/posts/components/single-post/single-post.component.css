@@ -268,6 +268,12 @@
     background: url("../../../../../assets/posts/full-heart-filtered.png");
     background-size: cover;
   }
+  .card-stats .stat.right .heart.inactive {
+    width: 2.4em;
+    height: 2.4em;
+    background: url("../../../../../assets/posts/inactive-heart.png");
+    background-size: cover;
+  }
 
   .card-stats .value {
       font-weight: 500;
