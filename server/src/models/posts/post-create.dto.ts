@@ -8,6 +8,6 @@ export class PostCreateDTO {
 
   @IsNotEmpty()
   @IsString()
-  @Length(20, 1000)
+  @Length(2, 1000)
   content: string;
 }

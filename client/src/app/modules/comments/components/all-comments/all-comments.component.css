@@ -8,17 +8,29 @@
     border-radius: 0 0 18px 18px;
     background: white;
     font-family: roboto;
+    position: relative;
+}
+
+.comments-container .create {
+    position: fixed;
+    bottom: 40%;
+    left: 7%;
+
+    font-size: 3em;
+    font-weight: 500;
+    font-family: roboto;
+    background-color: var(--main-light-green-color);
 }
 
 .single-comment-container {
     display: grid;
     grid-template-columns: 8em 1.5em 1fr;
-    grid-template-rows: 2.3em 3em 3em auto 1em 3.5em 1em;
+    grid-template-rows: 2.3em 3em 3em auto 1em 3.5em 1.2em;
     grid-template-areas: "avatar . icons"
                          "avatar . content"
                          "username . content"
                          ". . content"
-                         ". . ."
+                         ". . actions"
                          ". . info"
                          ". . .";
 
@@ -62,6 +74,29 @@
     text-justify: inter-word;
 }
 
+.single-comment-container .content.edit{
+    grid-area: content;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.4;
+    margin: 0.5em 3.5em 0 0;
+    text-align: initial;
+    text-justify: inter-word;
+    resize: none;
+}
+
+.single-comment-container .actions{
+    grid-area: actions;
+}
+.single-comment-container .actions .save {
+    height: 1.8rem;
+    font-size: 0.9em;
+}
+.single-comment-container .actions .undo {
+    height: 1.8rem;
+    font-size: 0.9em;
+}
+
 .single-comment-container .icons{
     grid-area: icons;
     display: flex;
@@ -101,7 +136,7 @@
     align-items: center;
     justify-content: space-between;
 
-    margin: 0 3.5em 0 0;
+    margin: 0.5em 3.5em 0 0;
 }
 
 .single-comment-container .info .likes {
@@ -129,6 +164,12 @@
     width: 2.4em;
     height: 2.4em;
     background: url("../../../../../assets/posts/full-heart-filtered.png");
+    background-size: cover;
+}
+.single-comment-container .info .likes .heart.inactive {
+    width: 2.4em;
+    height: 2.4em;
+    background: url("../../../../../assets/posts/inactive-heart.png");
     background-size: cover;
 }
 

@@ -97,6 +97,7 @@ const seedPosts = async (connection: any) => {
     console.log(`Seeded post by ${user.username} successfully!`);
 
     const newRecord = activityRepo.create({
+      username: user.username,
       action: `${ActivityType.Create} a post`,
       targetURL: `http://loclahost:3000/posts/${newPost.id}`,
       user: user,
@@ -138,19 +139,28 @@ const seedComments = async (connection: any) => {
     });
     const votes = [];
 
-    const newComment: Comment = await commentsRepo.create({
+    const newComment: Comment = commentsRepo.create({
       content: content,
       user: user,
       post: post,
       votes: votes,
     });
 
-    console.log();
+    await postsRepo
+      .createQueryBuilder("post")
+      .update()
+      .set({
+        commentsCount: () => "commentsCount + 1"
+      })
+      .where("id = :id", { id: post.id })
+      .execute();
+
     await commentsRepo.save(newComment);
     seededComments.push(newComment);
     console.log(`Seeded comment by ${user.username} successfully!`);
 
-    const newRecord = await activityRepo.create({
+    const newRecord = activityRepo.create({
+      username: user.username,
       action: `${ActivityType.Create} a comment`,
       targetURL: `http://loclahost:3000/posts/${post.id}/comments/${newComment.id}`,
       user: user,
@@ -192,6 +202,7 @@ const seedPostLikes = async (connection: any) => {
     console.log(`Seeded post like by ${user.username} successfully!`);
 
     const newRecord = activityRepo.create({
+      username: user.username,
       action: `${ActivityType.Like} a post`,
       targetURL: `http://loclahost:3000/posts/${post.id}`,
       user: seededUsers[seededUsers.length - i],
@@ -235,6 +246,7 @@ const seedCommentLikes = async (connection: any) => {
     console.log(`Seeded comment like by ${user.username} successfully!`);
 
     const newRecord = activityRepo.create({
+      username: user.username,
       action: `${ActivityType.Like} a comment`,
       targetURL: `http://loclahost:3000/posts/${comment.post.id}/comments/${comment.id}`,
       user: seededUsers[seededUsers.length - i],
