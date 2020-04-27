@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>{{data.title}}</h1>
+<div mat-dialog-content>
+    <mat-form-field class="content">
+        <mat-label>{{data.commentContentMessage}}</mat-label>
+        <textarea matInput [(ngModel)]="data.commentContent" required [value]="data.commentContent"
+            class="text"></textarea>
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button [mat-dialog-close]="{content: data.commentContent.trim()}" cdkFocusInitial>Save</button>
+</div>

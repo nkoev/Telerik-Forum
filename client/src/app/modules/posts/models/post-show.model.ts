@@ -1,3 +1,5 @@
+import { CommentShow } from '../../comments/models/comment-show.model';
+
 export interface PostShow {
     id: number;
 
@@ -11,7 +13,7 @@ export interface PostShow {
 
     commentsCount: number;
 
-    comments?: any[];
+    comments?: CommentShow[];
 
     flags: any[];
 

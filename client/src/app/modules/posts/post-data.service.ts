@@ -9,10 +9,10 @@ import { PostCreate } from './models/post-create.model';
 })
 export class PostDataService {
 
-  token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYzYzNhZjdhLTI2ODgtNDA0Yy1iMTdkLTc5M2Y4NmI1MWUxNCIsInVzZXJuYW1lIjoidXNlcjQiLCJpYXQiOjE1ODc5MDk4ODAsImV4cCI6MTU4NzkxNzA4MH0.C-LSL0wZ7fcfgiYRO47xlArQ9J-gOiy3sdgoetfiNxo';
+  token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhkZmZlNmQ4LTM3MzUtNDRmZi04NzE4LWExNTNhZjkzZWM3MSIsInVzZXJuYW1lIjoiYWRtaW4iLCJpYXQiOjE1ODc5OTg2NDMsImV4cCI6MTU4ODAwNTg0M30.OCVpY8MySj4232EGjpp1G2KM7VxYTSvBYA2JL8VfI8I';
   constructor(private readonly http: HttpClient) { }
 
-  public getSinglePost(postId: string): Observable<any> {
+  public getSinglePost(postId: string): Observable<PostShow> {
     return this.http.get<PostShow>(`http://localhost:3000/posts/${postId}`, {
       headers: {
         'Authorization': `Bearer ${this.token}`
@@ -20,7 +20,7 @@ export class PostDataService {
     });
   }
 
-  public getAllPosts(): Observable<any> {
+  public getAllPosts(): Observable<PostShow[]> {
     return this.http.get<PostShow[]>(`http://localhost:3000/posts`, {
       headers: {
         'Authorization': `Bearer ${this.token}`
@@ -28,7 +28,7 @@ export class PostDataService {
     });
   }
 
-  public createPost(post: PostCreate): Observable<any> {
+  public createPost(post: PostCreate): Observable<PostShow> {
     return this.http.post<PostShow>(`http://localhost:3000/posts`, post, {
       headers: {
         'Authorization': `Bearer ${this.token}`
@@ -36,7 +36,7 @@ export class PostDataService {
     });
   }
 
-  public updatePost(postId: number, post: PostCreate): Observable<any> {
+  public updatePost(postId: number, post: PostCreate): Observable<PostShow> {
     return this.http.put<PostShow>(`http://localhost:3000/posts/${postId}`, post, {
       headers: {
         'Authorization': `Bearer ${this.token}`
@@ -44,7 +44,7 @@ export class PostDataService {
     });
   }
 
-  public likePost(postId: number, state: boolean): Observable<any> {
+  public likePost(postId: number, state: boolean): Observable<PostShow> {
     const params = new HttpParams().set('state', `${state}`);
 
     return this.http.put<PostShow>(`http://localhost:3000/posts/${postId}/votes`, {}, {
@@ -55,7 +55,7 @@ export class PostDataService {
     });
   }
 
-  public flagPost(postId: number, state: boolean): Observable<any> {
+  public flagPost(postId: number, state: boolean): Observable<PostShow> {
     const params = new HttpParams().set('state', `${state}`);
 
     return this.http.put<PostShow>(`http://localhost:3000/posts/${postId}/flag`, {}, {
@@ -66,7 +66,7 @@ export class PostDataService {
     });
   }
 
-  public lockPost(postId: number, state: boolean): Observable<any> {
+  public lockPost(postId: number, state: boolean): Observable<PostShow> {
     const params = new HttpParams().set('state', `${state}`);
 
     return this.http.put<PostShow>(`http://localhost:3000/posts/${postId}/lock`, {}, {
@@ -77,7 +77,7 @@ export class PostDataService {
     });
   }
 
-  public deletePost(postId: number): Observable<any> {
+  public deletePost(postId: number): Observable<PostShow> {
     return this.http.delete<PostShow>(`http://localhost:3000/posts/${postId}`, {
       headers: {
         'Authorization': `Bearer ${this.token}`

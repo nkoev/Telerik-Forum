@@ -6,12 +6,13 @@
         <div class="content" *ngIf="!comment.inEditMode">{{comment.content}}</div>
         <textarea class="content edit" type="text" *ngIf="comment.inEditMode" [(ngModel)]="newContent"></textarea>
         <div class="actions">
-            <button mat-raised-button class="undo" *ngIf="comment.inEditMode" (click)="undoEdit(comment)">Undo</button>
+            <button mat-raised-button class="undo" *ngIf="comment.inEditMode"
+                (click)="undoUpdate(comment)">Undo</button>
             <button mat-raised-button color="accent" class="save" *ngIf="comment.inEditMode"
-                (click)="saveEdit(comment, newContent)">Save</button>
+                (click)="saveUpdate(comment, newContent)">Save</button>
         </div>
         <div class="icons">
-            <div class="pencil" *ngIf="comment.isAuthor" (click)="editComment(comment)"></div>
+            <div class="pencil" *ngIf="comment.isAuthor" (click)="updateComment(comment)"></div>
             <div class="bin" *ngIf="comment.isAuthor || comment.isAdmin" (click)="deleteComment(comment)"></div>
         </div>
         <div class="info">

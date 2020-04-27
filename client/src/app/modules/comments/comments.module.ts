@@ -1,19 +1,16 @@
 import { NgModule } from '@angular/core';
 import { AllCommentsComponent } from './components/all-comments/all-comments.component';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
-import { CreateCommentComponent } from './components/create-comment/create-comment.component';
+import { CommentDialogComponent } from './components/comment-dialog/comment-dialog.component';
 
 
 @NgModule({
     declarations: [
         AllCommentsComponent,
-        CreateCommentComponent,
+        CommentDialogComponent,
     ],
     imports: [
         SharedModule
-    ],
-    providers: [
-
     ],
     exports: [
         AllCommentsComponent

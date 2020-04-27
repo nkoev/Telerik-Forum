@@ -31,5 +31,5 @@
     </div>
 
     <app-all-comments class="comments-section" [ngClass]="{'opened': commentsOpened}" [postId]="post.id"
-        [comments]="comments" (updateComments)="updateComments($event)"></app-all-comments>
+        [comments]="post.comments" (updateComments)="updateComments($event)"></app-all-comments>
 </div>

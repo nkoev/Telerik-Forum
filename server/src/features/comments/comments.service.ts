@@ -49,15 +49,6 @@ export class CommentsService {
       throw new ForumSystemException('Post is locked', 403);
     }
 
-    await this.postsRepo
-      .createQueryBuilder("post")
-      .update()
-      .set({
-        commentsCount: () => "commentsCount + 1"
-      })
-      .where("id = :id", { id: post.id })
-      .execute();
-
     const newComment: Comment = this.commentsRepo.create({
       ...commentDTO,
       user: loggedUser,
@@ -66,6 +57,7 @@ export class CommentsService {
     });
     await this.commentsRepo.save(newComment);
 
+    await this.updateCommentsCount(postId);
     await this.activityService.logCommentEvent(loggedUser, ActivityType.Create, postId, newComment.id)
 
     return this.toCommentShowDTO(newComment);
@@ -101,19 +93,16 @@ export class CommentsService {
       throw new ForumSystemException('User has already (un)liked this comment', 400)
     }
 
-    const likes = this.commentsRepo
-      .createQueryBuilder()
-      .relation('votes')
-      .of(comment)
+    if (state) {
+      comment.votes.push(loggedUser);
+      await this.activityService.logCommentEvent(loggedUser, ActivityType.Like, postId, commentId);
+    } else {
+      comment.votes.splice(comment.votes.indexOf(loggedUser), 1);
+    }
 
-    state
-      ? (
-        await likes.add(loggedUser),
-        await this.activityService.logCommentEvent(loggedUser, ActivityType.Like, postId, commentId)
-      )
-      : await likes.remove(loggedUser)
+    const likedComment = await this.commentsRepo.save(comment);
 
-    return this.toCommentShowDTO(comment);
+    return this.toCommentShowDTO(likedComment);
   }
 
   public async deleteComment(loggedUser: User, postId: number, commentId: number, isAdmin: boolean): Promise<CommentShowDTO> {
@@ -123,20 +112,12 @@ export class CommentsService {
       throw new ForumSystemException('Not allowed to delete other users comments', 403);
     }
 
-    await this.postsRepo
-      .createQueryBuilder("post")
-      .update()
-      .set({
-        commentsCount: () => "commentsCount - 1"
-      })
-      .where("id = :id", { id: postId })
-      .execute();
-
     const deletedComment: Comment = await this.commentsRepo.save({
       ...comment,
       isDeleted: true
     });
 
+    await this.updateCommentsCount(postId);
     await this.activityService.logCommentEvent(loggedUser, ActivityType.Remove, postId, commentId);
 
     return this.toCommentShowDTO(deletedComment);
@@ -187,5 +168,17 @@ export class CommentsService {
     this.validateComment(foundComment);
 
     return foundComment;
+  }
+
+  private async updateCommentsCount(postId: number): Promise<void> {
+    const updatedPost = await this.postsRepo
+      .createQueryBuilder("post")
+      .leftJoinAndSelect("post.comments", "comments")
+      .loadRelationCountAndMap("post.commentsCount", "post.comments", "co", qb => qb.andWhere("co.isDeleted = :isDeleted", { isDeleted: false }))
+      .where("post.id = :id", { id: postId })
+      .addOrderBy("post.id, comments.id")
+      .getOne();
+
+    this.postsRepo.save(updatedPost);
   }
 }
