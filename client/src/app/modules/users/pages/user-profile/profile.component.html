@@ -5,20 +5,20 @@
       Self aware panel
     </mat-panel-title>
   </mat-expansion-panel-header>
-  <p>I'm visible because I am open</p>
+  <app-user-activity></app-user-activity>
 </mat-expansion-panel>
-<button
+<div
   *ngIf="
     loggedUser.id !== profileOwnerId &&
     !areFriends &&
     !friendRequestSent &&
     !friendRequestWaiting
   "
-  mat-raised-button
-  (click)="sendFriendRequest(profileOwnerId)"
 >
-  Send friend request
-</button>
+  <button mat-raised-button (click)="sendFriendRequest(profileOwnerId)">
+    Send friend request
+  </button>
+</div>
 <div *ngIf="friendRequestWaiting">
   <button mat-raised-button (click)="acceptFriendRequest(profileOwnerId)">
     Accept friend request

@@ -21,7 +21,7 @@ import { AllUsersComponent } from './components/all-users/all-users.component';
     AllUsersComponent,
   ],
   imports: [ReactiveFormsModule, SharedModule],
-  providers: [UsersDataService],
   exports: [AllUsersComponent],
+  providers: [UsersDataService],
 })
 export class UsersModule {}

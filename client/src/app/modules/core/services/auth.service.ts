@@ -8,6 +8,7 @@ import { UserLoginDTO } from 'src/app/models/user-login-dto';
 import { StorageService } from './storage.service';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { User } from 'src/app/models/user';
+import { CoreModule } from '../core.module';
 
 @Injectable()
 export class AuthService {

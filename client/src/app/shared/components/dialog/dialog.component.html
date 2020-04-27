@@ -1,0 +1,17 @@
+<div *ngIf="data?.length; else elseBlock">
+  <h2>Your recent activity:</h2>
+  <mat-dialog-content *ngFor="let activity of data">
+    <mat-list-item>
+      {{ activity.username }} {{ activity.action }} on
+      {{ activity.timeStamp | date }}
+    </mat-list-item>
+  </mat-dialog-content>
+</div>
+<ng-template #elseBlock>
+  <h2>
+    Looks like you haven't been very active lately.
+  </h2>
+  <h1>
+    Hit the forum now!
+  </h1>
+</ng-template>

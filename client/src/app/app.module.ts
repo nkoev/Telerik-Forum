@@ -6,9 +6,15 @@ import { HomePageComponent } from './pages/home-page/home-page.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { CoreModule } from './modules/core/core.module';
 import { SharedModule } from './shared/modules/shared.module';
+import { DialogComponent } from './shared/components/dialog/dialog.component';
 
 @NgModule({
-  declarations: [AppComponent, HomePageComponent, NotFoundComponent],
+  declarations: [
+    AppComponent,
+    HomePageComponent,
+    NotFoundComponent,
+    DialogComponent,
+  ],
   imports: [AppRoutingModule, UsersModule, CoreModule, SharedModule],
   bootstrap: [AppComponent],
 })
