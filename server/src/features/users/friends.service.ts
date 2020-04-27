@@ -140,13 +140,14 @@ export class FriendsService {
   async removeFriend(loggedUser: User, friendId: string): Promise<UserShowDTO> {
     const foundFriend: User = await this.getFriend(friendId);
     this.validateUser(foundFriend);
-    console.log(foundFriend);
+
     const foundFriendRequest = await this.getFriendRequest(
       loggedUser.id,
       foundFriend.id,
       true,
       true,
     );
+    console.log(foundFriendRequest);
     this.validateFriendRequest(foundFriendRequest, true);
     await this.friendRequestsRepository.delete(foundFriendRequest);
 

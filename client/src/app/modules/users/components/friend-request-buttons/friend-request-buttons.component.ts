@@ -22,9 +22,10 @@ export class FriendRequestButtonsComponent implements OnInit {
   }
 
   acceptFriendRequest(userId: string) {
-    this.usersDataService
-      .acceptFriendRequest(userId)
-      .subscribe(() => (this.friendStatus.requestReceived = false));
+    this.usersDataService.acceptFriendRequest(userId).subscribe(() => {
+      this.friendStatus.requestReceived = false;
+      this.friendStatus.isFriend = true;
+    });
   }
 
   rejectFriendRequest(userId: string) {

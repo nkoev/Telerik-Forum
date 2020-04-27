@@ -4,7 +4,7 @@
     <mat-list-item>
       <a [routerLink]="['/profile/', friend.id]">{{ friend.username }}</a>
       &nbsp; &nbsp;
-      <button mat-button>
+      <button mat-button (click)="removeFriend(friend.id)">
         unfriend
       </button>
     </mat-list-item>
@@ -18,12 +18,3 @@
     Go find some now!
   </h1>
 </ng-template>
-
-<div *ngIf="friendRequests?.length">
-  <h2>Friend requests:</h2>
-  <ul *ngFor="let request of friendRequests">
-    <li>
-      {{ request.username }} <button>accept</button><button>delete</button>
-    </li>
-  </ul>
-</div>
