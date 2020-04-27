@@ -27,8 +27,8 @@ export class SinglePostComponent implements OnInit {
 
   // REPLACE WITH ACTUAL DATA
   fakeLoggedUser = {
-    id: "8dffe6d8-3735-44ff-8718-a153af93ec71",
-    username: "admin",
+    id: "581744a5-6e09-4fb3-9183-1c79f96e6e22",
+    username: "user4",
     roles: ['Basic', 'Admin'],
   };
 
