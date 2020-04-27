@@ -85,7 +85,7 @@ export class CommentsController {
 
     @Delete('/:commentId')
     @UseGuards(BanGuard)
-    @HttpCode(HttpStatus.NO_CONTENT)
+    @HttpCode(HttpStatus.OK)
     async deleteComment(
         @LoggedUser() loggedUser: User,
         @IsAdmin() isAdmin: boolean,

@@ -87,19 +87,16 @@ export class PostsService {
       throw new ForumSystemException('User has already (un)liked this post', 400)
     }
 
-    const likes = this.postsRepo
-      .createQueryBuilder()
-      .relation('votes')
-      .of(post)
+    if (state) {
+      post.votes.push(loggedUser);
+      await this.activityService.logPostEvent(loggedUser, ActivityType.Like, postId);
+    } else {
+      post.votes.splice(post.votes.indexOf(loggedUser), 1);
+    }
 
-    state
-      ? (
-        await likes.add(loggedUser),
-        await this.activityService.logPostEvent(loggedUser, ActivityType.Like, postId)
-      )
-      : await likes.remove(loggedUser)
+    const likedPost = await this.postsRepo.save(post);
 
-    return this.toPostShowDTO(post)
+    return this.toPostShowDTO(likedPost);
   }
 
   public async flagPost(loggedUser: User, postId: number, state: boolean): Promise<PostShowDTO> {
@@ -115,20 +112,16 @@ export class PostsService {
       throw new ForumSystemException('User has already (un)flagged this post', 400)
     }
 
-    const flags = this.postsRepo
-      .createQueryBuilder()
-      .relation('flags')
-      .of(post)
+    if (state) {
+      post.flags.push(loggedUser);
+      await this.activityService.logPostEvent(loggedUser, ActivityType.Like, postId);
+    } else {
+      post.flags.splice(post.flags.indexOf(loggedUser), 1);
+    }
 
-    state
-      ? (
-        await flags.add(loggedUser),
-        await this.activityService.logPostEvent(loggedUser, ActivityType.Flag, postId),
-        await this.notificationsService.notifyAdmins(NotificationType.Post, ActionType.Flag, `posts/${postId}`)
-      )
-      : await flags.remove(loggedUser)
+    const flaggedPost = await this.postsRepo.save(post);
 
-    return this.toPostShowDTO(post);
+    return this.toPostShowDTO(flaggedPost);
   }
 
   public async lockPost(postId: number, state: boolean): Promise<PostShowDTO> {

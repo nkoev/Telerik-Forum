@@ -4,21 +4,18 @@ import { PostsRoutingModule } from './posts-routing.module';
 import { SinglePostComponent } from './components/single-post/single-post.component';
 import { CommentsModule } from '../comments/comments.module';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
-import { UpdatePostComponent } from './components/update-post/update-post.component';
+import { PostDialogComponent } from './components/post-dialog/post-dialog.component';
 
 @NgModule({
   declarations: [
     AllPostsComponent,
     SinglePostComponent,
-    UpdatePostComponent,
+    PostDialogComponent,
   ],
   imports: [
     SharedModule,
     PostsRoutingModule,
     CommentsModule
-  ],
-  providers: [
-
   ],
 })
 export class PostsModule { }

@@ -6,7 +6,8 @@ import { CommentDataService } from 'src/app/modules/comments/comment-data.servic
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { DialogComponent, DialogData } from 'src/app/shared/components/dialog/dialog.component';
-import { UpdatePostComponent, UpdatePostDialogData } from '../update-post/update-post.component';
+import { PostDialogData, PostDialogComponent } from '../post-dialog/post-dialog.component';
+import { CommentShow } from 'src/app/modules/comments/models/comment-show.model';
 
 @Component({
   selector: 'app-single-post',
@@ -15,20 +16,20 @@ import { UpdatePostComponent, UpdatePostDialogData } from '../update-post/update
 })
 export class SinglePostComponent implements OnInit {
 
-  post: PostShow; //undefined
+  post: PostShow;
   postLiked: boolean;
   postFlagged: boolean;
   isAuthor: boolean;
   isAdmin: boolean;
-  roles: any[] = ['Basic', 'Admin'];
 
-  comments: any[];
   commentsOpened: boolean = false;
-  message: string = '';
+  errorMessage: string = '';
 
+  // REPLACE WITH ACTUAL DATA
   fakeLoggedUser = {
-    id: "f3c3af7a-2688-404c-b17d-793f86b51e14",
-    username: "user4"
+    id: "8dffe6d8-3735-44ff-8718-a153af93ec71",
+    username: "admin",
+    roles: ['Basic', 'Admin'],
   };
 
   constructor(
@@ -39,6 +40,7 @@ export class SinglePostComponent implements OnInit {
     public dialog: MatDialog,
   ) { }
 
+
   ngOnInit(): void {
     console.log('COMPONENT INIT!');
 
@@ -47,44 +49,42 @@ export class SinglePostComponent implements OnInit {
         .subscribe({
           next: data => {
             this.post = data;
-            console.log(`This is the post:`, this.post);
-            console.log(`LOCKED: ${this.post.isLocked}`);
+            // console.log(`LOCKED: ${this.post.isLocked}`);
             this.postLiked = this.post.votes.some(vote => vote.id === this.fakeLoggedUser.id),
-              console.log(`LIKED: ${this.postLiked}`);
-            this.postFlagged = this.post.flags.some(flag => flag.id === this.fakeLoggedUser.id),
-              console.log(`FLAGGED: ${this.postFlagged}`);
-            this.isAuthor = this.post.user.id === this.fakeLoggedUser.id ? true : false;
-            console.log(`AUTHOR: ${this.isAuthor}`);
-            this.isAdmin = this.roles.includes('Admin');
-            console.log(`ADMIN: ${this.isAdmin}`);
+              // console.log(`LIKED: ${this.postLiked}`);
+              this.postFlagged = this.post.flags.some(flag => flag.id === this.fakeLoggedUser.id),
+              // console.log(`FLAGGED: ${this.postFlagged}`);
+              this.isAuthor = this.post.user.id === this.fakeLoggedUser.id ? true : false;
+            // console.log(`AUTHOR: ${this.isAuthor}`);
+            this.isAdmin = this.fakeLoggedUser.roles.includes('Admin');
+            // console.log(`ADMIN: ${this.isAdmin}`);
           },
           error: err => {
             console.log(err);
             // if (err.error.statusCode === 404) {
-            //   this.message = `No such post with id ${params.postId}`;
+            //   this.errorMessage = `No such post with id ${params.postId}`;
             // }
           }
         });
     });
   }
 
+
   loadComments(postId: number): void {
     if (!this.commentsOpened) {
       this.commentDataService.getAllComments(postId)
         .subscribe({
           next: data => {
-            this.comments = data;
-            this.post.commentsCount = this.comments.length;
-            // Additional property
-            this.comments = this.comments.map(comment => ({
+            this.post.comments = data.map(comment => ({
               ...comment,
+              // Additional properties
               isLiked: comment.votes.some(vote => vote.id === this.fakeLoggedUser.id),
+              isAuthor: comment.user.id === this.fakeLoggedUser.id ? true : false,
+              isAdmin: this.fakeLoggedUser.roles.includes('Admin'),
               inEditMode: false,
-              isAuthor: this.fakeLoggedUser.id === comment.user.id ? true : false,
-              isAdmin: false,
             }));
 
-            if (this.comments && this.comments.length > 0) {
+            if (this.post.comments && this.post.comments.length > 0) {
               this.commentsOpened = !this.commentsOpened;
             }
           },
@@ -96,29 +96,41 @@ export class SinglePostComponent implements OnInit {
     }
   }
 
-  updateComments(comment: any) {
-    this.commentsOpened = false;
-    this.loadComments(this.post.id);
-    // this.comments[this.comments.indexOf(comment)] = comment;
+  updateComments(data: { comment: CommentShow, state: boolean }): void {
+    // this.commentsOpened = false;
+    // this.loadComments(this.post.id);
+    if (data.state) {
+      data.comment.isAuthor = true;
+      this.post.comments.push(data.comment);
+    } else {
+      const index = this.post.comments.reduce((acc, comment, idx) => {
+        if (comment.id === data.comment.id) {
+          acc = idx;
+        }
+        return acc;
+      }, 0);
+      this.post.comments.splice(index, 1);
+    }
+    this.post.commentsCount = this.post.comments.length;
   }
 
   openDialog(dialogData: DialogData): Observable<any> {
     const dialogRef = this.dialog.open(DialogComponent, {
       width: '40em',
-      data: { action: dialogData.action, question: dialogData.question }
+      data: { action: dialogData.title, question: dialogData.question }
     });
 
     return dialogRef.afterClosed();
   }
 
-  openUpdatePostDialog(dialogData: UpdatePostDialogData): Observable<any> {
-    const dialogRef = this.dialog.open(UpdatePostComponent, {
-      width: '40em',
+  openPostDialog(dialogData: PostDialogData): Observable<any> {
+    const dialogRef = this.dialog.open(PostDialogComponent, {
+      width: '60em',
       data: {
         title: dialogData.title,
-        titleMessage: dialogData.titleMessage,
+        postTitleMessage: dialogData.postTitleMessage,
         postTitle: dialogData.postTitle,
-        contentMessage: dialogData.contentMessage,
+        postContentMessage: dialogData.postContentMessage,
         postContent: dialogData.postContent,
       }
     });
@@ -128,25 +140,28 @@ export class SinglePostComponent implements OnInit {
 
   updatePost(post: PostShow) {
 
-    const dialogData: UpdatePostDialogData = {
+    const dialogData: PostDialogData = {
       title: 'Update Post',
-      titleMessage: 'Your new post title',
+      postTitleMessage: 'Your new post title',
       postTitle: post.title,
-      contentMessage: 'Your new post content',
+      postContentMessage: 'Your new post content',
       postContent: post.content,
     };
 
-    this.openUpdatePostDialog(dialogData).subscribe(result => {
+    this.openPostDialog(dialogData).subscribe(result => {
       if (result) {
-        console.log(result);
+        if (post.title === result.title && post.content === result.content) {
+          return;
+        }
         this.postDataService.updatePost(this.post.id, result)
           .subscribe({
             next: data => {
-              console.log(data);
               this.post = data;
               console.log('POST UPDATED');
             },
-            error: err => console.log(err)
+            error: err => {
+              console.log(err);
+            }
           });
       }
     });
@@ -158,23 +173,23 @@ export class SinglePostComponent implements OnInit {
       return;
     }
 
-    console.log(`${this.postLiked} => ${!this.postLiked}`);
-
     this.postDataService.likePost(post.id, !this.postLiked)
       .subscribe({
         next: data => {
-          this.post = data;
-          console.log(data.votes.length);
+          this.post.votes = data.votes;
           this.postLiked = !this.postLiked;
+          console.log('POST (UN)LIKED');
         },
-        error: err => console.log(err)
+        error: err => {
+          console.log(err);
+        }
       });
   }
 
   flagPost(post: PostShow) {
 
     const dialogData = {
-      action: 'Flag Post',
+      title: 'Flag Post',
       question: 'Are you sure you want to (un)flag this post?'
     };
 
@@ -184,12 +199,11 @@ export class SinglePostComponent implements OnInit {
           .subscribe({
             next: data => {
               this.post = data;
-              console.log(data.flags);
               this.postFlagged = !this.postFlagged;
+              console.log('POST WAS (UN)FLAGGED');
             },
             error: err => {
               console.log(err);
-              return;
             }
           });
       }
@@ -199,7 +213,7 @@ export class SinglePostComponent implements OnInit {
   lockPost(post: PostShow) {
 
     const dialogData = {
-      action: 'Lock Post',
+      title: 'Lock Post',
       question: 'Are you sure you want to (un)lock this post?'
     };
 
@@ -213,7 +227,6 @@ export class SinglePostComponent implements OnInit {
             },
             error: err => {
               console.log(err);
-              return;
             }
           });
       }
@@ -223,7 +236,7 @@ export class SinglePostComponent implements OnInit {
   deletePost(post: PostShow) {
 
     const dialogData = {
-      action: 'Delete Post',
+      title: 'Delete Post',
       question: 'Are you sure you want to delete this post?'
     };
 
@@ -232,10 +245,12 @@ export class SinglePostComponent implements OnInit {
         this.postDataService.deletePost(post.id)
           .subscribe({
             next: data => {
-              console.log('POST DELETED');
+              console.log('POST WAS  DELETED');
               this.router.navigate(['/', 'home']);
             },
-            error: err => console.log(err)
+            error: err => {
+              console.log(err);
+            }
           });
       }
     });

@@ -7,3 +7,4 @@ temp/
 
 # dotenv environment variables file
 .env
+ormconfig.json

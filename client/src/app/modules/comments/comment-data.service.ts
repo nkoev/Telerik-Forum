@@ -2,28 +2,46 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpParams } from "@angular/common/http";
 import { Observable } from 'rxjs';
+import { CommentShow } from './models/comment-show.model';
+import { CommentCreate } from './models/comment-create.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CommentDataService {
 
-  token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImYzYzNhZjdhLTI2ODgtNDA0Yy1iMTdkLTc5M2Y4NmI1MWUxNCIsInVzZXJuYW1lIjoidXNlcjQiLCJpYXQiOjE1ODc5MDk4ODAsImV4cCI6MTU4NzkxNzA4MH0.C-LSL0wZ7fcfgiYRO47xlArQ9J-gOiy3sdgoetfiNxo';
+  token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhkZmZlNmQ4LTM3MzUtNDRmZi04NzE4LWExNTNhZjkzZWM3MSIsInVzZXJuYW1lIjoiYWRtaW4iLCJpYXQiOjE1ODc5OTg2NDMsImV4cCI6MTU4ODAwNTg0M30.OCVpY8MySj4232EGjpp1G2KM7VxYTSvBYA2JL8VfI8I';
 
   constructor(private readonly http: HttpClient) { }
 
-  public getAllComments(postId: number): Observable<any[]> {
-    return this.http.get<any>(`http://localhost:3000/posts/${postId}/comments`, {
+  public getAllComments(postId: number): Observable<CommentShow[]> {
+    return this.http.get<CommentShow[]>(`http://localhost:3000/posts/${postId}/comments`, {
       headers: {
         'Authorization': `Bearer ${this.token}`
       }
     });
   }
 
-  public likeComment(postId: number, commentId: any, state: boolean): Observable<any> {
+  public createComment(postId: number, comment: CommentCreate): Observable<CommentShow> {
+    return this.http.post<CommentShow>(`http://localhost:3000/posts/${postId}/comments`, comment, {
+      headers: {
+        'Authorization': `Bearer ${this.token}`
+      }
+    });
+  }
+
+  public updateComment(postId: number, comment: CommentShow): Observable<CommentShow> {
+    return this.http.put<CommentShow>(`http://localhost:3000/posts/${postId}/comments/${comment.id}`, comment, {
+      headers: {
+        'Authorization': `Bearer ${this.token}`
+      }
+    });
+  }
+
+  public likeComment(postId: number, commentId: number, state: boolean): Observable<CommentShow> {
     const params = new HttpParams().set('state', `${state}`);
 
-    return this.http.put<any>(`http://localhost:3000/posts/${postId}/comments/${commentId}/votes`, {}, {
+    return this.http.put<CommentShow>(`http://localhost:3000/posts/${postId}/comments/${commentId}/votes`, {}, {
       headers: {
         'Authorization': `Bearer ${this.token}`,
       },
@@ -31,24 +49,8 @@ export class CommentDataService {
     });
   }
 
-  public createComment(postId: number, comment: any): Observable<any> {
-    return this.http.post<any>(`http://localhost:3000/posts/${postId}/comments`, comment, {
-      headers: {
-        'Authorization': `Bearer ${this.token}`
-      }
-    });
-  }
-
-  public updateComment(postId: number, comment: any): Observable<any> {
-    return this.http.put<any>(`http://localhost:3000/posts/${postId}/comments/${comment.id}`, comment, {
-      headers: {
-        'Authorization': `Bearer ${this.token}`
-      }
-    });
-  }
-
-  public deleteComment(postId: number, commentId: any): Observable<any> {
-    return this.http.delete<any>(`http://localhost:3000/posts/${postId}/comments/${commentId}`, {
+  public deleteComment(postId: number, commentId: number): Observable<CommentShow> {
+    return this.http.delete<CommentShow>(`http://localhost:3000/posts/${postId}/comments/${commentId}`, {
       headers: {
         'Authorization': `Bearer ${this.token}`
       }
