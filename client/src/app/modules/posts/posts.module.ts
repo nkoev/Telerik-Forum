@@ -5,6 +5,7 @@ import { SinglePostComponent } from './components/single-post/single-post.compon
 import { CommentsModule } from '../comments/comments.module';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { PostDialogComponent } from './components/post-dialog/post-dialog.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { PostDialogComponent } from './components/post-dialog/post-dialog.compon
   imports: [
     SharedModule,
     PostsRoutingModule,
-    CommentsModule
+    CommentsModule,
+    ReactiveFormsModule,
   ],
 })
 export class PostsModule { }

@@ -1,16 +1,46 @@
 <h1 mat-dialog-title>{{data.title}}</h1>
+
 <div mat-dialog-content>
-    <mat-form-field class="content">
-        <mat-label>{{data.postTitleMessage}}</mat-label>
-        <input matInput [(ngModel)]="data.postTitle" required [value]="data.postTitle" class="text">
-    </mat-form-field>
-    <mat-form-field class="content">
-        <mat-label>{{data.postContentMessage}}</mat-label>
-        <textarea matInput [(ngModel)]="data.postContent" required [value]="data.postContent" class="text"></textarea>
-    </mat-form-field>
+    <form [formGroup]="postForm">
+
+        <mat-form-field class="content">
+            <mat-label>{{data.postTitleMessage}}</mat-label>
+            <input matInput formControlName="postTitle" required class="text">
+        </mat-form-field>
+
+        <mat-error *ngIf="postTitle.invalid && (postTitle.dirty || postTitle.touched)" class="alert alert-danger">
+            <div *ngIf="postTitle.errors.required">
+                Title is required
+            </div>
+            <div *ngIf="postTitle.errors.minlength && !postTitle.errors.required">
+                Title should be at least 3 symbols
+            </div>
+            <div *ngIf="postTitle.errors.maxlength && !postTitle.errors.required">
+                Title should be max 20 symbols
+            </div>
+        </mat-error>
+
+        <mat-form-field class="content">
+            <mat-label>{{data.postContentMessage}}</mat-label>
+            <textarea matInput formControlName="postContent" required class="text"></textarea>
+        </mat-form-field>
+
+        <mat-error *ngIf="postContent.invalid && (postContent.dirty || postContent.touched)" class="alert alert-danger">
+            <div *ngIf="postContent.errors.required">
+                Content is required
+            </div>
+            <div *ngIf="postContent.errors.minlength && !postContent.errors.required">
+                Content should be at least 2 symbols
+            </div>
+            <div *ngIf="postContent.errors.maxlength && !postContent.errors.required">
+                Content should be max 1000 symbols
+            </div>
+        </mat-error>
+
+    </form>
 </div>
+
 <div mat-dialog-actions>
-    <button mat-button (click)="onNoClick()">Undo</button>
-    <button mat-button [mat-dialog-close]="{title: data.postTitle.trim(), content: data.postContent.trim()}"
-        cdkFocusInitial>Save</button>
+    <button mat-button (click)="onClose()">Undo</button>
+    <button mat-button (click)="onSubmit(postForm)" cdkFocusInitial [disabled]="postForm.invalid">Save</button>
 </div>

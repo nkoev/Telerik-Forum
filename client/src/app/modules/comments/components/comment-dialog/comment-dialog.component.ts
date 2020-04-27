@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 export interface CommentDialogData {
   title: string;
@@ -14,14 +15,33 @@ export interface CommentDialogData {
 })
 export class CommentDialogComponent implements OnInit {
 
+  commentForm: FormGroup;
+
   constructor(
     public dialogRef: MatDialogRef<CommentDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: CommentDialogData) { }
+    @Inject(MAT_DIALOG_DATA) public data: CommentDialogData,
+    private formBuilder: FormBuilder
+  ) { }
 
   ngOnInit(): void {
+    this.commentForm = this.formBuilder.group(
+      {
+        commentContent: [this.data.commentContent, [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
+      }
+    );
   }
 
-  onNoClick(): void {
+  get commentContent() {
+    return this.commentForm.get('commentContent');
+  }
+
+  onSubmit(commentForm: FormGroup) {
+    if (commentForm.valid) {
+      this.dialogRef.close({ content: this.commentContent.value.trim() });
+    }
+  }
+
+  onClose() {
     this.dialogRef.close();
   }
 

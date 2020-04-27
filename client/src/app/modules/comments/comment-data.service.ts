@@ -10,7 +10,7 @@ import { CommentCreate } from './models/comment-create.model';
 })
 export class CommentDataService {
 
-  token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhkZmZlNmQ4LTM3MzUtNDRmZi04NzE4LWExNTNhZjkzZWM3MSIsInVzZXJuYW1lIjoiYWRtaW4iLCJpYXQiOjE1ODc5OTg2NDMsImV4cCI6MTU4ODAwNTg0M30.OCVpY8MySj4232EGjpp1G2KM7VxYTSvBYA2JL8VfI8I';
+  token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU4MTc0NGE1LTZlMDktNGZiMy05MTgzLTFjNzlmOTZlNmUyMiIsInVzZXJuYW1lIjoidXNlcjQiLCJpYXQiOjE1ODgwMTk0MzMsImV4cCI6MTU4ODAyNjYzM30.PSygiw_1oiTOURQborFJFR7_qJw0iYMI92T-LvGnMpA';
 
   constructor(private readonly http: HttpClient) { }
 
