@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { UserLoginDTO } from 'src/app/models/user-login-dto';
 import { StorageService } from './storage.service';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { User } from 'src/app/models/user';
+import { UserDTO } from 'src/app/models/user.dto';
 import { CoreModule } from '../core.module';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class AuthService {
   private readonly isLoggedInSubject$ = new BehaviorSubject<boolean>(
     this.isUserLoggedIn()
   );
-  private readonly loggedUserSubject$ = new BehaviorSubject<User>(
+  private readonly loggedUserSubject$ = new BehaviorSubject<UserDTO>(
     this.loggedUser()
   );
 
@@ -31,7 +31,7 @@ export class AuthService {
     return this.isLoggedInSubject$.asObservable();
   }
 
-  public get loggedUser$(): Observable<User> {
+  public get loggedUser$(): Observable<UserDTO> {
     return this.loggedUserSubject$.asObservable();
   }
 
@@ -40,7 +40,7 @@ export class AuthService {
       tap((res: any) => {
         try {
           this.storage.save('token', res.token);
-          const loggedUser: User = jwt_decode(res.token);
+          const loggedUser: UserDTO = jwt_decode(res.token);
           this.isLoggedInSubject$.next(true);
           this.loggedUserSubject$.next(loggedUser);
         } catch (err) {
@@ -69,7 +69,7 @@ export class AuthService {
     return this.storage.check('token');
   }
 
-  private loggedUser(): User {
+  private loggedUser(): UserDTO {
     try {
       return jwt_decode(this.storage.read('token'));
     } catch (error) {

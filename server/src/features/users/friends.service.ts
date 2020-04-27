@@ -7,6 +7,7 @@ import { UserShowDTO } from '../../models/users/user-show.dto';
 import { plainToClass } from 'class-transformer';
 import { ForumSystemException } from '../../common/exceptions/system-exception';
 import { FriendRequest } from '../../database/entities/friend-request.entity';
+import { FriendStatusDTO } from '../../models/users/friend.status.dto';
 
 @Injectable()
 export class FriendsService {
@@ -15,6 +16,53 @@ export class FriendsService {
     @InjectRepository(FriendRequest)
     private readonly friendRequestsRepository: Repository<FriendRequest>,
   ) {}
+
+  // GET ALL FRIENDS
+  async getFriends(loggedUser: User): Promise<UserShowDTO[]> {
+    if ((await loggedUser.friends).length < 1) {
+      return [];
+    }
+
+    const friendIds: string[] = (await loggedUser.friends).map(
+      friend => friend.id,
+    );
+
+    const foundFriends = await this.usersRepository.find({
+      where: {
+        id: In(friendIds),
+      },
+    });
+
+    return foundFriends.map(this.toUserShowDTO);
+
+    // return (await loggedUser.friends).map(this.toUserShowDTO);
+  }
+
+  // GET FRIEND STATUS
+
+  async getStatus(loggedUser: User, userId: string): Promise<FriendStatusDTO> {
+    const loggedUserFiriends = await loggedUser.friends;
+    const sentRequests: FriendRequest[] = await this.friendRequestsRepository.find(
+      {
+        userA: loggedUser.id,
+        status: false,
+      },
+    );
+    const receivedRequests: FriendRequest[] = await this.friendRequestsRepository.find(
+      {
+        userB: loggedUser.id,
+        status: false,
+      },
+    );
+
+    const isFriend = loggedUserFiriends.some(friend => friend.id === userId);
+    const requestReceived = receivedRequests.some(
+      request => request.userA === userId,
+    );
+    const requestSent = sentRequests.some(request => request.userB === userId);
+
+    return { isFriend, requestReceived, requestSent };
+  }
 
   // SEND FRIEND REQUEST
   async sendFriendRequest(
@@ -51,9 +99,10 @@ export class FriendsService {
     const foundFriendRequest = await this.getFriendRequest(
       foundFriend.id,
       loggedUser.id,
-      true,
+      false,
       false,
     );
+    console.log(foundFriendRequest);
     this.validateFriendRequest(foundFriendRequest, true);
     await this.friendRequestsRepository.save({
       ...foundFriendRequest,
@@ -89,11 +138,9 @@ export class FriendsService {
 
   // REMOVE FRIEND
   async removeFriend(loggedUser: User, friendId: string): Promise<UserShowDTO> {
-    const foundFriend: User = (await loggedUser.friends).filter(
-      friend => friend.id === friendId,
-    )[0];
+    const foundFriend: User = await this.getFriend(friendId);
     this.validateUser(foundFriend);
-
+    console.log(foundFriend);
     const foundFriendRequest = await this.getFriendRequest(
       loggedUser.id,
       foundFriend.id,
@@ -164,27 +211,6 @@ export class FriendsService {
     });
 
     return usersFromRequests.map(this.toUserShowDTO);
-  }
-
-  // GET ALL FRIENDS
-  async getFriends(loggedUser: User): Promise<UserShowDTO[]> {
-    if ((await loggedUser.friends).length < 1) {
-      return [];
-    }
-
-    const friendIds: string[] = (await loggedUser.friends).map(
-      friend => friend.id,
-    );
-
-    const foundFriends = await this.usersRepository.find({
-      where: {
-        id: In(friendIds),
-      },
-    });
-
-    return foundFriends.map(this.toUserShowDTO);
-
-    // return (await loggedUser.friends).map(this.toUserShowDTO);
   }
 
   private validateUser(user: User): void {

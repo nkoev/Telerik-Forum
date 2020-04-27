@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { User } from 'src/app/models/user';
+import { UserDTO } from 'src/app/models/user.dto';
 import { AuthService } from 'src/app/modules/core/services/auth.service';
 import { UsersDataService } from '../../services/users-data.service';
+import { FriendStatusDTO } from 'src/app/models/friend-status.dto';
 
 @Component({
   selector: 'app-user-profile',
@@ -11,10 +12,8 @@ import { UsersDataService } from '../../services/users-data.service';
 })
 export class UserProfileComponent implements OnInit {
   profileOwnerId: string;
-  loggedUser: User;
-  areFriends: boolean;
-  friendRequestSent: boolean;
-  friendRequestWaiting: boolean;
+  loggedUser: UserDTO;
+  friendStatus: FriendStatusDTO;
 
   constructor(
     private route: ActivatedRoute,
@@ -28,33 +27,7 @@ export class UserProfileComponent implements OnInit {
     });
     this.authService.loggedUser$.subscribe((res) => (this.loggedUser = res));
     this.usersDataService
-      .getUserFriends()
-      .subscribe(
-        (res: User[]) =>
-          (this.areFriends = res.some(
-            (user) => user.id === this.profileOwnerId
-          ))
-      );
-    this.usersDataService.getSentFriendRequests().subscribe((res: User[]) => {
-      this.friendRequestSent = res.some(
-        (user) => user.id === this.profileOwnerId
-      );
-    });
-    this.usersDataService
-      .getReceivedFriendRequests()
-      .subscribe((res: User[]) => {
-        this.friendRequestWaiting = res.some(
-          (user) => user.id === this.profileOwnerId
-        );
-      });
+      .getFriendStatus(this.profileOwnerId)
+      .subscribe((res: FriendStatusDTO) => (this.friendStatus = res));
   }
-
-  sendFriendRequest(userId: string) {
-    this.usersDataService
-      .sendFriendRequest(userId)
-      .subscribe(() => (this.friendRequestSent = true));
-  }
-  acceptFriendRequest(userId: string) {}
-
-  deleteFriendRequest(userId: string) {}
 }

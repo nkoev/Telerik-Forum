@@ -18,12 +18,30 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { BanGuard } from '../../common/guards/ban.guard';
 import { LoggedUser } from '../../common/decorators/user.decorator';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { FriendStatusDTO } from '../../models/users/friend.status.dto';
 
 @Controller('users/friends')
 @ApiBearerAuth()
 @UseGuards(AuthGuardWithBlacklisting, RolesGuard, BanGuard)
 export class FriendsController {
   constructor(private readonly friendsService: FriendsService) {}
+
+  //  GET ALL FRIENDS
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  async getFriends(@LoggedUser() loggedUser: User): Promise<UserShowDTO[]> {
+    return await this.friendsService.getFriends(loggedUser);
+  }
+
+  // GET Griend STATUS
+  @Get('/status/:userId')
+  @HttpCode(HttpStatus.OK)
+  async getStatus(
+    @LoggedUser() loggedUser: User,
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ): Promise<FriendStatusDTO> {
+    return await this.friendsService.getStatus(loggedUser, userId);
+  }
 
   //  SEND FRIEND REQUEST
   @Post('requests/:userId')
@@ -90,12 +108,5 @@ export class FriendsController {
     @LoggedUser() loggedUser: User,
   ): Promise<UserShowDTO[]> {
     return await this.friendsService.getSentFriendRequests(loggedUser);
-  }
-
-  //  GET ALL FRIENDS
-  @Get()
-  @HttpCode(HttpStatus.OK)
-  async getFriends(@LoggedUser() loggedUser: User): Promise<UserShowDTO[]> {
-    return await this.friendsService.getFriends(loggedUser);
   }
 }

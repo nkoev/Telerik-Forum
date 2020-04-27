@@ -1,8 +1,12 @@
 .profile-container {
   position: relative;
   height: 100%;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  flex-direction: column;
+  text-align: center;
+}
+
+#avatar {
+  width: 20%;
+  margin: 4%;
+  border-radius: 10%;
+  background-color: white;
 }

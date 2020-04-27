@@ -75,7 +75,7 @@ export class User {
     comment => comment.votes,
   )
   likedComments: Promise<Comment[]>;
-
+  @Expose()
   @ManyToMany(
     type => Role,
     role => role.users,
@@ -99,7 +99,7 @@ export class User {
   )
   @JoinTable()
   notifications: Notification[];
-
+  @Expose()
   @OneToOne(
     type => BanStatus,
     banStatus => banStatus.user,

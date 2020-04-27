@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UsersDataService } from '../../services/users-data.service';
-import { User } from 'src/app/models/user';
+import { UserDTO } from 'src/app/models/user.dto';
 
 @Component({
   selector: 'app-all-users',
@@ -8,12 +8,12 @@ import { User } from 'src/app/models/user';
   styleUrls: ['./all-users.component.css'],
 })
 export class AllUsersComponent implements OnInit {
-  allUsers: User[];
+  allUsers: UserDTO[];
   constructor(private usersDataService: UsersDataService) {}
 
   ngOnInit(): void {
     this.usersDataService
       .getAllUsers()
-      .subscribe((res: User[]) => (this.allUsers = res));
+      .subscribe((res: UserDTO[]) => (this.allUsers = res));
   }
 }

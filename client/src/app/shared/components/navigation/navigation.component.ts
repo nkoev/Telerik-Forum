@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/modules/core/services/auth.service';
-import { User } from 'src/app/models/user';
+import { UserDTO } from 'src/app/models/user.dto';
 import { DialogService } from '../../services/dialog.service';
 
 @Component({
@@ -14,7 +14,7 @@ export class NavigationComponent implements OnInit {
     private dialogService: DialogService
   ) {}
   isLoggedIn: boolean;
-  loggedUser: User;
+  loggedUser: UserDTO;
 
   ngOnInit(): void {
     this.authService.loggedUser$.subscribe((res) => (this.loggedUser = res));
