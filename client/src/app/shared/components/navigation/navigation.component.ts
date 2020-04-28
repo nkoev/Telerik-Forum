@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/modules/core/services/auth.service';
-import { User } from 'src/app/models/user';
+import { UserDTO } from 'src/app/models/user.dto';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   selector: 'app-navigation',
@@ -8,9 +9,12 @@ import { User } from 'src/app/models/user';
   styleUrls: ['./navigation.component.css'],
 })
 export class NavigationComponent implements OnInit {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private dialogService: DialogService
+  ) {}
   isLoggedIn: boolean;
-  loggedUser: User;
+  loggedUser: UserDTO;
 
   ngOnInit(): void {
     this.authService.loggedUser$.subscribe((res) => (this.loggedUser = res));
@@ -19,5 +23,13 @@ export class NavigationComponent implements OnInit {
 
   logout() {
     this.authService.logout().subscribe();
+  }
+
+  openActivity() {
+    this.dialogService.showUserActivity(this.loggedUser.id);
+  }
+
+  openFriends() {
+    this.dialogService.showUserFriends();
   }
 }

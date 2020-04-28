@@ -1,62 +1,50 @@
 <mat-card>
   <mat-card-title id="title">Please, fill in your details</mat-card-title>
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit(registerForm)">
+  <form [formGroup]="regForm" (ngSubmit)="onSubmit(regForm)">
     <mat-form-field>
       <mat-label>Username</mat-label>
-      <input
-        matInput
-        id="username"
-        class="form-control"
-        formControlName="username"
-        required
-      />
+      <input matInput formControlName="username" />
     </mat-form-field>
-    <mat-error
-      *ngIf="username.invalid && (username.dirty || username.touched)"
-      class="alert alert-danger"
-    >
-      <div *ngIf="username.errors.required">
+    <mat-hint *ngIf="username.dirty || username.touched">
+      <div *ngIf="username.errors?.required">
         Username is required.
       </div>
-      <div *ngIf="!username.errors.minLength && !username.errors.required">
+      <div *ngIf="username.errors?.minlength">
         Enter at least 5 symbols.
       </div>
-    </mat-error>
+      <div *ngIf="username.errors?.maxlength">
+        Max 20 symbols allowed.
+      </div>
+    </mat-hint>
     <br />
     <mat-form-field>
       <mat-label>Password</mat-label>
-      <input matInput type="password" formControlName="password" required />
+      <input matInput type="password" formControlName="password" />
     </mat-form-field>
-    <mat-error
-      *ngIf="password.invalid && (password.dirty || password.touched)"
-      class="alert alert-danger"
-    >
-      <div *ngIf="password.errors.required">
+    <mat-hint *ngIf="password.dirty || password.touched">
+      <div *ngIf="password.errors?.required">
         Password is required.
       </div>
-      <div *ngIf="!password.errors.minLength && !password.errors.required">
+      <div *ngIf="password.errors?.minlength">
         Enter at least 5 symbols.
       </div>
-    </mat-error>
+      <div *ngIf="password.errors?.maxlength">
+        Max 20 symbols allowed.
+      </div>
+    </mat-hint>
     <br />
     <mat-form-field>
-      <mat-label>Re-enter password</mat-label>
-      <input
-        type="password"
-        formControlName="confirmPassword"
-        required
-        matInput
-      />
+      <mat-label>Confirm password</mat-label>
+      <input matInput type="password" formControlName="confirmPassword" />
     </mat-form-field>
-    <mat-error
-      *ngIf="
-        (confirmPassword.dirty || confirmPassword.touched) &&
-        registerForm.errors?.notSame
-      "
-      class="cross-validation-error-message alert alert-danger"
-    >
-      Passwords do not match
-    </mat-error>
+    <mat-hint *ngIf="confirmPassword.dirty || confirmPassword.touched">
+      <div *ngIf="confirmPassword.errors?.required">
+        Confirmation is required.
+      </div>
+      <div *ngIf="confirmPassword.errors?.notSame">
+        Passwords do not match
+      </div>
+    </mat-hint>
     <br />
     <button
       class="dark-green-button"
@@ -66,11 +54,13 @@
     >
       Submit
     </button>
-    <div class="fail" *ngIf="invalid === true">
-      Please check if all the fields are correct
+    <br />
+    <button mat-button routerLink="/login">Back</button>
+    <div class="fail">
+      {{ errorMessage }}
     </div>
-    <div class="success" *ngIf="invalid === false">
-      You have registered successfully!
+    <div class="success">
+      {{ successMessage }}
     </div>
   </form>
 </mat-card>

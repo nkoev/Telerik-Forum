@@ -1,0 +1,10 @@
+<app-navigation></app-navigation>
+<div class="profile-container">
+  <img id="avatar" src="assets/images/avatar.png" />
+  <br />
+  <app-friend-request-buttons
+    *ngIf="loggedUser.id !== profileOwnerId"
+    [friendStatus]="friendStatus"
+    [profileOwnerId]="profileOwnerId"
+  ></app-friend-request-buttons>
+</div>

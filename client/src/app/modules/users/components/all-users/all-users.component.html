@@ -1,0 +1,5 @@
+<mat-list *ngFor="let user of allUsers">
+  <mat-list-item>
+    <a [routerLink]="['/profile/', user.id]">{{ user.username }}</a>
+  </mat-list-item>
+</mat-list>

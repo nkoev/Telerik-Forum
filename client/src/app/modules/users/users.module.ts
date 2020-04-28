@@ -3,20 +3,27 @@ import { LoginComponent } from './pages/login-page/login.component';
 import { CarouselComponent } from './components/carousel/carousel.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { UsersDataService } from './services/users-data.service';
-import { UserAccountComponent } from './pages/user-account/account.component';
+import { UserProfileComponent } from './pages/user-profile/profile.component';
 import { UserActivityComponent } from './components/user-activity/user-activity.component';
 import { SharedModule } from 'src/app/shared/modules/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { UserFriendsComponent } from './components/user-friends/users-friends.component';
+import { AllUsersComponent } from './components/all-users/all-users.component';
+import { FriendRequestButtonsComponent } from './components/friend-request-buttons/friend-request-buttons.component';
 
 @NgModule({
   declarations: [
     LoginComponent,
     CarouselComponent,
     RegisterComponent,
-    UserAccountComponent,
+    UserProfileComponent,
     UserActivityComponent,
+    UserFriendsComponent,
+    AllUsersComponent,
+    FriendRequestButtonsComponent,
   ],
   imports: [ReactiveFormsModule, SharedModule],
+  exports: [AllUsersComponent],
   providers: [UsersDataService],
 })
 export class UsersModule {}

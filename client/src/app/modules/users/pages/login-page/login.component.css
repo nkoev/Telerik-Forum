@@ -14,15 +14,20 @@
 }
 
 .login-container {
-  position: absolute;
+  position: fixed;
   width: 40%;
   top: 10%;
   left: 30%;
   text-align: center;
-  z-index: 2;
+  z-index: 4;
 }
 
 #login-button {
   color: white;
   background-color: #86c232;
+}
+
+#logo-image {
+  position: fixed;
+  z-index: 3;
 }

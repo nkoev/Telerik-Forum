@@ -1,0 +1,20 @@
+<div *ngIf="userFriends?.length; else elseBlock">
+  <h2>Your friends list:</h2>
+  <mat-list *ngFor="let friend of userFriends">
+    <mat-list-item>
+      <a [routerLink]="['/profile/', friend.id]">{{ friend.username }}</a>
+      &nbsp; &nbsp;
+      <button mat-button (click)="removeFriend(friend.id)">
+        unfriend
+      </button>
+    </mat-list-item>
+  </mat-list>
+</div>
+<ng-template #elseBlock>
+  <h2>
+    Looks like you don't have any friends yet.
+  </h2>
+  <h1>
+    Go find some now!
+  </h1>
+</ng-template>

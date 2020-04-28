@@ -1,13 +1,26 @@
 <mat-toolbar class="navigation">
-  <div *ngIf="isLoggedIn">Hello {{ loggedUser.username }}!</div>
-  <a mat-icon-button routerLink="/home"><mat-icon>home</mat-icon></a>
+  <a routerLink="/home"
+    ><div id="logo"><img src="/assets/images/logo.png" alt="Forum logo" /></div>
+  </a>
   <button class="light-green-button" mat-raised-button>
     Create post
   </button>
-  <button class="dark-green-button" mat-raised-button routerLink="/account">
-    Account
-  </button>
-  <button class="dark-green-button" (click)="logout()" mat-raised-button>
-    Logout
+  <button
+    class="light-green-button"
+    mat-raised-button
+    [matMenuTriggerFor]="appMenu"
+  >
+    {{ loggedUser.username }}
   </button>
 </mat-toolbar>
+
+<mat-menu #appMenu="matMenu">
+  <button mat-menu-item [routerLink]="['/profile/', loggedUser.id]">
+    Profile
+  </button>
+  <button mat-menu-item (click)="openActivity()">Recent activity</button>
+  <button mat-menu-item (click)="openFriends()">Friends</button>
+  <button mat-menu-item (click)="logout()" style="color: red;">
+    Logout
+  </button>
+</mat-menu>

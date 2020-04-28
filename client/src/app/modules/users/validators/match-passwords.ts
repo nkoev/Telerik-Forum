@@ -6,7 +6,9 @@ export const passwordsValidator: ValidatorFn = (
   const pass = control.get('password');
   const confirm = control.get('confirmPassword');
 
-  return pass && confirm && pass.value === confirm.value
-    ? null
-    : { notSame: true };
+  if (pass && confirm && pass.value === confirm.value) {
+    return null;
+  } else {
+    confirm.setErrors({ notSame: true });
+  }
 };

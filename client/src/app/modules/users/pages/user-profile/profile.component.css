@@ -1,0 +1,12 @@
+.profile-container {
+  position: relative;
+  height: 100%;
+  text-align: center;
+}
+
+#avatar {
+  width: 20%;
+  margin: 4%;
+  border-radius: 10%;
+  background-color: white;
+}

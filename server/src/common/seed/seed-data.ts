@@ -147,12 +147,12 @@ const seedComments = async (connection: any) => {
     });
 
     await postsRepo
-      .createQueryBuilder("post")
+      .createQueryBuilder('post')
       .update()
       .set({
-        commentsCount: () => "commentsCount + 1"
+        commentsCount: () => 'commentsCount + 1',
       })
-      .where("id = :id", { id: post.id })
+      .where('id = :id', { id: post.id })
       .execute();
 
     await commentsRepo.save(newComment);
