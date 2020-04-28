@@ -58,7 +58,8 @@ export class AllCommentsComponent implements OnInit {
       data: {
         title: dialogData.title,
         question: dialogData.question
-      }
+      },
+      backdropClass: 'backdropClass',
     });
 
     return dialogRef.afterClosed();
@@ -71,7 +72,8 @@ export class AllCommentsComponent implements OnInit {
         title: dialogData.title,
         commentContentMessage: dialogData.commentContentMessage,
         commentContent: dialogData.commentContent,
-      }
+      },
+      backdropClass: 'backdropClass',
     });
 
     return dialogRef.afterClosed();

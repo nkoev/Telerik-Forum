@@ -9,7 +9,7 @@ import { PostCreate } from './models/post-create.model';
 })
 export class PostDataService {
 
-  token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU4MTc0NGE1LTZlMDktNGZiMy05MTgzLTFjNzlmOTZlNmUyMiIsInVzZXJuYW1lIjoidXNlcjQiLCJpYXQiOjE1ODgwMTk0MzMsImV4cCI6MTU4ODAyNjYzM30.PSygiw_1oiTOURQborFJFR7_qJw0iYMI92T-LvGnMpA';
+  token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhkZmZlNmQ4LTM3MzUtNDRmZi04NzE4LWExNTNhZjkzZWM3MSIsInVzZXJuYW1lIjoiYWRtaW4iLCJpYXQiOjE1ODgwNzE0MDMsImV4cCI6MTU4ODA3ODYwM30.iAwPZHynh_jkeEvUx07HFGteJeCQeiIflZ64NCsTLBc';
   constructor(private readonly http: HttpClient) { }
 
   public getSinglePost(postId: string): Observable<PostShow> {
