@@ -4,9 +4,9 @@ import { AllPostsComponent } from './components/all-posts/all-posts.component';
 import { SinglePostComponent } from './components/single-post/single-post.component';
 
 const routes: Routes = [
-    { path: '', redirectTo: 'posts/all', pathMatch: 'full' },
-    { path: 'posts/all', component: AllPostsComponent },
-    { path: 'posts/:postId', component: SinglePostComponent },
+    { path: '', redirectTo: 'all', pathMatch: 'full' },
+    { path: 'all', component: AllPostsComponent },
+    { path: ':postId', component: SinglePostComponent },
 ];
 
 @NgModule({

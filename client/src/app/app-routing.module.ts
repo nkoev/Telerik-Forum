@@ -22,7 +22,7 @@ const appRoutes: Routes = [
   },
   { path: 'account', component: UserAccountComponent },
   {
-    path: 'home',
+    path: 'posts',
     loadChildren: () =>
       import('./modules/posts/posts.module').then((m) => m.PostsModule),
   },
