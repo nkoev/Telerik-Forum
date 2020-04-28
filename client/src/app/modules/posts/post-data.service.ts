@@ -9,48 +9,30 @@ import { PostCreate } from './models/post-create.model';
 })
 export class PostDataService {
 
-  token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhkZmZlNmQ4LTM3MzUtNDRmZi04NzE4LWExNTNhZjkzZWM3MSIsInVzZXJuYW1lIjoiYWRtaW4iLCJpYXQiOjE1ODgwNzE0MDMsImV4cCI6MTU4ODA3ODYwM30.iAwPZHynh_jkeEvUx07HFGteJeCQeiIflZ64NCsTLBc';
+  private _postsURL: string = 'http://localhost:3000/posts';
+
   constructor(private readonly http: HttpClient) { }
 
   public getSinglePost(postId: string): Observable<PostShow> {
-    return this.http.get<PostShow>(`http://localhost:3000/posts/${postId}`, {
-      headers: {
-        'Authorization': `Bearer ${this.token}`
-      }
-    });
+    return this.http.get<PostShow>(`${this._postsURL}/${postId}`);
   }
 
   public getAllPosts(): Observable<PostShow[]> {
-    return this.http.get<PostShow[]>(`http://localhost:3000/posts`, {
-      headers: {
-        'Authorization': `Bearer ${this.token}`
-      }
-    });
+    return this.http.get<PostShow[]>(`${this._postsURL}`);
   }
 
   public createPost(post: PostCreate): Observable<PostShow> {
-    return this.http.post<PostShow>(`http://localhost:3000/posts`, post, {
-      headers: {
-        'Authorization': `Bearer ${this.token}`
-      }
-    });
+    return this.http.post<PostShow>(`${this._postsURL}`, post);
   }
 
   public updatePost(postId: number, post: PostCreate): Observable<PostShow> {
-    return this.http.put<PostShow>(`http://localhost:3000/posts/${postId}`, post, {
-      headers: {
-        'Authorization': `Bearer ${this.token}`
-      }
-    });
+    return this.http.put<PostShow>(`${this._postsURL}/${postId}`, post);
   }
 
   public likePost(postId: number, state: boolean): Observable<PostShow> {
     const params = new HttpParams().set('state', `${state}`);
 
-    return this.http.put<PostShow>(`http://localhost:3000/posts/${postId}/votes`, {}, {
-      headers: {
-        'Authorization': `Bearer ${this.token}`,
-      },
+    return this.http.put<PostShow>(`${this._postsURL}/${postId}/votes`, {}, {
       params: params,
     });
   }
@@ -58,10 +40,7 @@ export class PostDataService {
   public flagPost(postId: number, state: boolean): Observable<PostShow> {
     const params = new HttpParams().set('state', `${state}`);
 
-    return this.http.put<PostShow>(`http://localhost:3000/posts/${postId}/flag`, {}, {
-      headers: {
-        'Authorization': `Bearer ${this.token}`,
-      },
+    return this.http.put<PostShow>(`${this._postsURL}/${postId}/flag`, {}, {
       params: params,
     });
   }
@@ -69,19 +48,12 @@ export class PostDataService {
   public lockPost(postId: number, state: boolean): Observable<PostShow> {
     const params = new HttpParams().set('state', `${state}`);
 
-    return this.http.put<PostShow>(`http://localhost:3000/posts/${postId}/lock`, {}, {
-      headers: {
-        'Authorization': `Bearer ${this.token}`,
-      },
+    return this.http.put<PostShow>(`${this._postsURL}/${postId}/lock`, {}, {
       params: params,
     });
   }
 
   public deletePost(postId: number): Observable<PostShow> {
-    return this.http.delete<PostShow>(`http://localhost:3000/posts/${postId}`, {
-      headers: {
-        'Authorization': `Bearer ${this.token}`
-      }
-    });
+    return this.http.delete<PostShow>(`${this._postsURL}/${postId}`);
   }
 }

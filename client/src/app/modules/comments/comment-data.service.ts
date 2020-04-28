@@ -10,50 +10,31 @@ import { CommentCreate } from './models/comment-create.model';
 })
 export class CommentDataService {
 
-  token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhkZmZlNmQ4LTM3MzUtNDRmZi04NzE4LWExNTNhZjkzZWM3MSIsInVzZXJuYW1lIjoiYWRtaW4iLCJpYXQiOjE1ODgwNzE0MDMsImV4cCI6MTU4ODA3ODYwM30.iAwPZHynh_jkeEvUx07HFGteJeCQeiIflZ64NCsTLBc';
+  private _postsURL = 'http://localhost:3000/posts';
 
   constructor(private readonly http: HttpClient) { }
 
   public getAllComments(postId: number): Observable<CommentShow[]> {
-    return this.http.get<CommentShow[]>(`http://localhost:3000/posts/${postId}/comments`, {
-      headers: {
-        'Authorization': `Bearer ${this.token}`
-      }
-    });
+    return this.http.get<CommentShow[]>(`${this._postsURL}/${postId}/comments`);
   }
 
   public createComment(postId: number, comment: CommentCreate): Observable<CommentShow> {
-    return this.http.post<CommentShow>(`http://localhost:3000/posts/${postId}/comments`, comment, {
-      headers: {
-        'Authorization': `Bearer ${this.token}`
-      }
-    });
+    return this.http.post<CommentShow>(`${this._postsURL}/${postId}/comments`, comment);
   }
 
   public updateComment(postId: number, comment: CommentShow): Observable<CommentShow> {
-    return this.http.put<CommentShow>(`http://localhost:3000/posts/${postId}/comments/${comment.id}`, comment, {
-      headers: {
-        'Authorization': `Bearer ${this.token}`
-      }
-    });
+    return this.http.put<CommentShow>(`${this._postsURL}/${postId}/comments/${comment.id}`, comment);
   }
 
   public likeComment(postId: number, commentId: number, state: boolean): Observable<CommentShow> {
     const params = new HttpParams().set('state', `${state}`);
 
-    return this.http.put<CommentShow>(`http://localhost:3000/posts/${postId}/comments/${commentId}/votes`, {}, {
-      headers: {
-        'Authorization': `Bearer ${this.token}`,
-      },
+    return this.http.put<CommentShow>(`${this._postsURL}/${postId}/comments/${commentId}/votes`, {}, {
       params: params,
     });
   }
 
   public deleteComment(postId: number, commentId: number): Observable<CommentShow> {
-    return this.http.delete<CommentShow>(`http://localhost:3000/posts/${postId}/comments/${commentId}`, {
-      headers: {
-        'Authorization': `Bearer ${this.token}`
-      }
-    });
+    return this.http.delete<CommentShow>(`${this._postsURL}/${postId}/comments/${commentId}`);
   }
 }

@@ -8,6 +8,8 @@ import { Observable } from 'rxjs';
 import { DialogComponent, DialogData } from 'src/app/shared/components/dialog/dialog.component';
 import { PostDialogData, PostDialogComponent } from '../post-dialog/post-dialog.component';
 import { CommentShow } from 'src/app/modules/comments/models/comment-show.model';
+import { User } from 'src/app/models/user';
+import { AuthService } from 'src/app/modules/core/services/auth.service';
 
 @Component({
   selector: 'app-single-post',
@@ -24,19 +26,14 @@ export class SinglePostComponent implements OnInit {
 
   commentsOpened: boolean = false;
   errorMessage: string = '';
-
-  // REPLACE WITH ACTUAL DATA
-  fakeLoggedUser = {
-    id: "8dffe6d8-3735-44ff-8718-a153af93ec71",
-    username: "admin",
-    roles: ['Basic', 'Admin'],
-  };
+  loggedUser: User;
 
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly postDataService: PostDataService,
     private readonly commentDataService: CommentDataService,
+    private authService: AuthService,
     public dialog: MatDialog,
   ) { }
 
@@ -44,20 +41,17 @@ export class SinglePostComponent implements OnInit {
   ngOnInit(): void {
     console.log('COMPONENT INIT!');
 
+    this.authService.loggedUser$.subscribe((res) => (this.loggedUser = res));
+
     this.route.params.subscribe(params => {
       this.postDataService.getSinglePost(params.postId)
         .subscribe({
           next: data => {
             this.post = data;
-            // console.log(`LOCKED: ${this.post.isLocked}`);
-            this.postLiked = this.post.votes.some(vote => vote.id === this.fakeLoggedUser.id),
-              // console.log(`LIKED: ${this.postLiked}`);
-              this.postFlagged = this.post.flags.some(flag => flag.id === this.fakeLoggedUser.id),
-              // console.log(`FLAGGED: ${this.postFlagged}`);
-              this.isAuthor = this.post.user.id === this.fakeLoggedUser.id ? true : false;
-            // console.log(`AUTHOR: ${this.isAuthor}`);
-            this.isAdmin = this.fakeLoggedUser.roles.includes('Admin');
-            // console.log(`ADMIN: ${this.isAdmin}`);
+            this.postLiked = this.post.votes.some(vote => vote.id === this.loggedUser.id),
+              this.postFlagged = this.post.flags.some(flag => flag.id === this.loggedUser.id),
+              this.isAuthor = this.post.user.id === this.loggedUser.id ? true : false;
+            this.isAdmin = this.loggedUser.roles.includes('Admin');
           },
           error: err => {
             console.log(err);
@@ -78,9 +72,9 @@ export class SinglePostComponent implements OnInit {
             this.post.comments = data.map(comment => ({
               ...comment,
               // Additional properties
-              isLiked: comment.votes.some(vote => vote.id === this.fakeLoggedUser.id),
-              isAuthor: comment.user.id === this.fakeLoggedUser.id ? true : false,
-              isAdmin: this.fakeLoggedUser.roles.includes('Admin'),
+              isLiked: comment.votes.some(vote => vote.id === this.loggedUser.id),
+              isAuthor: comment.user.id === this.loggedUser.id ? true : false,
+              isAdmin: this.loggedUser.roles.includes('Admin'),
               inEditMode: false,
             }));
 

@@ -23,11 +23,6 @@ const appRoutes: Routes = [
   { path: 'account', component: UserAccountComponent },
   {
     path: 'home',
-    component: HomePageComponent,
-    // canActivate: [AuthGuard],
-  },
-  {
-    path: 'posts',
     loadChildren: () =>
       import('./modules/posts/posts.module').then((m) => m.PostsModule),
   },
@@ -39,4 +34,4 @@ const appRoutes: Routes = [
   imports: [RouterModule.forRoot(appRoutes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
