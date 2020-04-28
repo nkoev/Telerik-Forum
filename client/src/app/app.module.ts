@@ -9,12 +9,7 @@ import { SharedModule } from './shared/modules/shared.module';
 import { DialogComponent } from './shared/components/dialog/dialog.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HomePageComponent,
-    NotFoundComponent,
-    DialogComponent,
-  ],
+  declarations: [AppComponent, HomePageComponent, NotFoundComponent],
   imports: [AppRoutingModule, UsersModule, CoreModule, SharedModule],
   bootstrap: [AppComponent],
 })

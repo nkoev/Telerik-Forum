@@ -7,10 +7,15 @@ COLORS:
 #6B6E70 light grey
 */
 
-body {
+html {
   height: 100%;
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+body {
+  height: 100%;
+  margin: 0;
   background-color: #474b4f;
 }
 

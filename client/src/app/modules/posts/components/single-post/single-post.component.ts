@@ -5,19 +5,24 @@ import { PostShow } from '../../models/post-show.model';
 import { CommentDataService } from 'src/app/modules/comments/comment-data.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
-import { DialogComponent, DialogData } from 'src/app/shared/components/dialog/dialog.component';
-import { PostDialogData, PostDialogComponent } from '../post-dialog/post-dialog.component';
+import {
+  DialogComponent,
+  DialogData,
+} from 'src/app/shared/components/dialog/dialog.component';
+import {
+  PostDialogData,
+  PostDialogComponent,
+} from '../post-dialog/post-dialog.component';
 import { CommentShow } from 'src/app/modules/comments/models/comment-show.model';
-import { User } from 'src/app/models/user';
+import { UserDTO } from 'src/app/models/user.dto';
 import { AuthService } from 'src/app/modules/core/services/auth.service';
 
 @Component({
   selector: 'app-single-post',
   templateUrl: './single-post.component.html',
-  styleUrls: ['./single-post.component.css']
+  styleUrls: ['./single-post.component.css'],
 })
 export class SinglePostComponent implements OnInit {
-
   post: PostShow;
   postLiked: boolean;
   postFlagged: boolean;
@@ -26,7 +31,7 @@ export class SinglePostComponent implements OnInit {
 
   commentsOpened: boolean = false;
   errorMessage: string = '';
-  loggedUser: User;
+  loggedUser: UserDTO;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -34,63 +39,65 @@ export class SinglePostComponent implements OnInit {
     private readonly postDataService: PostDataService,
     private readonly commentDataService: CommentDataService,
     private authService: AuthService,
-    public dialog: MatDialog,
-  ) { }
-
+    public dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     console.log('COMPONENT INIT!');
 
     this.authService.loggedUser$.subscribe((res) => (this.loggedUser = res));
 
-    this.route.params.subscribe(params => {
-      this.postDataService.getSinglePost(params.postId)
-        .subscribe({
-          next: data => {
-            this.post = data;
-            this.postLiked = this.post.votes.some(vote => vote.id === this.loggedUser.id),
-              this.postFlagged = this.post.flags.some(flag => flag.id === this.loggedUser.id),
-              this.isAuthor = this.post.user.id === this.loggedUser.id ? true : false;
-            this.isAdmin = this.loggedUser.roles.includes('Admin');
-          },
-          error: err => {
-            console.log(err);
-            // if (err.error.statusCode === 404) {
-            //   this.errorMessage = `No such post with id ${params.postId}`;
-            // }
-          }
-        });
+    this.route.params.subscribe((params) => {
+      this.postDataService.getSinglePost(params.postId).subscribe({
+        next: (data) => {
+          this.post = data;
+          (this.postLiked = this.post.votes.some(
+            (vote) => vote.id === this.loggedUser.id
+          )),
+            (this.postFlagged = this.post.flags.some(
+              (flag) => flag.id === this.loggedUser.id
+            )),
+            (this.isAuthor =
+              this.post.user.id === this.loggedUser.id ? true : false);
+          this.isAdmin = this.loggedUser.roles.includes('Admin');
+        },
+        error: (err) => {
+          console.log(err);
+          // if (err.error.statusCode === 404) {
+          //   this.errorMessage = `No such post with id ${params.postId}`;
+          // }
+        },
+      });
     });
   }
 
-
   loadComments(postId: number): void {
     if (!this.commentsOpened) {
-      this.commentDataService.getAllComments(postId)
-        .subscribe({
-          next: data => {
-            this.post.comments = data.map(comment => ({
-              ...comment,
-              // Additional properties
-              isLiked: comment.votes.some(vote => vote.id === this.loggedUser.id),
-              isAuthor: comment.user.id === this.loggedUser.id ? true : false,
-              isAdmin: this.loggedUser.roles.includes('Admin'),
-              inEditMode: false,
-            }));
+      this.commentDataService.getAllComments(postId).subscribe({
+        next: (data) => {
+          this.post.comments = data.map((comment) => ({
+            ...comment,
+            // Additional properties
+            isLiked: comment.votes.some(
+              (vote) => vote.id === this.loggedUser.id
+            ),
+            isAuthor: comment.user.id === this.loggedUser.id ? true : false,
+            isAdmin: this.loggedUser.roles.includes('Admin'),
+            inEditMode: false,
+          }));
 
-            if (this.post.comments && this.post.comments.length > 0) {
-              this.commentsOpened = !this.commentsOpened;
-            }
-          },
-          error: err => console.log(err)
-        });
-
+          if (this.post.comments && this.post.comments.length > 0) {
+            this.commentsOpened = !this.commentsOpened;
+          }
+        },
+        error: (err) => console.log(err),
+      });
     } else {
       this.commentsOpened = !this.commentsOpened;
     }
   }
 
-  updateComments(data: { comment: CommentShow, state: boolean }): void {
+  updateComments(data: { comment: CommentShow; state: boolean }): void {
     // this.commentsOpened = false;
     // this.loadComments(this.post.id);
     if (data.state) {
@@ -135,7 +142,6 @@ export class SinglePostComponent implements OnInit {
   }
 
   updatePost(post: PostShow) {
-
     const dialogData: PostDialogData = {
       title: 'Update Post',
       postTitleMessage: 'Your new post title',
@@ -144,110 +150,105 @@ export class SinglePostComponent implements OnInit {
       postContent: post.content,
     };
 
-    this.openPostDialog(dialogData).subscribe(result => {
+    this.openPostDialog(dialogData).subscribe((result) => {
       if (result) {
         if (post.title === result.title && post.content === result.content) {
           return;
         }
-        this.postDataService.updatePost(this.post.id, result)
-          .subscribe({
-            next: data => {
-              this.post = { ...this.post, title: data.title, content: data.content };
-              console.log('POST UPDATED');
-            },
-            error: err => {
-              console.log(err);
-            }
-          });
+        this.postDataService.updatePost(this.post.id, result).subscribe({
+          next: (data) => {
+            this.post = {
+              ...this.post,
+              title: data.title,
+              content: data.content,
+            };
+            console.log('POST UPDATED');
+          },
+          error: (err) => {
+            console.log(err);
+          },
+        });
       }
     });
   }
 
   likePost(post: PostShow) {
-
     if (this.isAuthor) {
       return;
     }
 
-    this.postDataService.likePost(post.id, !this.postLiked)
-      .subscribe({
-        next: data => {
-          this.post = { ...this.post, votes: data.votes };
-          this.postLiked = !this.postLiked;
-          console.log('POST (UN)LIKED');
-        },
-        error: err => {
-          console.log(err);
-        }
-      });
+    this.postDataService.likePost(post.id, !this.postLiked).subscribe({
+      next: (data) => {
+        this.post = { ...this.post, votes: data.votes };
+        this.postLiked = !this.postLiked;
+        console.log('POST (UN)LIKED');
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 
   flagPost(post: PostShow) {
-
     const dialogData = {
       title: 'Flag Post',
-      question: 'Are you sure you want to (un)flag this post?'
+      question: 'Are you sure you want to (un)flag this post?',
     };
 
-    this.openDialog(dialogData).subscribe(result => {
+    this.openDialog(dialogData).subscribe((result) => {
       if (result) {
-        this.postDataService.flagPost(post.id, !this.postFlagged)
-          .subscribe({
-            next: data => {
-              this.post = { ...this.post, flags: data.flags };
-              this.postFlagged = !this.postFlagged;
-              console.log('POST WAS (UN)FLAGGED');
-            },
-            error: err => {
-              console.log(err);
-            }
-          });
+        this.postDataService.flagPost(post.id, !this.postFlagged).subscribe({
+          next: (data) => {
+            this.post = { ...this.post, flags: data.flags };
+            this.postFlagged = !this.postFlagged;
+            console.log('POST WAS (UN)FLAGGED');
+          },
+          error: (err) => {
+            console.log(err);
+          },
+        });
       }
     });
   }
 
   lockPost(post: PostShow) {
-
     const dialogData = {
       title: 'Lock Post',
-      question: 'Are you sure you want to (un)lock this post?'
+      question: 'Are you sure you want to (un)lock this post?',
     };
 
-    this.openDialog(dialogData).subscribe(result => {
+    this.openDialog(dialogData).subscribe((result) => {
       if (result) {
-        this.postDataService.lockPost(post.id, !post.isLocked)
-          .subscribe({
-            next: data => {
-              this.post = { ...this.post, isLocked: data.isLocked };
-              console.log('POST WAS (UN)LOCKED');
-            },
-            error: err => {
-              console.log(err);
-            }
-          });
+        this.postDataService.lockPost(post.id, !post.isLocked).subscribe({
+          next: (data) => {
+            this.post = { ...this.post, isLocked: data.isLocked };
+            console.log('POST WAS (UN)LOCKED');
+          },
+          error: (err) => {
+            console.log(err);
+          },
+        });
       }
     });
   }
 
   deletePost(post: PostShow) {
-
     const dialogData = {
       title: 'Delete Post',
-      question: 'Are you sure you want to delete this post?'
+      question: 'Are you sure you want to delete this post?',
     };
 
-    this.openDialog(dialogData).subscribe(result => {
+    this.openDialog(dialogData).subscribe((result) => {
       if (result) {
-        this.postDataService.deletePost(post.id)
-          .subscribe({
-            next: data => {
-              console.log('POST WAS  DELETED');
-              this.router.navigate(['/', 'home']);
-            },
-            error: err => {
-              console.log(err);
-            }
-          });
+        this.postDataService.deletePost(post.id).subscribe({
+          next: (data) => {
+            console.log('POST WAS  DELETED');
+            this.router.navigate(['/', 'home']);
+          },
+          error: (err) => {
+            console.log(err);
+          },
+        });
       }
     });
   }
