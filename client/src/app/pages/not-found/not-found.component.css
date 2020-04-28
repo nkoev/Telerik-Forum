@@ -31,3 +31,8 @@
     background: url("../../../assets/posts/missing-the-mark.jpg");
     background-size: cover;
 }
+
+span {
+    color: #b24735;
+    cursor: pointer;
+}
