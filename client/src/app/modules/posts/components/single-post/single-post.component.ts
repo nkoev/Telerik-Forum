@@ -27,8 +27,8 @@ export class SinglePostComponent implements OnInit {
 
   // REPLACE WITH ACTUAL DATA
   fakeLoggedUser = {
-    id: "581744a5-6e09-4fb3-9183-1c79f96e6e22",
-    username: "user4",
+    id: "8dffe6d8-3735-44ff-8718-a153af93ec71",
+    username: "admin",
     roles: ['Basic', 'Admin'],
   };
 
@@ -117,7 +117,8 @@ export class SinglePostComponent implements OnInit {
   openDialog(dialogData: DialogData): Observable<any> {
     const dialogRef = this.dialog.open(DialogComponent, {
       width: '40em',
-      data: { action: dialogData.title, question: dialogData.question }
+      data: { action: dialogData.title, question: dialogData.question },
+      backdropClass: 'backdropClass',
     });
 
     return dialogRef.afterClosed();
@@ -132,7 +133,8 @@ export class SinglePostComponent implements OnInit {
         postTitle: dialogData.postTitle,
         postContentMessage: dialogData.postContentMessage,
         postContent: dialogData.postContent,
-      }
+      },
+      backdropClass: 'backdropClass',
     });
 
     return dialogRef.afterClosed();
@@ -156,7 +158,7 @@ export class SinglePostComponent implements OnInit {
         this.postDataService.updatePost(this.post.id, result)
           .subscribe({
             next: data => {
-              this.post = data;
+              this.post = { ...this.post, title: data.title, content: data.content };
               console.log('POST UPDATED');
             },
             error: err => {
@@ -176,7 +178,7 @@ export class SinglePostComponent implements OnInit {
     this.postDataService.likePost(post.id, !this.postLiked)
       .subscribe({
         next: data => {
-          this.post.votes = data.votes;
+          this.post = { ...this.post, votes: data.votes };
           this.postLiked = !this.postLiked;
           console.log('POST (UN)LIKED');
         },
@@ -198,7 +200,7 @@ export class SinglePostComponent implements OnInit {
         this.postDataService.flagPost(post.id, !this.postFlagged)
           .subscribe({
             next: data => {
-              this.post = data;
+              this.post = { ...this.post, flags: data.flags };
               this.postFlagged = !this.postFlagged;
               console.log('POST WAS (UN)FLAGGED');
             },
@@ -222,7 +224,7 @@ export class SinglePostComponent implements OnInit {
         this.postDataService.lockPost(post.id, !post.isLocked)
           .subscribe({
             next: data => {
-              this.post = data;
+              this.post = { ...this.post, isLocked: data.isLocked };
               console.log('POST WAS (UN)LOCKED');
             },
             error: err => {

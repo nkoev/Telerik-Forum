@@ -6,7 +6,8 @@
     --main-dark-gray-color: #222629;
 
     border-radius: 0 0 18px 18px;
-    background: white;
+    /* background: white; */
+    background-color: #474b4f;
     font-family: roboto;
     position: relative;
 }
