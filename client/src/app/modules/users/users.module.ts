@@ -10,6 +10,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { UserFriendsComponent } from './components/user-friends/users-friends.component';
 import { AllUsersComponent } from './components/all-users/all-users.component';
 import { FriendRequestButtonsComponent } from './components/friend-request-buttons/friend-request-buttons.component';
+import { FileUploadComponent } from './components/file-upload/file-upload.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { FriendRequestButtonsComponent } from './components/friend-request-butto
     UserFriendsComponent,
     AllUsersComponent,
     FriendRequestButtonsComponent,
+    FileUploadComponent,
   ],
   imports: [ReactiveFormsModule, SharedModule],
   exports: [AllUsersComponent],

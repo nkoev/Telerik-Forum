@@ -60,4 +60,12 @@ export class UsersDataService {
   removeFriend(userId: string) {
     return this.http.delete(`${this.usersUrl}/friends/${userId}`);
   }
+
+  getAvatar() {
+    return this.http.get(`${this.usersUrl}/avatar`);
+  }
+
+  uploadAvatar(file: FormData) {
+    return this.http.post(`${this.usersUrl}/avatar/upload`, file);
+  }
 }

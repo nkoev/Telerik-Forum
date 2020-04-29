@@ -1,37 +1,71 @@
 <app-navigation></app-navigation>
 
 <div class="single-post-container" *ngIf="post">
-    <div class="single-post-card" [ngClass]="{'opened': commentsOpened}">
-        <div class="card-image">
-            <div class="avatar"></div>
-            <div class="username">@{{post?.user.username}}</div>
-        </div>
-        <div class="card-text">
-            <div class="icons">
-                <div class="flag" *ngIf="!isAuthor" (click)="flagPost(post)" [ngClass]="{'full': postFlagged}"></div>
-                <div class="pencil" *ngIf="isAuthor" (click)="updatePost(post)"></div>
-                <div class="bin" *ngIf="isAuthor || isAdmin" (click)="deletePost(post);"></div>
-                <div class="padlock" *ngIf="isAdmin" (click)="lockPost(post)" [ngClass]="{'full': post?.isLocked}">
-                </div>
-            </div>
-            <span class="date">{{post?.createdOn |date}}</span>
-            <h2>{{post?.title}}</h2>
-            <p>{{post?.content}}</p>
-        </div>
-        <div class="card-stats" [ngClass]="{'opened': commentsOpened}">
-            <div class="stat left" (click)="loadComments(post.id)" [ngClass]="{'opened': commentsOpened}">
-                <div class="value">{{post?.commentsCount}}</div>
-                <div class="type">comments</div>
-            </div>
-            <div class="stat right" (click)="likePost(post)" [ngClass]="{'opened': commentsOpened}">
-                <div class="value">{{post?.votes.length}}</div>
-                <div class="type">likes</div>
-                <div class="heart" *ngIf="!isAuthor" [ngClass]="{'full': postLiked}"></div>
-                <div class="heart inactive" *ngIf="isAuthor"></div>
-            </div>
-        </div>
+  <div class="single-post-card" [ngClass]="{ opened: commentsOpened }">
+    <div class="card-image">
+      <div class="avatar"></div>
+      <div class="username">
+        <a mat-button [routerLink]="['/profile/', post?.user.id]"
+          >@{{ post?.user.username }}</a
+        >
+      </div>
     </div>
+    <div class="card-text">
+      <div class="icons">
+        <div
+          class="flag"
+          *ngIf="!isAuthor"
+          (click)="flagPost(post)"
+          [ngClass]="{ full: postFlagged }"
+        ></div>
+        <div class="pencil" *ngIf="isAuthor" (click)="updatePost(post)"></div>
+        <div
+          class="bin"
+          *ngIf="isAuthor || isAdmin"
+          (click)="deletePost(post)"
+        ></div>
+        <div
+          class="padlock"
+          *ngIf="isAdmin"
+          (click)="lockPost(post)"
+          [ngClass]="{ full: post?.isLocked }"
+        ></div>
+      </div>
+      <span class="date">{{ post?.createdOn | date }}</span>
+      <h2>{{ post?.title }}</h2>
+      <p>{{ post?.content }}</p>
+    </div>
+    <div class="card-stats" [ngClass]="{ opened: commentsOpened }">
+      <div
+        class="stat left"
+        (click)="loadComments(post.id)"
+        [ngClass]="{ opened: commentsOpened }"
+      >
+        <div class="value">{{ post?.commentsCount }}</div>
+        <div class="type">comments</div>
+      </div>
+      <div
+        class="stat right"
+        (click)="likePost(post)"
+        [ngClass]="{ opened: commentsOpened }"
+      >
+        <div class="value">{{ post?.votes.length }}</div>
+        <div class="type">likes</div>
+        <div
+          class="heart"
+          *ngIf="!isAuthor"
+          [ngClass]="{ full: postLiked }"
+        ></div>
+        <div class="heart inactive" *ngIf="isAuthor"></div>
+      </div>
+    </div>
+  </div>
 
-    <app-all-comments class="comments-section" [ngClass]="{'opened': commentsOpened}" [postId]="post.id"
-        [comments]="post.comments" (updateComments)="updateComments($event)"></app-all-comments>
+  <app-all-comments
+    class="comments-section"
+    [ngClass]="{ opened: commentsOpened }"
+    [postId]="post.id"
+    [comments]="post.comments"
+    (updateComments)="updateComments($event)"
+  ></app-all-comments>
 </div>

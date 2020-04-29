@@ -8,10 +8,15 @@ import { User } from '../../database/entities/user.entity';
 import { Role } from '../../database/entities/role.entity';
 import { BanStatus } from '../../database/entities/ban-status.entity';
 import { FriendRequest } from '../../database/entities/friend-request.entity';
+import { MulterModule } from '@nestjs/platform-express';
+import { Avatar } from '../../database/entities/avatar.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Role, BanStatus, FriendRequest])],
+  imports: [
+    TypeOrmModule.forFeature([User, Role, BanStatus, Avatar, FriendRequest]),
+    MulterModule,
+  ],
   controllers: [UsersController, FriendsController],
-  providers: [UsersService, FriendsService]
+  providers: [UsersService, FriendsService],
 })
-export class UsersModule { }
+export class UsersModule {}

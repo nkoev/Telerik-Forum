@@ -11,6 +11,8 @@ import {
   Get,
   UseGuards,
   Put,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserRegisterDTO } from '../../models/users/user-register.dto';
@@ -25,6 +27,9 @@ import { LoggedUser } from '../../common/decorators/user.decorator';
 import { User } from '../../database/entities/user.entity';
 import { ActivityShowDTO } from '../../models/activity/activity-show.dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Avatar } from '../../database/entities/avatar.entity';
+import { AvatarDTO } from '../../models/users/avatar.dto';
 
 @Controller('users')
 export class UsersController {
@@ -35,21 +40,6 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   async getUsers(): Promise<UserShowDTO[]> {
     return await this.usersService.getUsers();
-  }
-
-  //  REGISTER
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  async registerUser(
-    @Body(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-      }),
-    )
-    user: UserRegisterDTO,
-  ) {
-    return await this.usersService.registerUser(user);
   }
 
   //  GET ALL NOTIFICATIONS
@@ -73,6 +63,42 @@ export class UsersController {
     @Param('userId', ParseUUIDPipe) userId: string,
   ): Promise<ActivityShowDTO[]> {
     return await this.usersService.getUserActivity(loggedUser, userId);
+  }
+
+  //  REGISTER
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  async registerUser(
+    @Body(
+      new ValidationPipe({
+        whitelist: true,
+        transform: true,
+      }),
+    )
+    user: UserRegisterDTO,
+  ) {
+    return await this.usersService.registerUser(user);
+  }
+
+  // UPLOAD AVATAR
+  @Post('avatar/upload')
+  @UseGuards(AuthGuardWithBlacklisting)
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(
+    @UploadedFile()
+    file: AvatarDTO,
+    @LoggedUser()
+    loggedUser: User,
+  ): Promise<Avatar> {
+    return this.usersService.uploadAvatar(file, loggedUser);
+  }
+
+  // GET AVATAR
+
+  @Get('avatar')
+  @UseGuards(AuthGuardWithBlacklisting)
+  async getAvatar(@LoggedUser() loggedUser: User): Promise<Avatar> {
+    return this.usersService.getAvatar(loggedUser);
   }
 
   // BAN USERS
