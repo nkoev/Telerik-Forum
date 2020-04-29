@@ -14,16 +14,12 @@ import { ForumSystemException } from '../../common/exceptions/system-exception';
 import { ActivityRecord } from '../../database/entities/activity.entity';
 import { ActivityShowDTO } from '../../models/activity/activity-show.dto';
 import moment = require('moment');
-import { Avatar } from '../../database/entities/avatar.entity';
-import { AvatarDTO } from '../../models/users/avatar.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(Role) private readonly rolesRepository: Repository<Role>,
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
-    @InjectRepository(Avatar)
-    private readonly avatarsRepository: Repository<Avatar>,
     @InjectRepository(BanStatus)
     private readonly banStatusRepository: Repository<BanStatus>,
   ) {}
@@ -63,29 +59,19 @@ export class UsersService {
 
   // UPLOAD AVATAR
 
-  public async uploadAvatar(
-    file: AvatarDTO,
-    loggedUser: User,
-  ): Promise<Avatar> {
-    const avatar = this.avatarsRepository.create({
-      data: file.buffer,
-      encoding: file.encoding,
-      mimeType: file.mimetype,
-    });
-    await this.avatarsRepository.save(avatar);
+  public async uploadAvatar(file, loggedUser: User): Promise<string> {
+    loggedUser.avatar = file.buffer;
 
-    loggedUser.avatar = Promise.resolve(avatar);
+    const savedUser = await this.usersRepository.save(loggedUser);
 
-    await this.usersRepository.save(loggedUser);
-
-    return avatar;
+    return savedUser.avatar;
   }
 
   // GET AVATAR
-  public async getAvatar(loggedUser: User): Promise<Avatar> {
-    const avatar = await loggedUser.avatar;
-    return avatar;
-  }
+  // public async getAvatar(loggedUser: User): Promise<Avatar> {
+  //   const avatar = await loggedUser.avatar;
+  //   return avatar;
+  // }
 
   // BAN USERS
   async updateBanStatus(

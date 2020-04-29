@@ -28,8 +28,6 @@ import { User } from '../../database/entities/user.entity';
 import { ActivityShowDTO } from '../../models/activity/activity-show.dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Avatar } from '../../database/entities/avatar.entity';
-import { AvatarDTO } from '../../models/users/avatar.dto';
 
 @Controller('users')
 export class UsersController {
@@ -86,20 +84,20 @@ export class UsersController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
     @UploadedFile()
-    file: AvatarDTO,
+    file,
     @LoggedUser()
     loggedUser: User,
-  ): Promise<Avatar> {
+  ): Promise<string> {
     return this.usersService.uploadAvatar(file, loggedUser);
   }
 
   // GET AVATAR
 
-  @Get('avatar')
-  @UseGuards(AuthGuardWithBlacklisting)
-  async getAvatar(@LoggedUser() loggedUser: User): Promise<Avatar> {
-    return this.usersService.getAvatar(loggedUser);
-  }
+  // @Get('avatar')
+  // @UseGuards(AuthGuardWithBlacklisting)
+  // async getAvatar(@LoggedUser() loggedUser: User): Promise<Avatar> {
+  //   return this.usersService.getAvatar(loggedUser);
+  // }
 
   // BAN USERS
   @Put('/:userId/banstatus')

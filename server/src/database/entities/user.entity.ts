@@ -17,7 +17,6 @@ import { Expose } from 'class-transformer';
 import { Notification } from './notification.entity';
 import { BanStatus } from './ban-status.entity';
 import { ActivityRecord } from './activity.entity';
-import { Avatar } from './avatar.entity';
 
 @Entity('users')
 export class User {
@@ -115,10 +114,6 @@ export class User {
   )
   public activity: Promise<ActivityRecord>;
 
-  @OneToOne(
-    type => Avatar,
-    avatar => avatar.user,
-  )
-  @JoinColumn()
-  public avatar: Promise<Avatar>;
+  @Column('longblob')
+  public avatar: string;
 }

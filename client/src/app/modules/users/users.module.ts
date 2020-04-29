@@ -11,6 +11,7 @@ import { UserFriendsComponent } from './components/user-friends/users-friends.co
 import { AllUsersComponent } from './components/all-users/all-users.component';
 import { FriendRequestButtonsComponent } from './components/friend-request-buttons/friend-request-buttons.component';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
+import { ɵBROWSER_SANITIZATION_PROVIDERS } from '@angular/platform-browser';
 
 @NgModule({
   declarations: [
