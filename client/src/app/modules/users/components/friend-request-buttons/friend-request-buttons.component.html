@@ -1,9 +1,9 @@
-<div *ngIf="friendStatus.isFriend">
+<div *ngIf="friendStatus?.isFriend">
   <button mat-raised-button (click)="removeFriend(profileOwnerId)">
     unfriend
   </button>
 </div>
-<div *ngIf="friendStatus.requestReceived">
+<div *ngIf="friendStatus?.requestReceived">
   <button mat-raised-button (click)="acceptFriendRequest(profileOwnerId)">
     accept friend request
   </button>
@@ -13,14 +13,14 @@
     reject friend request
   </button>
 </div>
-<div *ngIf="friendStatus.requestSent">
+<div *ngIf="friendStatus?.requestSent">
   Friend request sent
 </div>
 <div
   *ngIf="
-    !friendStatus.isFriend &&
-    !friendStatus.requestReceived &&
-    !friendStatus.requestSent
+    !friendStatus?.isFriend &&
+    !friendStatus?.requestReceived &&
+    !friendStatus?.requestSent
   "
 >
   <button mat-raised-button (click)="sendFriendRequest(profileOwnerId)">

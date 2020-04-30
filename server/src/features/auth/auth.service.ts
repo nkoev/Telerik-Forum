@@ -45,9 +45,11 @@ export class AuthService {
 
     const payload: UserShowDTO = Object.assign(
       {},
-      plainToClass(UserShowDTO, user, {
-        excludeExtraneousValues: true,
-      }),
+      {
+        ...plainToClass(UserShowDTO, user, {
+          excludeExtraneousValues: true,
+        }),
+      },
     );
     const token = await this.jwtService.signAsync(payload);
 

@@ -93,11 +93,13 @@ export class UsersController {
 
   // GET AVATAR
 
-  // @Get('avatar')
-  // @UseGuards(AuthGuardWithBlacklisting)
-  // async getAvatar(@LoggedUser() loggedUser: User): Promise<Avatar> {
-  //   return this.usersService.getAvatar(loggedUser);
-  // }
+  @Get('avatar/:userId')
+  @UseGuards(AuthGuardWithBlacklisting)
+  async getAvatar(
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ): Promise<string> {
+    return this.usersService.getAvatar(userId);
+  }
 
   // BAN USERS
   @Put('/:userId/banstatus')

@@ -1,11 +1,12 @@
 <app-navigation></app-navigation>
 <div class="profile-container">
-  <img id="avatar" src="assets/images/avatar.png" />
+  <img id="avatar" [src]="avatar" />
   <br />
   <app-friend-request-buttons
     *ngIf="loggedUser.id !== profileOwnerId"
     [friendStatus]="friendStatus"
     [profileOwnerId]="profileOwnerId"
-  ></app-friend-request-buttons>
-  <app-file-upload></app-file-upload>
+    >{{ friendStatus }}</app-friend-request-buttons
+  >
+  <app-file-upload *ngIf="loggedUser.id === profileOwnerId"></app-file-upload>
 </div>

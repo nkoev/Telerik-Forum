@@ -68,10 +68,10 @@ export class UsersService {
   }
 
   // GET AVATAR
-  // public async getAvatar(loggedUser: User): Promise<Avatar> {
-  //   const avatar = await loggedUser.avatar;
-  //   return avatar;
-  // }
+  public async getAvatar(userId: string): Promise<string> {
+    const user = await this.usersRepository.findOne({ id: userId });
+    return user.avatar;
+  }
 
   // BAN USERS
   async updateBanStatus(

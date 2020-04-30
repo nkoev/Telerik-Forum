@@ -1,5 +1,4 @@
 import { Expose, Transform } from 'class-transformer';
-import { Role } from '../../database/entities/role.entity';
 import { BanStatus } from '../../database/entities/ban-status.entity';
 
 export class UserShowDTO {

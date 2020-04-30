@@ -1,51 +1,66 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { CommentDataService } from '../../comment-data.service';
-import { DialogComponent, DialogData } from 'src/app/shared/components/dialog/dialog.component';
+import {
+  DialogComponent,
+  DialogData,
+} from 'src/app/shared/components/dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
-import { CommentDialogData, CommentDialogComponent } from '../comment-dialog/comment-dialog.component';
+import {
+  CommentDialogData,
+  CommentDialogComponent,
+} from '../comment-dialog/comment-dialog.component';
 import { CommentShow } from 'src/app/modules/comments/models/comment-show.model';
+import { PostShow } from 'src/app/modules/posts/models/post-show.model';
+import { SafeUrl } from '@angular/platform-browser';
+import { UsersDataService } from 'src/app/modules/users/services/users-data.service';
 
 @Component({
   selector: 'app-all-comments',
   templateUrl: './all-comments.component.html',
-  styleUrls: ['./all-comments.component.css']
+  styleUrls: ['./all-comments.component.css'],
 })
 export class AllCommentsComponent implements OnInit {
-
   @Input()
-  postId: number;
+  post: PostShow;
   @Input()
   comments: CommentShow[];
   @Output('updateComments')
   updateCommentsEmitter: EventEmitter<any> = new EventEmitter();
-
+  avatar: SafeUrl;
   newContent: string;
 
   constructor(
     private readonly commentDataService: CommentDataService,
-    public dialog: MatDialog,
-  ) { }
+    private usersDataService: UsersDataService,
+    public dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
-
     // <---- BUTTON START---->
     //
     //Get the button:
-    const mybutton = document.getElementById("create-btn");
+    const mybutton = document.getElementById('create-btn');
 
     // When the user scrolls down 20px from the top of the document, show the button
-    window.onscroll = function () { scrollFunction() };
+    window.onscroll = function () {
+      scrollFunction();
+    };
 
     function scrollFunction() {
-      if (document.body.scrollTop > 250 || document.documentElement.scrollTop > 250) {
-        mybutton.style.display = "block";
+      if (
+        document.body.scrollTop > 250 ||
+        document.documentElement.scrollTop > 250
+      ) {
+        mybutton.style.display = 'block';
       } else {
-        mybutton.style.display = "none";
+        mybutton.style.display = 'none';
       }
     }
     // <---- BUTTON END---->
-
+    this.usersDataService.getAvatar(this.post.user.id).subscribe((res) => {
+      this.avatar = res;
+    });
   }
 
   checkIfLastComment(comment: CommentShow): boolean {
@@ -57,7 +72,7 @@ export class AllCommentsComponent implements OnInit {
       width: '40em',
       data: {
         title: dialogData.title,
-        question: dialogData.question
+        question: dialogData.question,
       },
       backdropClass: 'backdropClass',
     });
@@ -80,25 +95,23 @@ export class AllCommentsComponent implements OnInit {
   }
 
   createComment(): void {
-
     const dialogData: CommentDialogData = {
       title: 'Create New Comment',
       commentContentMessage: 'Your comment content',
       commentContent: '',
     };
 
-    this.openCommentDialog(dialogData).subscribe(result => {
+    this.openCommentDialog(dialogData).subscribe((result) => {
       if (result) {
-        this.commentDataService.createComment(this.postId, result)
-          .subscribe({
-            next: data => {
-              this.updateCommentsEmitter.emit({ comment: data, state: true });
-              console.log('COMMENT ADDED');
-            },
-            error: err => {
-              console.log(err);
-            }
-          });
+        this.commentDataService.createComment(this.post.id, result).subscribe({
+          next: (data) => {
+            this.updateCommentsEmitter.emit({ comment: data, state: true });
+            console.log('COMMENT ADDED');
+          },
+          error: (err) => {
+            console.log(err);
+          },
+        });
       }
     });
   }
@@ -117,51 +130,51 @@ export class AllCommentsComponent implements OnInit {
   saveUpdate(comment: CommentShow, newContent: string): void {
     if (comment.content !== newContent.trim()) {
       comment.content = newContent.trim();
-      this.commentDataService.updateComment(this.postId, comment)
-        .subscribe({
-          next: data => {
-            console.log('COMMENT EDITED');
-          },
-          error: err => {
-            console.log(err);
-          }
-        });
+      this.commentDataService.updateComment(this.post.id, comment).subscribe({
+        next: (data) => {
+          console.log('COMMENT EDITED');
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
     }
     comment.inEditMode = false;
   }
 
   likeComment(comment: CommentShow): void {
-    this.commentDataService.likeComment(this.postId, comment.id, !comment.isLiked)
+    this.commentDataService
+      .likeComment(this.post.id, comment.id, !comment.isLiked)
       .subscribe({
-        next: data => {
+        next: (data) => {
           // comment = data;
           this.comments[this.comments.indexOf(comment)].votes = data.votes;
           comment.isLiked = !comment.isLiked;
         },
-        error: err => {
+        error: (err) => {
           console.log(err);
-        }
+        },
       });
   }
 
   deleteComment(comment: CommentShow): void {
-
     const dialogData = {
       title: 'Delete Comment',
-      question: 'Are you sure you want to delete this comment?'
+      question: 'Are you sure you want to delete this comment?',
     };
 
-    this.openDialog(dialogData).subscribe(result => {
+    this.openDialog(dialogData).subscribe((result) => {
       if (result) {
-        this.commentDataService.deleteComment(this.postId, comment.id)
+        this.commentDataService
+          .deleteComment(this.post.id, comment.id)
           .subscribe({
-            next: data => {
+            next: (data) => {
               this.updateCommentsEmitter.emit({ comment: data, state: false });
               console.log('COMMENT DELETED');
             },
-            error: err => {
+            error: (err) => {
               console.log(err);
-            }
+            },
           });
       }
     });

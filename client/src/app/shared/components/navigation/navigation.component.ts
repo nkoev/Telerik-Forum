@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/modules/core/services/auth.service';
 import { UserDTO } from 'src/app/models/user.dto';
 import { DialogService } from '../../services/dialog.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navigation',
@@ -9,16 +10,22 @@ import { DialogService } from '../../services/dialog.service';
   styleUrls: ['./navigation.component.css'],
 })
 export class NavigationComponent implements OnInit {
+  private subscriptions: Subscription[] = [];
+  isLoggedIn: boolean;
+  loggedUser: UserDTO;
+
   constructor(
     private authService: AuthService,
     private dialogService: DialogService
   ) {}
-  isLoggedIn: boolean;
-  loggedUser: UserDTO;
 
   ngOnInit(): void {
-    this.authService.loggedUser$.subscribe((res) => (this.loggedUser = res));
-    this.authService.isLoggedIn$.subscribe((res) => (this.isLoggedIn = res));
+    this.subscriptions.push(
+      this.authService.loggedUser$.subscribe((res) => (this.loggedUser = res))
+    );
+    this.subscriptions.push(
+      this.authService.isLoggedIn$.subscribe((res) => (this.isLoggedIn = res))
+    );
   }
 
   logout() {

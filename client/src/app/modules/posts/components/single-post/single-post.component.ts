@@ -16,6 +16,8 @@ import {
 import { CommentShow } from 'src/app/modules/comments/models/comment-show.model';
 import { UserDTO } from 'src/app/models/user.dto';
 import { AuthService } from 'src/app/modules/core/services/auth.service';
+import { SafeUrl } from '@angular/platform-browser';
+import { UsersDataService } from 'src/app/modules/users/services/users-data.service';
 
 @Component({
   selector: 'app-single-post',
@@ -32,6 +34,7 @@ export class SinglePostComponent implements OnInit {
   commentsOpened: boolean = false;
   errorMessage: string = '';
   loggedUser: UserDTO;
+  avatar: SafeUrl;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -39,6 +42,7 @@ export class SinglePostComponent implements OnInit {
     private readonly postDataService: PostDataService,
     private readonly commentDataService: CommentDataService,
     private authService: AuthService,
+    private usersDataService: UsersDataService,
     public dialog: MatDialog
   ) {}
 
@@ -60,6 +64,11 @@ export class SinglePostComponent implements OnInit {
             (this.isAuthor =
               this.post.user.id === this.loggedUser.id ? true : false);
           this.isAdmin = this.loggedUser.roles.includes('Admin');
+          this.usersDataService
+            .getAvatar(this.post.user.id)
+            .subscribe((res) => {
+              this.avatar = res;
+            });
         },
         error: (err) => {
           console.log(err);

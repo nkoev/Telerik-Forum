@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { tap, shareReplay } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as jwt_decode from 'jwt-decode';
 import { Router } from '@angular/router';
@@ -8,7 +8,6 @@ import { UserLoginDTO } from 'src/app/models/user-login-dto';
 import { StorageService } from './storage.service';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { UserDTO } from 'src/app/models/user.dto';
-import { CoreModule } from '../core.module';
 
 @Injectable()
 export class AuthService {

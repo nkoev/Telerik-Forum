@@ -6,7 +6,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DialogComponent } from '../components/dialog/dialog.component';
 import { DialogService } from '../services/dialog.service';
-import { FilesService } from 'src/app/shared/services/files.service';
 
 @NgModule({
   declarations: [NavigationComponent, DialogComponent],
@@ -19,6 +18,6 @@ import { FilesService } from 'src/app/shared/services/files.service';
     RouterModule,
     FormsModule,
   ],
-  providers: [DialogService, FilesService],
+  providers: [DialogService],
 })
 export class SharedModule {}
