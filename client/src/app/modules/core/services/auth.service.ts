@@ -40,9 +40,13 @@ export class AuthService {
       tap((res: any) => {
         try {
           this.storage.save('token', res.token);
-          const loggedUser: UserDTO = jwt_decode(res.token);
+          const payload: any = jwt_decode(res.token);
           this.isLoggedInSubject$.next(true);
-          this.loggedUserSubject$.next(loggedUser);
+          this.loggedUserSubject$.next(payload);
+          setTimeout(() => {
+            this.storage.delete('token');
+            this.router.navigate(['login']);
+          }, Date.now() - payload.exp);
         } catch (err) {
           console.log(err);
         }
@@ -51,18 +55,12 @@ export class AuthService {
   }
 
   logout() {
-    return this.http
-      .delete(this.authUrl, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('jwt')}` },
+    return this.http.delete(this.authUrl).pipe(
+      tap(() => {
+        this.storage.delete('token');
+        this.router.navigate(['login']);
       })
-      .pipe(
-        tap(() => {
-          this.router.navigate(['login']);
-          this.storage.delete('token');
-          this.isLoggedInSubject$.next(false);
-          this.loggedUserSubject$.next(null);
-        })
-      );
+    );
   }
 
   private isUserLoggedIn(): boolean {

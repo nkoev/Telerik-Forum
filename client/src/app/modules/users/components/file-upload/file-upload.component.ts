@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UsersDataService } from '../../services/users-data.service';
-import { DomSanitizer } from '@angular/platform-browser';
+import { SafeUrl } from '@angular/platform-browser';
+import { FilesService } from 'src/app/shared/services/files.service';
 
 @Component({
   selector: 'app-file-upload',
@@ -8,12 +9,12 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrls: ['./file-upload.component.css'],
 })
 export class FileUploadComponent implements OnInit {
-  public avatar: any;
+  public avatar: SafeUrl;
   public imageLoading: boolean;
 
   constructor(
     private usersDataService: UsersDataService,
-    private sanitizer: DomSanitizer
+    private filesService: FilesService
   ) {}
 
   ngOnInit(): void {}
@@ -24,15 +25,7 @@ export class FileUploadComponent implements OnInit {
     fd.append('file', file, file.name);
 
     this.usersDataService.uploadAvatar(fd).subscribe((res: any) => {
-      const reader = new FileReader();
-      const blob = new Blob([new Uint8Array(res.data)]);
-
-      reader.readAsDataURL(blob);
-      reader.onload = () => {
-        this.avatar = this.sanitizer.bypassSecurityTrustUrl(
-          reader.result as string
-        );
-      };
+      this.filesService.toDataUrl(res, this);
     });
   }
 }
