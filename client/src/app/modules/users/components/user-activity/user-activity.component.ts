@@ -19,6 +19,10 @@ export class UserActivityComponent implements OnInit {
     this.router.events.subscribe(() => this.dialogRef.close());
   }
 
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+
   getRoutes(word: string): string[] {
     // const regex = new RegExp(`^(?:\S+\s*\n?){1,${test}}`);
     const regEx = /posts\\?.*/g;

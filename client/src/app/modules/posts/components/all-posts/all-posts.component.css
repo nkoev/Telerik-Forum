@@ -271,7 +271,12 @@ mat-paginator:hover ::ng-deep .mat-paginator-page-size-label {
 }
 
 ::ng-deep .mat-paginator-page-size-label {
+  visibility: hidden;
+}
+::ng-deep .mat-paginator-page-size-label:after {
+  visibility: visible;
   font-weight: 500;
+  content: 'Posts per page:' !important;
 }
 ::ng-deep .mat-form-field-appearance-legacy .mat-form-field-underline {
   background-color: transparent;
