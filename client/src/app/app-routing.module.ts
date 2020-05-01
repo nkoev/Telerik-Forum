@@ -6,6 +6,7 @@ import { AuthGuard } from './modules/core/services/auth.guard';
 import { LoginComponent } from './modules/users/pages/login-page/login.component';
 import { RegisterComponent } from './modules/users/pages/register/register.component';
 import { UserProfileComponent } from './modules/users/pages/user-profile/profile.component';
+import { AvatarResolverService } from './shared/services/avatar-resolver.service';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -20,7 +21,11 @@ const appRoutes: Routes = [
       },
     ],
   },
-  { path: 'profile/:userId', component: UserProfileComponent },
+  {
+    path: 'profile/:userId',
+    component: UserProfileComponent,
+    resolve: { avatar: AvatarResolverService },
+  },
   {
     path: 'home',
     component: HomePageComponent,

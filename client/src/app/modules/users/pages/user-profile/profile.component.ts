@@ -23,7 +23,8 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private authService: AuthService,
-    private usersDataService: UsersDataService
+    private usersDataService: UsersDataService,
+    private actr: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -38,13 +39,18 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       (res: FriendStatusDTO) => (this.friendStatus = res),
       (err) => console.log(err)
     );
-    this.usersDataService
-      .getAvatar(this.profileOwnerId)
-      .subscribe((avatarUrl) => {
-        if (avatarUrl) {
-          this.avatar = avatarUrl;
-        }
-      });
+    // this.usersDataService
+    //   .getAvatar(this.profileOwnerId)
+    //   .subscribe((avatarUrl) => {
+    //     if (avatarUrl) {
+    //       this.avatar = avatarUrl;
+    //     }
+    //   });
+    this.actr.data.subscribe((data) => {
+      if (data.avatar) {
+        this.avatar = data.avatar;
+      }
+    });
     this.subscriptions.push(sub1, sub2);
   }
 

@@ -13,6 +13,7 @@
     [profileOwnerId]="profileOwnerId"
     (avatarUploaded)="avatarUploaded($event)"
   ></app-file-upload>
+  <br />
   <app-admin-controls
     class="admin-controls"
     *ngIf="loggedUser.id !== profileOwnerId && isAdmin"
