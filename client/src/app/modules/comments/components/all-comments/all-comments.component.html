@@ -2,8 +2,8 @@
   <div id="{{'c'+comment.id}}" class="single-comment-container" *ngFor="let comment of comments"
     [ngClass]="{'last': checkIfLastComment(comment)}">
 
-    <div class="avatar"></div>
-    <div class="username">@{{comment.user.username}}</div>
+    <div class="avatar" [routerLink]="['/profile', comment.user.id]"></div>
+    <div class="username" [routerLink]="['/profile', comment.user.id]">@{{comment.user.username}}</div>
     <div class="icons">
       <div class="pencil" *ngIf="comment.isAuthor" (click)="updateComment(comment)"></div>
       <div class="bin" *ngIf="comment.isAuthor || comment.isAdmin" (click)="deleteComment(comment)"></div>
@@ -28,7 +28,7 @@
         </div>
         <div class="heart inactive" *ngIf="comment.isAuthor">
         </div>
-        <div class="value">{{comment.votes.length}}</div>
+        <div class="value" (click)="showCommentVotes(comment)" title="Show likes">{{comment.votes.length}}</div>
       </div>
     </div>
 

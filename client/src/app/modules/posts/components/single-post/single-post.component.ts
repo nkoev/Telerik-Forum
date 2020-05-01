@@ -236,4 +236,11 @@ export class SinglePostComponent implements OnInit {
       });
   }
 
+  showPostVotes(post: PostShow): void {
+    if (post.votes.length < 1) {
+      return;
+    }
+    this.dialogService.showVotes(post.votes);
+  }
+
 }

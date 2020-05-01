@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { UserActivityComponent } from 'src/app/modules/users/components/user-activity/user-activity.component';
 import { ActivityDTO } from 'src/app/models/activity.dto';
 import { UsersDataService } from 'src/app/modules/users/services/users-data.service';
@@ -10,6 +10,8 @@ import { PostDataService } from 'src/app/modules/posts/post-data.service';
 import { DialogComponent } from '../components/dialog/dialog.component';
 import { CommentDialogData, CommentDialogComponent } from 'src/app/modules/comments/components/comment-dialog/comment-dialog.component';
 import { CommentDataService } from 'src/app/modules/comments/comment-data.service';
+import { UserDTO } from 'src/app/models/user.dto';
+import { VotesComponent } from '../components/votes/votes.component';
 
 @Injectable()
 export class DialogService {
@@ -54,6 +56,17 @@ export class DialogService {
         })
       )
       .subscribe();
+  }
+
+  showVotes(votes: UserDTO[]): MatDialogRef<VotesComponent, any> {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.id = 'modal-component';
+    dialogConfig.height = 'auto';
+    dialogConfig.width = 'auto';
+    dialogConfig.panelClass = 'dialog';
+    dialogConfig.backdropClass = 'backdropClass';
+    dialogConfig.data = votes;
+    return this.matDialog.open(VotesComponent, dialogConfig);
   }
 
   createPost(observer): void {

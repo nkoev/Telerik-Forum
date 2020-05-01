@@ -73,6 +73,7 @@
     align-self: center;
 
     margin-right: 8px;
+    cursor: pointer;
 }
 .header-title {
     grid-area: title;
@@ -92,6 +93,7 @@
 
     margin-top: 2px;
     color: var(--main-light-green-color);
+    cursor: pointer;
 }
 .header-icons {
     grid-area: icons;

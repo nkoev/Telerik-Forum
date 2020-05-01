@@ -6,13 +6,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DialogComponent } from '../components/dialog/dialog.component';
 import { DialogService } from '../services/dialog.service';
+import { VotesComponent } from '../components/votes/votes.component';
 
 @NgModule({
-  declarations: [NavigationComponent, DialogComponent],
+  declarations: [NavigationComponent, DialogComponent, VotesComponent],
   imports: [CommonModule, AppMaterialModule, RouterModule, FormsModule],
   exports: [
     NavigationComponent,
     DialogComponent,
+    VotesComponent,
     CommonModule,
     AppMaterialModule,
     RouterModule,

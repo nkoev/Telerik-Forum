@@ -45,6 +45,7 @@
     background: url("../../../../../assets/posts/single-post-avatar.jpg");
     background-size: cover;
     border-radius: 50%;
+    cursor: pointer;
 }
 
 .single-comment-container .username{
@@ -52,6 +53,7 @@
     justify-self: center;
     align-self: flex-start;
     font-size: 13px;
+    cursor: pointer;
 }
 
 .single-comment-container .content{
@@ -99,6 +101,7 @@
     height: 1.5em;
     background: url("../../../../../assets/posts/edit-empty.png");
     background-size: cover;
+    cursor: pointer;
 }
 .single-comment-container .icons .pencil:hover{
     width: 1.5em;
@@ -112,6 +115,7 @@
     background: url("../../../../../assets/posts/bin-empty.png");
     background-size: cover;
     margin-left: 0.8em;
+    cursor: pointer;
 }
 .single-comment-container .icons .bin:hover{
     width: 1.5em;
@@ -140,6 +144,7 @@
     height: 2.4em;
     background: url("../../../../../assets/posts/empty-heart-filtered.png");
     background-size: cover;
+    cursor: pointer;
 }
 .single-comment-container .info .likes .heart:hover {
     width: 2.4em;
@@ -166,6 +171,7 @@
 .single-comment-container .info .likes .value {
     font-size: 12px;
     font-weight: 500;
+    cursor: pointer;
 }
 
 .single-comment-container .info .date {

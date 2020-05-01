@@ -88,78 +88,101 @@
     cursor: pointer;
   }
 
-.card-text {
-  grid-area: text;
-  display: grid;
-  margin: 45px;
-}
-.card-text .icons {
-  display: flex;
-  justify-content: flex-end;
-}
-.card-text .flag {
-  width: 1.7em;
-  height: 1.7em;
-  background: url("../../../../../assets/posts/empty-flag.png");
-  background-size: cover;
-}
-.card-text .flag:hover {
-  width: 1.7em;
-  height: 1.7em;
-  background: url("../../../../../assets/posts/full-flag.png");
-  background-size: cover;
-}
-.card-text .flag.full {
-  width: 1.7em;
-  height: 1.7em;
-  background: url("../../../../../assets/posts/full-flag.png");
-  background-size: cover;
-}
-.card-text .pencil {
-  width: 1.7em;
-  height: 1.7em;
-  background: url("../../../../../assets/posts/edit-empty.png");
-  background-size: cover;
-  margin-left: 1em;
-}
-.card-text .pencil:hover {
-  width: 1.7em;
-  height: 1.7em;
-  background: url("../../../../../assets/posts/edit-full.png");
-  background-size: cover;
-}
-.card-text .bin {
-  width: 1.7em;
-  height: 1.7em;
-  background: url("../../../../../assets/posts/bin-empty.png");
-  background-size: cover;
-  margin-left: 1em;
-}
-.card-text .bin:hover {
-  width: 1.7em;
-  height: 1.7em;
-  background: url("../../../../../assets/posts/bin-full.png");
-  background-size: cover;
-}
-.card-text .padlock {
-  width: 1.7em;
-  height: 1.7em;
-  background: url("../../../../../assets/posts/padlock-empty.png");
-  background-size: cover;
-  margin-left: 1em;
-}
-.card-text .padlock:hover {
-  width: 1.7em;
-  height: 1.7em;
-  background: url("../../../../../assets/posts/padlock-full.png");
-  background-size: cover;
-}
-.card-text .padlock.full {
-  width: 1.7em;
-  height: 1.7em;
-  background: url("../../../../../assets/posts/padlock-full.png");
-  background-size: cover;
-}
+  .card-text {
+    grid-area: text;
+    display: grid;
+    margin: 45px;
+  }
+  .card-text .icons {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .card-text .flag {
+    width: 1.7em;
+    height: 1.7em;
+    background: url("../../../../../assets/posts/empty-flag.png");
+    background-size: cover;
+    cursor: pointer;
+  }
+  .card-text .flag:hover {
+    width: 1.7em;
+    height: 1.7em;
+    background: url("../../../../../assets/posts/full-flag.png");
+    background-size: cover;
+  }
+  .card-text .flag.full {
+    width: 1.7em;
+    height: 1.7em;
+    background: url("../../../../../assets/posts/full-flag.png");
+    background-size: cover;
+  }
+  .card-text .pencil {
+    width: 1.7em;
+    height: 1.7em;
+    background: url("../../../../../assets/posts/edit-empty.png");
+    background-size: cover;
+    margin-left: 1em;
+    cursor: pointer;
+  }
+  .card-text .pencil:hover {
+    width: 1.7em;
+    height: 1.7em;
+    background: url("../../../../../assets/posts/edit-full.png");
+    background-size: cover;
+  }
+  .card-text .bin {
+    width: 1.7em;
+    height: 1.7em;
+    background: url("../../../../../assets/posts/bin-empty.png");
+    background-size: cover;
+    margin-left: 1em;
+    cursor: pointer;
+  }
+  .card-text .bin:hover {
+    width: 1.7em;
+    height: 1.7em;
+    background: url("../../../../../assets/posts/bin-full.png");
+    background-size: cover;
+  }
+  .card-text .padlock {
+    width: 1.7em;
+    height: 1.7em;
+    background: url("../../../../../assets/posts/padlock-empty.png");
+    background-size: cover;
+    margin-left: 1em;
+  }
+  .card-text .padlock:hover {
+    width: 1.7em;
+    height: 1.7em;
+    background: url("../../../../../assets/posts/padlock-full.png");
+    background-size: cover;
+    cursor: pointer;
+  }
+  .card-text .padlock.full {
+    width: 1.7em;
+    height: 1.7em;
+    background: url("../../../../../assets/posts/padlock-full.png");
+    background-size: cover;
+  }
+  
+  .card-text .date {
+    color: var(--main-light-green-color);
+    font-size: 17px;
+  }
+  .card-text p {
+    color: grey;
+    font-size: 20px;
+    font-weight: 300;
+    line-height: 1.6;
+    margin: 0 1.5em 0 1.5em;
+    text-align: justify;
+    text-justify: inter-word;
+  }
+  .card-text h2 {
+    margin-top: 0.1em;
+    margin-bottom: 3em;
+    font-size:28px;
+  }
 
 .card-text .date {
   color: var(--main-light-green-color);
@@ -192,6 +215,17 @@
     border-bottom-right-radius 25ms linear 25ms;
   background: var(--main-light-green-color);
 }
+  .card-stats .stat {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  
+    color: white;
+    padding: 0.2em;
+    font-size: 16px;
+    cursor: pointer;
+  }
 
 .card-stats.opened {
   border-bottom-left-radius: 0;
@@ -244,7 +278,7 @@
 }
 
   .card-stats .stat.right:hover .value {
-    display:none;
+    cursor: pointer;
   }
   .card-stats .stat.right:hover .type {
     display:none;
