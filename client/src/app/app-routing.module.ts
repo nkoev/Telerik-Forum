@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { HomePageComponent } from './pages/home-page/home-page.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { AuthGuard } from './modules/core/services/auth.guard';
 import { LoginComponent } from './modules/users/pages/login-page/login.component';
@@ -25,11 +24,6 @@ const appRoutes: Routes = [
     component: UserProfileComponent,
     canActivate: [AuthGuard],
   },
-  // {
-  //   path: 'home',
-  //   component: HomePageComponent,
-  //   canActivate: [AuthGuard],
-  // },
   {
     path: 'posts',
     loadChildren: () =>
