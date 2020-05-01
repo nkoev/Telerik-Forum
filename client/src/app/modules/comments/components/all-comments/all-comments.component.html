@@ -1,8 +1,14 @@
 <div class="comments-container">
   <div id="{{'c'+comment.id}}" class="single-comment-container" *ngFor="let comment of comments"
     [ngClass]="{'last': checkIfLastComment(comment)}">
+
     <div class="avatar"></div>
     <div class="username">@{{comment.user.username}}</div>
+    <div class="icons">
+      <div class="pencil" *ngIf="comment.isAuthor" (click)="updateComment(comment)"></div>
+      <div class="bin" *ngIf="comment.isAuthor || comment.isAdmin" (click)="deleteComment(comment)"></div>
+    </div>
+
     <div class="content" *ngIf="!comment.inEditMode">{{comment.content}}</div>
     <textarea class="content edit" type="text" *ngIf="comment.inEditMode" [(ngModel)]="newContent"></textarea>
     <div class="actions">
@@ -10,13 +16,10 @@
       <button mat-raised-button color="accent" class="save" *ngIf="comment.inEditMode"
         (click)="saveUpdate(comment, newContent)">Save</button>
     </div>
-    <div class="icons">
-      <div class="pencil" *ngIf="comment.isAuthor" (click)="updateComment(comment)"></div>
-      <div class="bin" *ngIf="comment.isAuthor || comment.isAdmin" (click)="deleteComment(comment)"></div>
-    </div>
+
     <div class="info">
       <div class="date">
-        <div class="label">Last modified on:</div>
+        <div class="label">Posted on:</div>
         <div class="value">{{comment.createdOn | date}}</div>
       </div>
       <div class="likes">
@@ -28,5 +31,6 @@
         <div class="value">{{comment.votes.length}}</div>
       </div>
     </div>
+
   </div>
 </div>

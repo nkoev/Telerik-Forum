@@ -1,10 +1,14 @@
 <app-navigation></app-navigation>
 
+<div class="center">
+  <mat-progress-spinner mode="indeterminate" value="50" diameter="70" *ngIf="!post"></mat-progress-spinner>
+</div>
+
 <div class="single-post-container" *ngIf="post">
   <div class="single-post-card" [ngClass]="{'opened': commentsOpened}">
 
     <div class="card-image">
-      <div class="avatar">
+      <div class="avatar" [routerLink]="['/profile', post.user.id]">
         <img *ngIf="avatar" [src]="avatar" class="avatar" />
       </div>
       <div class="username">
@@ -26,6 +30,7 @@
     </div>
 
     <div class="card-stats" [ngClass]="{'opened': commentsOpened}">
+
       <div class="stat left" (click)="loadComments(post.id)" [ngClass]="{'opened': commentsOpened}">
         <div class="value">{{post?.commentsCount}}</div>
         <div class="type">comments</div>
@@ -44,3 +49,4 @@
       [comments]="post.comments" (updateComments)="updateComments($event)"></app-all-comments>
 
   </div>
+</div>

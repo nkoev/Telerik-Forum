@@ -1,11 +1,10 @@
 import { Component, OnInit, HostListener, Renderer2, ElementRef, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { PostDataService } from '../../post-data.service';
 import { AuthService } from 'src/app/modules/core/services/auth.service';
-import { MatDialog } from '@angular/material/dialog';
 import { UserDTO } from 'src/app/models/user.dto';
 import { PageEvent } from '@angular/material/paginator';
 import { DialogService } from 'src/app/shared/services/dialog.service';
+import { PostShow } from '../../models/post-show.model';
 
 @Component({
   selector: 'app-all-posts',
@@ -36,7 +35,7 @@ export class AllPostsComponent implements OnInit {
   }
 
   loggedUser: UserDTO;
-  posts: any[];
+  posts: PostShow[];
 
   length: number = 100;
   pageSize: number = 5;
@@ -88,23 +87,22 @@ export class AllPostsComponent implements OnInit {
     });
   }
 
-  createPost() {
+  createPost(): void {
     this.dialogService.createPost(
       {
         next: data => {
           data = { ...data, isAuthor: true };
           this.posts.unshift(data);
           this.updatePostsCount();
-          console.log('COMMENT ADDED');
+          console.log('POST ADDED');
         },
         error: err => {
           console.log(err);
         }
-      }
-    );
+      });
   }
 
-  updatePost(post: any) {
+  updatePost(post: PostShow): void {
     this.dialogService.updatePost(post,
       {
         next: (data) => {
@@ -118,22 +116,16 @@ export class AllPostsComponent implements OnInit {
         error: (err) => {
           console.log(err);
         },
-      }
-    );
+      });
   }
 
-  getFirst20Words(test: number, word: string): string {
-    // const regex = new RegExp(`^(?:\S+\s*\n?){1,${test}}`);
-    const regEx = /^(?:\S+\s*\n?){1,20}/g;
-    return regEx.exec(word) + '...';
-  }
-
-  likePost(post: any): void {
+  likePost(post: PostShow): void {
     this.postDataService.likePost(post.id, !post.isLiked)
       .subscribe({
         next: data => {
           this.posts[this.posts.indexOf(post)].votes = data.votes;
           post.isLiked = !post.isLiked;
+          console.log('POST LIKED');
         },
         error: err => {
           console.log(err);
@@ -141,13 +133,13 @@ export class AllPostsComponent implements OnInit {
       });
   }
 
-  flagPost(post: any) {
+  flagPost(post: PostShow): void {
     this.dialogService.updatePost(post,
       {
         next: (data) => {
           this.posts[this.posts.indexOf(post)].flags = data.flags;
           post.isFlagged = !post.isFlagged;
-          console.log('POST WAS (UN)FLAGGED');
+          console.log('POST (UN)FLAGGED');
         },
         error: (err) => {
           console.log(err);
@@ -155,8 +147,7 @@ export class AllPostsComponent implements OnInit {
       });
   }
 
-
-  lockPost(post: any) {
+  lockPost(post: PostShow): void {
     this.dialogService.lockPost(post, {
       next: (data) => {
         this.posts[this.posts.indexOf(post)] = { ...post, isLocked: data.isLocked };
@@ -168,8 +159,7 @@ export class AllPostsComponent implements OnInit {
     });
   }
 
-
-  deletePost(post: any): void {
+  deletePost(post: PostShow): void {
     this.dialogService.deletePost(post,
       {
         next: (data) => {
@@ -188,8 +178,13 @@ export class AllPostsComponent implements OnInit {
       });
   }
 
+  getFirstNWords(count: number, word: string): string {
+    // const regex = new RegExp(`^(?:\S+\s*\n?){1,${count}}`);
+    const regEx = /^(?:\S+\s*\n?){1,20}/g;
+    return regEx.exec(word) + '...';
+  }
 
-  handlePage(event: PageEvent): any {
+  handlePage(event: PageEvent): PageEvent {
     this.updatePostsCount();
     this.loadPosts(event.pageSize, event.pageIndex * event.pageSize);
     this.pageIndex = event.pageIndex;

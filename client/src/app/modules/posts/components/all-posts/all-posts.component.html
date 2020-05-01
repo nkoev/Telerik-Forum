@@ -1,10 +1,15 @@
 <app-navigation></app-navigation>
 
+<div class="center">
+    <mat-progress-spinner mode="indeterminate" value="50" diameter="70" *ngIf="!posts"></mat-progress-spinner>
+</div>
+
 <div class="all-posts-container" *ngIf="posts" (scroll)="onScroll($event)">
     <div class="all-cards-container">
 
         <div class="post-card" *ngFor="let post of posts">
             <mat-card class="card" [routerLink]="['/posts', post.id]">
+
                 <div class="header-avatar" [routerLink]="['/profile', post.user.id]"></div>
                 <div class="header-title">{{post.title}}</div>
                 <div class="header-username">
@@ -20,9 +25,11 @@
                     <div class="padlock" *ngIf="post.isAdmin" (click)="$event.stopPropagation(); lockPost(post)"
                         [ngClass]="{'full': post.isLocked}"></div>
                 </div>
+
                 <div class="card-content">
-                    <p class="content-text">{{getFirst20Words(20, post.content)}}</p>
+                    <p class="content-text">{{getFirstNWords(20, post.content)}}</p>
                 </div>
+
                 <div class="card-footer">
                     <div class="date">
                         <div class="label">Created on:</div>
@@ -37,8 +44,10 @@
                         <div class="value">{{post.votes.length}}</div>
                     </div>
                 </div>
+
             </mat-card>
         </div>
+
     </div>
     <button mat-fab #create class="create" title="Add a new post" (click)="createPost()">+</button>
 

@@ -8,7 +8,6 @@ import { PostCreate } from './models/post-create.model';
   providedIn: 'root',
 })
 export class PostDataService {
-
   private _postsURL: string = 'http://localhost:3000/posts';
 
   constructor(private readonly http: HttpClient) { }

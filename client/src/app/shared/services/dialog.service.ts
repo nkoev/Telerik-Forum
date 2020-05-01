@@ -20,7 +20,7 @@ export class DialogService {
     private readonly commentDataService: CommentDataService,
   ) { }
 
-  showUserActivity(userId: string) {
+  showUserActivity(userId: string): void {
     this.usersDataService
       .getUserActivity(userId)
       .pipe(
@@ -30,6 +30,7 @@ export class DialogService {
           dialogConfig.height = 'auto';
           dialogConfig.width = 'auto';
           dialogConfig.panelClass = 'dialog';
+          dialogConfig.backdropClass = 'backdropClass';
           dialogConfig.data = data;
           return this.matDialog.open(UserActivityComponent, dialogConfig);
         })
@@ -37,7 +38,7 @@ export class DialogService {
       .subscribe();
   }
 
-  showUserFriends() {
+  showUserFriends(): void {
     this.usersDataService
       .getUserFriends()
       .pipe(
@@ -47,6 +48,7 @@ export class DialogService {
           dialogConfig.height = 'auto';
           dialogConfig.width = 'auto';
           dialogConfig.panelClass = 'dialog';
+          dialogConfig.backdropClass = 'backdropClass';
           dialogConfig.data = data;
           return this.matDialog.open(UserFriendsComponent, dialogConfig);
         })
@@ -54,7 +56,7 @@ export class DialogService {
       .subscribe();
   }
 
-  createPost(observer) {
+  createPost(observer): void {
     const dialogData: PostDialogData = {
       title: 'Create New Post',
       postTitleMessage: 'Your post title',
@@ -71,7 +73,7 @@ export class DialogService {
     });
   }
 
-  updatePost(post, observer) {
+  updatePost(post, observer): void {
     const dialogData: PostDialogData = {
       title: 'Update Post',
       postTitleMessage: 'Your new post title',
@@ -90,7 +92,7 @@ export class DialogService {
     });
   }
 
-  flagPost(post, observer) {
+  flagPost(post, observer): void {
     const dialogData = {
       title: 'Flag Post',
       question: post.isFlagged
@@ -105,7 +107,7 @@ export class DialogService {
     });
   }
 
-  lockPost(post, observer) {
+  lockPost(post, observer): void {
     const dialogData = {
       title: 'Lock Post',
       question: post.isLocked
@@ -120,7 +122,7 @@ export class DialogService {
     });
   }
 
-  deletePost(post, observer) {
+  deletePost(post, observer): void {
     const dialogData = {
       title: 'Delete Post',
       question: 'Are you sure you want to delete this post?',
@@ -133,7 +135,7 @@ export class DialogService {
     });
   }
 
-  createComment(postId, observer) {
+  createComment(postId, observer): void {
     const dialogData: CommentDialogData = {
       title: 'Create New Comment',
       commentContentMessage: 'Your comment content',

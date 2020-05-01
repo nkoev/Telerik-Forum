@@ -6,9 +6,7 @@ import { Subscription } from 'rxjs';
 import { SafeUrl } from '@angular/platform-browser';
 import { UsersDataService } from 'src/app/modules/users/services/users-data.service';
 import { AvatarService } from 'src/app/modules/core/services/avatar.service';
-import { PostDataService } from 'src/app/modules/posts/post-data.service';
 import { MatDialog } from '@angular/material/dialog';
-import { PostDialogData, PostDialogComponent } from 'src/app/modules/posts/components/post-dialog/post-dialog.component';
 import { Router } from '@angular/router';
 
 @Component({
@@ -83,4 +81,5 @@ export class NavigationComponent implements OnInit, OnDestroy {
       }
     );
   }
+
 }

@@ -132,6 +132,7 @@ export class SinglePostComponent implements OnInit {
         },
         error: (err) => console.log(err),
       });
+
     } else {
       this.commentsOpened = !this.commentsOpened;
     }
@@ -161,7 +162,7 @@ export class SinglePostComponent implements OnInit {
     this.post.commentsCount = this.post.comments.length;
   }
 
-  updatePost(post: PostShow) {
+  updatePost(post: PostShow): void {
     this.dialogService.updatePost(post,
       {
         next: (data) => {
@@ -178,7 +179,7 @@ export class SinglePostComponent implements OnInit {
       });
   }
 
-  likePost(post: PostShow) {
+  likePost(post: PostShow): void {
     if (this.isAuthor) {
       return;
     }
@@ -195,7 +196,7 @@ export class SinglePostComponent implements OnInit {
     });
   }
 
-  flagPost(post: PostShow) {
+  flagPost(post: PostShow): void {
     this.dialogService.flagPost(post,
       {
         next: (data) => {
@@ -209,7 +210,7 @@ export class SinglePostComponent implements OnInit {
       });
   }
 
-  lockPost(post: PostShow) {
+  lockPost(post: PostShow): void {
     this.dialogService.lockPost(post,
       {
         next: (data) => {
@@ -222,7 +223,7 @@ export class SinglePostComponent implements OnInit {
       });
   }
 
-  deletePost(post: PostShow) {
+  deletePost(post: PostShow): void {
     this.dialogService.deletePost(post,
       {
         next: (data) => {

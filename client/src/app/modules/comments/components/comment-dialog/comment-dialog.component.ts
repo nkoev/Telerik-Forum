@@ -25,6 +25,7 @@ export class CommentDialogComponent implements OnInit {
         commentContent: dialogData.commentContent,
       },
       backdropClass: 'backdropClass',
+      panelClass: 'dialog',
     });
 
     return dialogRef.afterClosed();

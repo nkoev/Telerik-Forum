@@ -12,4 +12,4 @@ import { SharedModule } from './shared/modules/shared.module';
   imports: [AppRoutingModule, UsersModule, CoreModule, SharedModule],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }
