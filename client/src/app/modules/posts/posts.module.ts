@@ -19,5 +19,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     CommentsModule,
     ReactiveFormsModule,
   ],
+  exports: [
+    PostDialogComponent
+  ]
 })
 export class PostsModule { }

@@ -1,5 +1,5 @@
 <div class="comments-container">
-    <div class="single-comment-container" *ngFor="let comment of comments"
+    <div id="{{'c'+comment.id}}" class="single-comment-container" *ngFor="let comment of comments"
         [ngClass]="{'last': checkIfLastComment(comment)}">
         <div class="avatar"></div>
         <div class="username">@{{comment.user.username}}</div>
@@ -30,5 +30,4 @@
             </div>
         </div>
     </div>
-    <button mat-fab id="create-btn" class="create" title="Add a new comment" (click)="createComment()">+</button>
 </div>

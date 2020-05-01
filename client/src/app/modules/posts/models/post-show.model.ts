@@ -20,4 +20,12 @@ export interface PostShow {
     createdOn: Date;
 
     isLocked: boolean;
+
+    isAuthor?: boolean;
+
+    // isAdmin?: boolean;
+
+    // isFlagged?: boolean;
+
+    // isLiked?: boolean;
 }

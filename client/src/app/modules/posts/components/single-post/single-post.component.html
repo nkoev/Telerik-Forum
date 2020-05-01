@@ -3,14 +3,16 @@
 <div class="single-post-container" *ngIf="post">
     <div class="single-post-card" [ngClass]="{'opened': commentsOpened}">
         <div class="card-image">
-            <div class="avatar"></div>
-            <div class="username">@{{post?.user.username}}</div>
+            <div class="avatar" [routerLink]="['/profile', post.user.id]"></div>
+            <div class="username">
+                <p [routerLink]="['/profile', post.user.id]">@{{post?.user.username}}</p>
+            </div>
         </div>
         <div class="card-text">
             <div class="icons">
                 <div class="flag" *ngIf="!isAuthor" (click)="flagPost(post)" [ngClass]="{'full': postFlagged}"></div>
                 <div class="pencil" *ngIf="isAuthor" (click)="updatePost(post)"></div>
-                <div class="bin" *ngIf="isAuthor || isAdmin" (click)="deletePost(post);"></div>
+                <div class="bin" *ngIf="isAuthor || isAdmin" (click)="deletePost(post)"></div>
                 <div class="padlock" *ngIf="isAdmin" (click)="lockPost(post)" [ngClass]="{'full': post?.isLocked}">
                 </div>
             </div>
@@ -30,8 +32,10 @@
                 <div class="heart inactive" *ngIf="isAuthor"></div>
             </div>
         </div>
+
+        <button mat-fab #create class="create" title="Add a new comment" (click)="child.createComment();">+</button>
     </div>
 
-    <app-all-comments class="comments-section" [ngClass]="{'opened': commentsOpened}" [postId]="post.id"
+    <app-all-comments #child class="comments-section" [ngClass]="{'opened': commentsOpened}" [postId]="post.id"
         [comments]="post.comments" (updateComments)="updateComments($event)"></app-all-comments>
 </div>

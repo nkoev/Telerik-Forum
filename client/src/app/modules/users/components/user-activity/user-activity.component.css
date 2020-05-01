@@ -1,0 +1,10 @@
+.activity-link {
+    margin: 0 4px 0 4px;
+    color: salmon;
+    cursor: pointer;
+}
+
+.container {
+    height: 80vh;
+    overflow-y: auto;
+}

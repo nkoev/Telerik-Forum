@@ -1,13 +1,29 @@
 .navigation {
   color: white;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   background-color: #61892f;
   height: 10%;
   overflow: hidden;
 }
 
+.navigation-logo {
+  margin-left: 10%;
+}
+
 #logo {
   border-radius: 50%;
   background-color: white;
+}
+
+.navigation-actions {
+  margin-right: 3%;
+  display: flex;
+  align-items: center;
+}
+
+.navigation-actions .menu {
+  margin-right: 8px;
+  cursor: pointer;
+  transform: scale(1.4);
 }

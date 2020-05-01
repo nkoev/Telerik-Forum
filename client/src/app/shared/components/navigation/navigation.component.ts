@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/modules/core/services/auth.service';
 import { UserDTO } from 'src/app/models/user.dto';
 import { DialogService } from '../../services/dialog.service';
+import { PostDataService } from 'src/app/modules/posts/post-data.service';
+import { MatDialog } from '@angular/material/dialog';
+import { PostDialogData, PostDialogComponent } from 'src/app/modules/posts/components/post-dialog/post-dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navigation',
@@ -11,8 +15,10 @@ import { DialogService } from '../../services/dialog.service';
 export class NavigationComponent implements OnInit {
   constructor(
     private authService: AuthService,
-    private dialogService: DialogService
-  ) {}
+    private dialogService: DialogService,
+    public dialog: MatDialog,
+    private readonly router: Router,
+  ) { }
   isLoggedIn: boolean;
   loggedUser: UserDTO;
 
@@ -31,5 +37,20 @@ export class NavigationComponent implements OnInit {
 
   openFriends() {
     this.dialogService.showUserFriends();
+  }
+
+  createPost() {
+    this.dialogService.createPost(
+      {
+        next: data => {
+          data = { ...data, isAuthor: true };
+          console.log('COMMENT ADDED');
+          this.router.navigate(['/', 'posts', data.id]);
+        },
+        error: err => {
+          console.log(err);
+        }
+      }
+    );
   }
 }

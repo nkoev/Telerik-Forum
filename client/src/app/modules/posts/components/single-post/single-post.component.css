@@ -6,12 +6,14 @@
     --main-dark-gray-color: #222629;
 
     display: grid;
-    grid-template-columns: 1fr 80em 1fr ;
+    grid-template-columns: 1fr  minmax(34em, 6fr) 1fr ;
     grid-template-rows: 10em auto auto 10em;
     grid-template-areas: " . . . " 
                          ". card ." 
                          ". comments ." 
                          " . . . ";
+
+    position: relative;
 }
 
 .single-post-card {
@@ -78,6 +80,8 @@
       background-size: cover;
       border-radius: 50%;
       box-shadow: 0 2em 2em var(--main-dark-gray-color);
+
+      cursor: pointer;
   }
 
   .card-image .username {
@@ -85,6 +89,11 @@
     margin-top: 0.5em;
     font-size: 17px;
     color: whitesmoke;
+    display: inline-flex;
+    justify-content: center;
+  }
+  .card-image .username p {
+    cursor: pointer;
   }
 
   .card-text {
@@ -262,6 +271,10 @@
     background: url("../../../../../assets/posts/full-heart-filtered.png");
     background-size: cover;
   }
+  .card-stats .stat.right .heart:active {
+    transition: all .1s ease-in-out;
+    transform: scale(1.2);
+  }
   .card-stats .stat.right .heart.full {
     width: 2.4em;
     height: 2.4em;
@@ -291,3 +304,16 @@
     opacity: 1;
     transition: visibility 0s linear 0s, opacity 300ms;
   }
+
+
+  .single-post-container .create {
+    position: fixed;
+    bottom: 40%;
+    left: 5%;
+    display: none;
+
+    font-size: 3em;
+    font-weight: 500;
+    font-family: roboto;
+    background-color: var(--main-light-green-color);
+}

@@ -1,0 +1,294 @@
+.all-posts-container {
+    --main-light-green-color: #86C232;
+    --main-dark-green-color: #61892F;
+    --main-light-gray-color: #6B6E70;
+    --main-gray-color: #474B4F;
+    --main-dark-gray-color: #222629;
+
+    display: grid;
+    grid-template-columns: 1fr  minmax(34em, 8fr) 1fr ;
+    grid-template-rows: 8em auto  1em auto 3em ;
+    grid-template-areas: " . . . " 
+                         ". all-cards ." 
+                         " . . . "
+                         " . paginator . "
+                         " . . . ";
+
+    position: relative;
+}
+
+.all-cards-container {
+    grid-area: all-cards;
+    display: grid;  
+    grid-gap: 15px;  
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3, auto);
+
+    padding:  1em 1em 1em 1em;
+    background-image: url('../../../../../assets/posts/single-post-background-gray-blurred2.jpg');
+    border-radius: 1%;
+
+    box-shadow: 1em 0px 1em rgba(18, 18, 18, 0.6),
+    2em 0px 2em rgba(18, 18, 18, 0.5),
+    3em 0px 2em rgba(18, 18, 18, 0.4),
+    4em 0px 2em rgba(18, 18, 18, 0.3),
+    5em 0px 2.7em rgba(18, 18, 18, 0.3),
+    6em 0px 3em rgba(18, 18, 18, 0.2),
+    7em 0px 4em rgba(18, 18, 18, 0.1),
+    8em 0px 5em rgba(18, 18, 18, 0.05),
+    9em 0px 5em rgba(18, 18, 18, 0.03),
+    -1em 0px 1em rgba(18, 18, 18, 0.6),
+    -2em 0px 2em rgba(18, 18, 18, 0.5),
+    -3em 0px 2em rgba(18, 18, 18, 0.4),
+    -4em 0px 2em rgba(18, 18, 18, 0.3),
+    -5em 0px 2.7em rgba(18, 18, 18, 0.3),
+    -6em 0px 3em rgba(18, 18, 18, 0.2),
+    -7em 0px 4em rgba(18, 18, 18, 0.1),
+    -8em 0px 5em rgba(18, 18, 18, 0.05),
+    -9em 0px 5em rgba(18, 18, 18, 0.03);
+}
+
+/* ---------------------------- */
+
+.card {
+    display: grid;   
+    grid-template-columns: 1fr 8fr 4fr;
+    grid-template-rows: 0.5fr 0.5fr 0.3fr 1fr 0.2fr;
+    grid-template-areas: " avatar title icons " 
+                         " avatar username ." 
+                         " . . . "  
+                         " content content content" 
+                         " footer footer footer "; 
+
+    cursor: pointer;
+}
+
+.header-avatar {
+    grid-area: avatar;
+    height: 4em;
+    width: 4em;
+    background-image: url('../../../../../assets/posts/single-post-avatar.jpg');
+    border-radius: 50%;
+    background-size: cover;
+    align-self: center;
+
+    margin-right: 8px;
+}
+.header-title {
+    grid-area: title;
+    font-size: 22px;
+    font-weight: 500;
+    font-family: roboto;
+    align-self: flex-end;
+    margin-bottom: 2px;
+}
+.header-username {
+    grid-area: username;
+    font-size: 16px;
+    font-weight: 300;
+    font-family: roboto;
+    align-self: flex-start;
+    display: inline-flex;
+
+    margin-top: 2px;
+    color: var(--main-light-green-color);
+}
+.header-icons {
+    grid-area: icons;
+    display: flex;
+    justify-self: flex-end;
+    justify-content: flex-end;
+    align-items: flex-end;
+
+    margin: 0 1.5em 0 0;
+}
+.card-content {
+    grid-area: content;
+    margin: 0.5em 1.5em 0 0;
+}
+.card-content .content-text {
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 1.4;
+    margin: 0 1.5em 0 0.5em;
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+/*  ----------------   FOOTER  -------------------  */
+.card-footer {
+    grid-area: footer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin: 0.5em 1.5em 0 0.5em;
+}
+.card-footer .likes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card-footer .likes .heart {
+    width: 2.4em;
+    height: 2.4em;
+    background: url("../../../../../assets/posts/empty-heart-filtered.png");
+    background-size: cover;
+}
+.card-footer .likes .heart:hover {
+    width: 2.4em;
+    height: 2.4em;
+    background: url("../../../../../assets/posts/full-heart-filtered.png");
+    background-size: cover;
+}
+.card-footer .likes .heart:active {
+    transition: all .1s ease-in-out;
+    transform: scale(1.2);
+}
+.card-footer .likes .heart.full {
+    width: 2.4em;
+    height: 2.4em;
+    background: url("../../../../../assets/posts/full-heart-filtered.png");
+    background-size: cover;
+}
+.card-footer .likes .heart.inactive {
+    width: 2.4em;
+    height: 2.4em;
+    background: url("../../../../../assets/posts/inactive-heart.png");
+    background-size: cover;
+}
+.card-footer .date {
+    display: flex;
+    font-size: 14px;    
+}
+
+.card-footer .date .label {
+    font-weight: 300;
+    margin-right: 5px;
+}
+.card-footer.date .value {
+    font-weight: 400;
+}
+
+
+/* -------------------- HEADER -------------------- */
+.header-icons .flag {
+    width: 1.7em;
+    height: 1.7em;
+    background: url("../../../../../assets/posts/empty-flag.png");
+    background-size: cover;
+  }
+  .header-icons .flag:hover {
+    width: 1.7em;
+    height: 1.7em;
+    background: url("../../../../../assets/posts/full-flag.png");
+    background-size: cover;
+  }
+  .header-icons .flag.full {
+    width: 1.7em;
+    height: 1.7em;
+    background: url("../../../../../assets/posts/full-flag.png");
+    background-size: cover;
+  }
+  .header-icons .pencil {
+    width: 1.7em;
+    height: 1.7em;
+    background: url("../../../../../assets/posts/edit-empty.png");
+    background-size: cover;
+    margin-left: 1em;
+  }
+  .header-icons .pencil:hover {
+    width: 1.7em;
+    height: 1.7em;
+    background: url("../../../../../assets/posts/edit-full.png");
+    background-size: cover;
+  }
+  .header-icons .bin {
+    width: 1.7em;
+    height: 1.7em;
+    background: url("../../../../../assets/posts/bin-empty.png");
+    background-size: cover;
+    margin-left: 1em;
+  }
+  .header-icons .bin:hover {
+    width: 1.7em;
+    height: 1.7em;
+    background: url("../../../../../assets/posts/bin-full.png");
+    background-size: cover;
+  }
+  .header-icons .padlock {
+    width: 1.7em;
+    height: 1.7em;
+    background: url("../../../../../assets/posts/padlock-empty.png");
+    background-size: cover;
+    margin-left: 1em;
+  }
+  .header-icons .padlock:hover {
+    width: 1.7em;
+    height: 1.7em;
+    background: url("../../../../../assets/posts/padlock-full.png");
+    background-size: cover;
+  }
+  .header-icons .padlock.full {
+    width: 1.7em;
+    height: 1.7em;
+    background: url("../../../../../assets/posts/padlock-full.png");
+    background-size: cover;
+  }
+
+  .all-posts-container .create {
+    position: fixed;
+    bottom: 40%;
+    left: 4%;
+    display: none;
+
+    font-size: 3em;
+    font-weight: 500;
+    font-family: roboto;
+    background-color: var(--main-light-green-color);
+}
+
+/* ---------- PAGINATOR ----------- */
+mat-paginator {
+  grid-area: paginator;
+  border-radius: 5px;
+  background-color: rgb(134, 194, 50, 0.4);
+}
+mat-paginator:hover {
+  background-color: rgb(134, 194, 50, 1);
+}
+mat-paginator:hover ::ng-deep .mat-select {
+  background-color: rgb(255, 255, 255, 1);
+}
+mat-paginator:hover ::ng-deep .mat-paginator-range-label {
+  background-color: rgb(255, 255, 255, 1);
+}
+mat-paginator:hover ::ng-deep .mat-paginator-page-size-label {
+  color: rgba(0, 0, 0, 0.842);
+}
+
+::ng-deep .mat-paginator-page-size-label {
+  font-weight: 500;
+}
+::ng-deep .mat-form-field-appearance-legacy .mat-form-field-underline {
+  background-color: transparent;
+}
+::ng-deep .mat-select-arrow {
+  color: rgb(134, 194, 50, 0.4);
+}
+::ng-deep .mat-select {
+  background-color: rgb(255, 255, 255, 0.4);
+  border-radius: 3px;
+  padding: 2px 4px 2px 4px;
+}
+::ng-deep .ng-tns-c151-2.ng-star-inserted {
+  font-weight: 500;
+}
+::ng-deep .mat-paginator-range-label {
+  background-color: rgb(255, 255, 255, 0.4);
+  border-radius: 3px;
+  padding: 2px 4px 2px 4px;
+
+  font-weight: 500;
+}
