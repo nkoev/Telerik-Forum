@@ -39,9 +39,10 @@
                         <div class="heart" *ngIf="!post.isAuthor" (click)="$event.stopPropagation(); likePost(post)"
                             [ngClass]="{'full': post.isLiked}">
                         </div>
-                        <div class="heart inactive" *ngIf="post.isAuthor">
+                        <div class="heart inactive" *ngIf="post.isAuthor" (click)="$event.stopPropagation();">
                         </div>
-                        <div class="value">{{post.votes.length}}</div>
+                        <div class="value" (click)="$event.stopPropagation(); showPostVotes(post)" title="Show likes">
+                            {{post.votes.length}}</div>
                     </div>
                 </div>
 

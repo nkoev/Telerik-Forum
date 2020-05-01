@@ -110,6 +110,7 @@
     height: 1.7em;
     background: url("../../../../../assets/posts/empty-flag.png");
     background-size: cover;
+    cursor: pointer;
   }
   .card-text .flag:hover {
     width: 1.7em;
@@ -129,6 +130,7 @@
     background: url("../../../../../assets/posts/edit-empty.png");
     background-size: cover;
     margin-left: 1em;
+    cursor: pointer;
   }
   .card-text .pencil:hover {
     width: 1.7em;
@@ -142,6 +144,7 @@
     background: url("../../../../../assets/posts/bin-empty.png");
     background-size: cover;
     margin-left: 1em;
+    cursor: pointer;
   }
   .card-text .bin:hover {
     width: 1.7em;
@@ -161,6 +164,7 @@
     height: 1.7em;
     background: url("../../../../../assets/posts/padlock-full.png");
     background-size: cover;
+    cursor: pointer;
   }
   .card-text .padlock.full {
     width: 1.7em;
@@ -215,6 +219,7 @@
     color: white;
     padding: 0.2em;
     font-size: 16px;
+    cursor: pointer;
   }
 
   .card-stats .stat.left {
@@ -250,7 +255,7 @@
   }
 
   .card-stats .stat.right:hover .value {
-    display:none;
+    cursor: pointer;
   }
   .card-stats .stat.right:hover .type {
     display:none;

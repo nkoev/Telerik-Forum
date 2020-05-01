@@ -193,4 +193,11 @@ export class AllPostsComponent implements OnInit {
     return event;
   }
 
+  showPostVotes(post: PostShow): void {
+    if (post.votes.length < 1) {
+      return;
+    }
+    this.dialogService.showVotes(post.votes);
+  }
+
 }

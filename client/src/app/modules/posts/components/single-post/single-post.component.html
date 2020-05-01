@@ -34,10 +34,11 @@
             </div>
 
             <div class="stat right" (click)="likePost(post)" [ngClass]="{'opened': commentsOpened}">
-                <div class="value">{{post?.votes.length}}</div>
-                <div class="type">likes</div>
                 <div class="heart" *ngIf="!isAuthor" [ngClass]="{'full': postLiked}"></div>
                 <div class="heart inactive" *ngIf="isAuthor"></div>
+                <div class="value" (click)="$event.stopPropagation(); showPostVotes(post)" title="Show likes">
+                    {{post?.votes.length}}</div>
+                <div class="type">likes</div>
             </div>
         </div>
 
