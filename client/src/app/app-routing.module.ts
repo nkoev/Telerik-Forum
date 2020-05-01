@@ -9,7 +9,7 @@ import { UserProfileComponent } from './modules/users/pages/user-profile/profile
 import { AvatarResolverService } from './shared/services/avatar-resolver.service';
 
 const appRoutes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: 'posts', pathMatch: 'full' },
   {
     path: 'login',
     component: LoginComponent,
@@ -28,8 +28,8 @@ const appRoutes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: 'home',
-    component: HomePageComponent,
+    path: 'profile/:userId',
+    component: UserProfileComponent,
     canActivate: [AuthGuard],
   },
   {
@@ -46,4 +46,4 @@ const appRoutes: Routes = [
   imports: [RouterModule.forRoot(appRoutes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
