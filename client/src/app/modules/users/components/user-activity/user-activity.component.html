@@ -1,8 +1,9 @@
-<div *ngIf="userActivity?.length; else elseBlock">
+<div class="container" *ngIf="userActivity?.length; else elseBlock">
   <h2>Your recent activity:</h2>
   <mat-list *ngFor="let activity of userActivity">
     <mat-list-item>
-      {{ activity.username }} {{ activity.action }} on
+      {{ activity.username }} <span class="activity-link" (click)="targetRouter(activity)">{{ activity.action }}</span>
+      on
       {{ activity.timeStamp | date }}
     </mat-list-item>
   </mat-list>

@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 export interface PostDialogData {
   title: string;
@@ -16,6 +17,22 @@ export interface PostDialogData {
   styleUrls: ['./post-dialog.component.css']
 })
 export class PostDialogComponent implements OnInit {
+
+  static openPostDialog(dialog: MatDialog, dialogData: PostDialogData): Observable<any> {
+    const dialogRef = dialog.open(PostDialogComponent, {
+      width: '60em',
+      data: {
+        title: dialogData.title,
+        postTitleMessage: dialogData.postTitleMessage,
+        postTitle: dialogData.postTitle,
+        postContentMessage: dialogData.postContentMessage,
+        postContent: dialogData.postContent,
+      },
+      backdropClass: 'backdropClass',
+    });
+
+    return dialogRef.afterClosed();
+  }
 
   postForm: FormGroup;
 

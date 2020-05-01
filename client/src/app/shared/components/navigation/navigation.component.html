@@ -1,25 +1,30 @@
 <div class="toolbar-container">
   <mat-toolbar class="navigation">
-    <a routerLink="/posts/all"
-      ><div id="logo">
-        <img src="/assets/images/logo.png" alt="Forum logo" />
-      </div>
-    </a>
-    <button class="light-green-button" mat-raised-button>
-      Hit the forum now!
-    </button>
-    <div id="username">
-      Hello, {{ loggedUser.username }}
-      <div *ngIf="isAdmin">
-        Admin
-      </div>
-    </div>
-    <div class="image-container">
-      <a [matMenuTriggerFor]="appMenu">
-        <div *ngIf="loggedUser.banStatus" id="ban-alert">BANNED</div>
-        <img [src]="avatar" class="avatar-image" />
+
+    <div class="navigation-logo">
+      <a routerLink="/posts/all">
+        <div id="logo">
+          <img src="/assets/images/logo.png" alt="Forum logo" />
+        </div>
       </a>
     </div>
+
+    <div class="navigation-actions">
+      <mat-icon class="menu" [matMenuTriggerFor]="postsMenu">menu</mat-icon>
+      <div id="username">
+        Hello, {{ loggedUser.username }}
+        <div *ngIf="isAdmin">
+          Admin
+        </div>
+      </div>
+      <div class="image-container">
+        <a [matMenuTriggerFor]="appMenu">
+          <div *ngIf="loggedUser.banStatus" id="ban-alert">BANNED</div>
+          <img [src]="avatar" class="avatar-image" />
+        </a>
+      </div>
+    </div>
+
   </mat-toolbar>
 </div>
 
@@ -32,4 +37,9 @@
   <button mat-menu-item (click)="logout()" style="color: red;">
     Logout
   </button>
+</mat-menu>
+
+<mat-menu #postsMenu="matMenu">
+  <button mat-menu-item [routerLink]="['/posts/all']">All Posts</button>
+  <button mat-menu-item (click)="createPost()">New Post</button>
 </mat-menu>

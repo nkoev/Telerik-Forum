@@ -20,4 +20,4 @@ import { DialogService } from '../services/dialog.service';
   ],
   providers: [DialogService],
 })
-export class SharedModule {}
+export class SharedModule { }

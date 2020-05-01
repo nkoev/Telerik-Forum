@@ -1,23 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PostDataService } from '../../post-data.service';
 import { PostShow } from '../../models/post-show.model';
 import { CommentDataService } from 'src/app/modules/comments/comment-data.service';
-import { MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
-import {
-  DialogComponent,
-  DialogData,
-} from 'src/app/shared/components/dialog/dialog.component';
-import {
-  PostDialogData,
-  PostDialogComponent,
-} from '../post-dialog/post-dialog.component';
 import { CommentShow } from 'src/app/modules/comments/models/comment-show.model';
 import { UserDTO } from 'src/app/models/user.dto';
 import { AuthService } from 'src/app/modules/core/services/auth.service';
 import { SafeUrl } from '@angular/platform-browser';
 import { UsersDataService } from 'src/app/modules/users/services/users-data.service';
+import { DialogService } from 'src/app/shared/services/dialog.service';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-single-post',
@@ -25,6 +17,28 @@ import { UsersDataService } from 'src/app/modules/users/services/users-data.serv
   styleUrls: ['./single-post.component.css'],
 })
 export class SinglePostComponent implements OnInit {
+
+  @ViewChild('create', { read: ElementRef }) myBtn: ElementRef;
+  @HostListener('window:scroll', ['$event']) // for window scroll events
+  onScroll(event) {
+    if (!this.myBtn) {
+      return;
+    }
+    if (event.path[1].scrollY > 100) {
+      this.renderer.setStyle(
+        this.myBtn?.nativeElement,
+        'display',
+        'block'
+      );
+    } else {
+      this.renderer.setStyle(
+        this.myBtn?.nativeElement,
+        'display',
+        'none'
+      );
+    }
+  }
+
   post: PostShow;
   postLiked: boolean;
   postFlagged: boolean;
@@ -43,8 +57,10 @@ export class SinglePostComponent implements OnInit {
     private readonly commentDataService: CommentDataService,
     private authService: AuthService,
     private usersDataService: UsersDataService,
-    public dialog: MatDialog
-  ) {}
+    public dialog: MatDialog,
+    private dialogService: DialogService,
+    private renderer: Renderer2,
+  ) { }
 
   ngOnInit(): void {
     console.log('COMPONENT INIT!');
@@ -72,12 +88,25 @@ export class SinglePostComponent implements OnInit {
         },
         error: (err) => {
           console.log(err);
-          // if (err.error.statusCode === 404) {
-          //   this.errorMessage = `No such post with id ${params.postId}`;
-          // }
+          this.router.navigate(['/', '404']);
         },
       });
     });
+  }
+
+  ngAfterViewInit() {
+    let commentId: number;
+
+    this.route.queryParams.subscribe(params => {
+      commentId = params['comment'];
+      if (commentId) {
+        setTimeout(() => { this.loadComments(this.post?.id); }, 1000);
+      }
+    });
+
+    if (commentId) {
+      setTimeout(() => { document.querySelector(`#c${commentId}`).scrollIntoView(); }, 2000);
+    }
   }
 
   loadComments(postId: number): void {
@@ -98,6 +127,8 @@ export class SinglePostComponent implements OnInit {
           if (this.post.comments && this.post.comments.length > 0) {
             this.commentsOpened = !this.commentsOpened;
           }
+
+          this.post.commentsCount = this.post.comments.length;
         },
         error: (err) => console.log(err),
       });
@@ -110,8 +141,13 @@ export class SinglePostComponent implements OnInit {
     // this.commentsOpened = false;
     // this.loadComments(this.post.id);
     if (data.state) {
-      data.comment.isAuthor = true;
-      this.post.comments.push(data.comment);
+      if (!this.commentsOpened) {
+        this.loadComments(this.post.id);
+        return;
+      } else {
+        data.comment.isAuthor = true;
+        this.post.comments.push(data.comment);
+      }
     } else {
       const index = this.post.comments.reduce((acc, comment, idx) => {
         if (comment.id === data.comment.id) {
@@ -121,64 +157,25 @@ export class SinglePostComponent implements OnInit {
       }, 0);
       this.post.comments.splice(index, 1);
     }
+
     this.post.commentsCount = this.post.comments.length;
   }
 
-  openDialog(dialogData: DialogData): Observable<any> {
-    const dialogRef = this.dialog.open(DialogComponent, {
-      width: '40em',
-      data: { action: dialogData.title, question: dialogData.question },
-      backdropClass: 'backdropClass',
-    });
-
-    return dialogRef.afterClosed();
-  }
-
-  openPostDialog(dialogData: PostDialogData): Observable<any> {
-    const dialogRef = this.dialog.open(PostDialogComponent, {
-      width: '60em',
-      data: {
-        title: dialogData.title,
-        postTitleMessage: dialogData.postTitleMessage,
-        postTitle: dialogData.postTitle,
-        postContentMessage: dialogData.postContentMessage,
-        postContent: dialogData.postContent,
-      },
-      backdropClass: 'backdropClass',
-    });
-
-    return dialogRef.afterClosed();
-  }
-
   updatePost(post: PostShow) {
-    const dialogData: PostDialogData = {
-      title: 'Update Post',
-      postTitleMessage: 'Your new post title',
-      postTitle: post.title,
-      postContentMessage: 'Your new post content',
-      postContent: post.content,
-    };
-
-    this.openPostDialog(dialogData).subscribe((result) => {
-      if (result) {
-        if (post.title === result.title && post.content === result.content) {
-          return;
-        }
-        this.postDataService.updatePost(this.post.id, result).subscribe({
-          next: (data) => {
-            this.post = {
-              ...this.post,
-              title: data.title,
-              content: data.content,
-            };
-            console.log('POST UPDATED');
-          },
-          error: (err) => {
-            console.log(err);
-          },
-        });
-      }
-    });
+    this.dialogService.updatePost(post,
+      {
+        next: (data) => {
+          this.post = {
+            ...this.post,
+            title: data.title,
+            content: data.content,
+          };
+          console.log('POST UPDATED');
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
   }
 
   likePost(post: PostShow) {
@@ -199,66 +196,43 @@ export class SinglePostComponent implements OnInit {
   }
 
   flagPost(post: PostShow) {
-    const dialogData = {
-      title: 'Flag Post',
-      question: 'Are you sure you want to (un)flag this post?',
-    };
-
-    this.openDialog(dialogData).subscribe((result) => {
-      if (result) {
-        this.postDataService.flagPost(post.id, !this.postFlagged).subscribe({
-          next: (data) => {
-            this.post = { ...this.post, flags: data.flags };
-            this.postFlagged = !this.postFlagged;
-            console.log('POST WAS (UN)FLAGGED');
-          },
-          error: (err) => {
-            console.log(err);
-          },
-        });
-      }
-    });
+    this.dialogService.flagPost(post,
+      {
+        next: (data) => {
+          this.post = { ...this.post, flags: data.flags };
+          this.postFlagged = !this.postFlagged;
+          console.log('POST WAS (UN)FLAGGED');
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
   }
 
   lockPost(post: PostShow) {
-    const dialogData = {
-      title: 'Lock Post',
-      question: 'Are you sure you want to (un)lock this post?',
-    };
-
-    this.openDialog(dialogData).subscribe((result) => {
-      if (result) {
-        this.postDataService.lockPost(post.id, !post.isLocked).subscribe({
-          next: (data) => {
-            this.post = { ...this.post, isLocked: data.isLocked };
-            console.log('POST WAS (UN)LOCKED');
-          },
-          error: (err) => {
-            console.log(err);
-          },
-        });
-      }
-    });
+    this.dialogService.lockPost(post,
+      {
+        next: (data) => {
+          this.post = { ...this.post, isLocked: data.isLocked };
+          console.log('POST WAS (UN)LOCKED');
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
   }
 
   deletePost(post: PostShow) {
-    const dialogData = {
-      title: 'Delete Post',
-      question: 'Are you sure you want to delete this post?',
-    };
-
-    this.openDialog(dialogData).subscribe((result) => {
-      if (result) {
-        this.postDataService.deletePost(post.id).subscribe({
-          next: (data) => {
-            console.log('POST WAS  DELETED');
-            this.router.navigate(['/', 'home']);
-          },
-          error: (err) => {
-            console.log(err);
-          },
-        });
-      }
-    });
+    this.dialogService.deletePost(post,
+      {
+        next: (data) => {
+          console.log('POST WAS  DELETED');
+          this.router.navigate(['/', 'posts']);
+        },
+        error: (err) => {
+          console.log(err);
+        },
+      });
   }
+
 }
