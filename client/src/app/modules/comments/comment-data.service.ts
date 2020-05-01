@@ -9,7 +9,6 @@ import { CommentCreate } from './models/comment-create.model';
   providedIn: 'root',
 })
 export class CommentDataService {
-
   private _postsURL = 'http://localhost:3000/posts';
 
   constructor(private readonly http: HttpClient) { }

@@ -19,6 +19,7 @@ export class DialogComponent implements OnInit {
       width: '40em',
       data: { action: dialogData.title, question: dialogData.question },
       backdropClass: 'backdropClass',
+      panelClass: 'dialog',
     });
 
     return dialogRef.afterClosed();

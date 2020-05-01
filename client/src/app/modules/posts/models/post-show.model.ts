@@ -23,9 +23,9 @@ export interface PostShow {
 
     isAuthor?: boolean;
 
-    // isAdmin?: boolean;
+    isAdmin?: boolean;
 
-    // isFlagged?: boolean;
+    isFlagged?: boolean;
 
-    // isLiked?: boolean;
+    isLiked?: boolean;
 }

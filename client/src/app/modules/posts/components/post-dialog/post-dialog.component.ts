@@ -29,6 +29,7 @@ export class PostDialogComponent implements OnInit {
         postContent: dialogData.postContent,
       },
       backdropClass: 'backdropClass',
+      panelClass: 'dialog',
     });
 
     return dialogRef.afterClosed();

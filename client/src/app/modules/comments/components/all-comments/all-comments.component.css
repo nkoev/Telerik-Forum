@@ -135,26 +135,22 @@
     flex-direction: column;
     align-items: center;
 }
-
 .single-comment-container .info .likes .heart {
     width: 2.4em;
     height: 2.4em;
     background: url("../../../../../assets/posts/empty-heart-filtered.png");
     background-size: cover;
 }
-
 .single-comment-container .info .likes .heart:hover {
     width: 2.4em;
     height: 2.4em;
     background: url("../../../../../assets/posts/full-heart-filtered.png");
     background-size: cover;
 }
-
 .single-comment-container .info .likes .heart:active {
     transition: all .1s ease-in-out;
     transform: scale(1.2);
   }
-
 .single-comment-container .info .likes .heart.full {
     width: 2.4em;
     height: 2.4em;
@@ -167,7 +163,6 @@
     background: url("../../../../../assets/posts/inactive-heart.png");
     background-size: cover;
 }
-
 .single-comment-container .info .likes .value {
     font-size: 12px;
     font-weight: 500;
@@ -177,11 +172,9 @@
     display: flex;
     font-size: 14px;    
 }
-
 .single-comment-container .info .date .label {
     font-weight: 300;
 }
-
 .single-comment-container .info .date .value {
     font-weight: 400;
     margin-left: 0.5em;

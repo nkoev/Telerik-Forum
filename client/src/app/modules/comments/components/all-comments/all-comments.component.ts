@@ -25,7 +25,6 @@ export class AllCommentsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-
   }
 
   checkIfLastComment(comment: CommentShow): boolean {
@@ -33,7 +32,6 @@ export class AllCommentsComponent implements OnInit {
   }
 
   createComment(): void {
-
     this.dialogService.createComment(this.postId,
       {
         next: data => {

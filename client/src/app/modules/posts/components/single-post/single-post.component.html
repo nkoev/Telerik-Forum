@@ -1,13 +1,19 @@
 <app-navigation></app-navigation>
 
+<div class="center">
+    <mat-progress-spinner mode="indeterminate" value="50" diameter="70" *ngIf="!post"></mat-progress-spinner>
+</div>
+
 <div class="single-post-container" *ngIf="post">
     <div class="single-post-card" [ngClass]="{'opened': commentsOpened}">
+
         <div class="card-image">
             <div class="avatar" [routerLink]="['/profile', post.user.id]"></div>
             <div class="username">
                 <p [routerLink]="['/profile', post.user.id]">@{{post?.user.username}}</p>
             </div>
         </div>
+
         <div class="card-text">
             <div class="icons">
                 <div class="flag" *ngIf="!isAuthor" (click)="flagPost(post)" [ngClass]="{'full': postFlagged}"></div>
@@ -20,11 +26,13 @@
             <h2>{{post?.title}}</h2>
             <p>{{post?.content}}</p>
         </div>
+
         <div class="card-stats" [ngClass]="{'opened': commentsOpened}">
             <div class="stat left" (click)="loadComments(post.id)" [ngClass]="{'opened': commentsOpened}">
                 <div class="value">{{post?.commentsCount}}</div>
                 <div class="type">comments</div>
             </div>
+
             <div class="stat right" (click)="likePost(post)" [ngClass]="{'opened': commentsOpened}">
                 <div class="value">{{post?.votes.length}}</div>
                 <div class="type">likes</div>

@@ -2,9 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/modules/core/services/auth.service';
 import { UserDTO } from 'src/app/models/user.dto';
 import { DialogService } from '../../services/dialog.service';
-import { PostDataService } from 'src/app/modules/posts/post-data.service';
 import { MatDialog } from '@angular/material/dialog';
-import { PostDialogData, PostDialogComponent } from 'src/app/modules/posts/components/post-dialog/post-dialog.component';
 import { Router } from '@angular/router';
 
 @Component({
@@ -53,4 +51,5 @@ export class NavigationComponent implements OnInit {
       }
     );
   }
+
 }
