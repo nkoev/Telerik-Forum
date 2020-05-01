@@ -26,7 +26,9 @@ export class UsersService {
 
   // GET ALL USERS
   async getUsers() {
-    const users: User[] = await this.usersRepository.find();
+    const users: User[] = await this.usersRepository.find({
+      where: { isDeleted: false },
+    });
     return users.map(this.toUserShowDTO);
   }
 
@@ -90,7 +92,7 @@ export class UsersService {
       throw new ForumSystemException('User is already banned', 400);
     }
 
-    const expiryDate = moment(banStatusUpdate.expires, 'DD-MM-YYYY', true);
+    const expiryDate = moment(banStatusUpdate.expires);
     const presentDate = moment();
     const expiryMaxDate = moment().add(90, 'd');
 

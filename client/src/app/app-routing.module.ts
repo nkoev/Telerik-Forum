@@ -25,6 +25,7 @@ const appRoutes: Routes = [
     path: 'profile/:userId',
     component: UserProfileComponent,
     resolve: { avatar: AvatarResolverService },
+    canActivate: [AuthGuard],
   },
   {
     path: 'home',
@@ -35,6 +36,7 @@ const appRoutes: Routes = [
     path: 'posts',
     loadChildren: () =>
       import('./modules/posts/posts.module').then((m) => m.PostsModule),
+    canActivate: [AuthGuard],
   },
   { path: '404', component: NotFoundComponent },
   { path: '**', redirectTo: '/404', pathMatch: 'full' },

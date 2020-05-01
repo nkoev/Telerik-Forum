@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { UserDTO } from 'src/app/models/user.dto';
 import { tap, map } from 'rxjs/operators';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class UsersDataService {
@@ -81,5 +82,13 @@ export class UsersDataService {
 
   uploadAvatar(file: FormData) {
     return this.http.post(`${this.usersUrl}/avatar/upload`, file);
+  }
+
+  deleteUser(userId: string): Observable<UserDTO> {
+    return this.http.delete<UserDTO>(`${this.usersUrl}/${userId}`);
+  }
+
+  banUser(userId: string, body): Observable<any> {
+    return this.http.put(`${this.usersUrl}/${userId}/banstatus`, body);
   }
 }

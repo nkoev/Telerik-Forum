@@ -25,19 +25,16 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private authService: AuthService,
     private usersDataService: UsersDataService,
-    private actr: ActivatedRoute,
     private avatarService: AvatarService
   ) {}
 
   ngOnInit(): void {
-    const sub1 = this.route.paramMap.subscribe(
-      (params) => (this.profileOwnerId = params.get('userId'))
-    );
-    const sub2 = this.authService.loggedUser$.subscribe((res) => {
+    this.profileOwnerId = this.route.snapshot.params.userId;
+    const sub1 = this.authService.loggedUser$.subscribe((res) => {
       this.loggedUser = res;
       this.isAdmin = res.roles.includes('Admin');
     });
-    const sub3 = this.avatarService.avatarUpload$.subscribe((avatarUrl) => {
+    const sub2 = this.avatarService.avatarUpload$.subscribe((avatarUrl) => {
       if (avatarUrl) {
         this.avatar = avatarUrl;
       }
@@ -46,12 +43,12 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       (res: FriendStatusDTO) => (this.friendStatus = res),
       (err) => console.log(err)
     );
-    this.actr.data.subscribe((data) => {
+    this.route.data.subscribe((data) => {
       if (data.avatar) {
         this.avatar = data.avatar;
       }
     });
-    this.subscriptions.push(sub1, sub2, sub3);
+    this.subscriptions.push(sub1, sub2);
   }
 
   ngOnDestroy() {

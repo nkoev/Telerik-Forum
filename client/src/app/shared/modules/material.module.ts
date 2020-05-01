@@ -32,6 +32,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatCarouselModule } from '@ngmodule/material-carousel';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @NgModule({
   exports: [
@@ -67,6 +68,7 @@ import { MatCarouselModule } from '@ngmodule/material-carousel';
     MatSortModule,
     MatPaginatorModule,
     MatCarouselModule,
+    MatNativeDateModule,
   ],
 })
 export class AppMaterialModule {}

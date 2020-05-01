@@ -29,6 +29,16 @@ body {
   background-color: #86c232;
 }
 
+.red-button {
+  color: white;
+  background-color: red;
+}
+
+.orange-button {
+  color: white;
+  background-color: orange;
+}
+
 .backdropClass {
   /* z-index: 100; */
   opacity: 1 !important;

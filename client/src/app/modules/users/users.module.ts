@@ -12,6 +12,7 @@ import { AllUsersComponent } from './components/all-users/all-users.component';
 import { FriendRequestButtonsComponent } from './components/friend-request-buttons/friend-request-buttons.component';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { AdminControlsComponent } from './components/admin-controls/admin-controls.component';
+import { BanDialogComponent } from './components/ban-dialog/ban-dialog.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { AdminControlsComponent } from './components/admin-controls/admin-contro
     FriendRequestButtonsComponent,
     FileUploadComponent,
     AdminControlsComponent,
+    BanDialogComponent,
   ],
   imports: [ReactiveFormsModule, SharedModule],
   exports: [AllUsersComponent],
