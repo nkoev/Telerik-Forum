@@ -8,7 +8,7 @@ import { RegisterComponent } from './modules/users/pages/register/register.compo
 import { UserProfileComponent } from './modules/users/pages/user-profile/profile.component';
 
 const appRoutes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: 'posts', pathMatch: 'full' },
   {
     path: 'login',
     component: LoginComponent,
@@ -20,16 +20,21 @@ const appRoutes: Routes = [
       },
     ],
   },
-  { path: 'profile/:userId', component: UserProfileComponent },
   {
-    path: 'home',
-    component: HomePageComponent,
+    path: 'profile/:userId',
+    component: UserProfileComponent,
     canActivate: [AuthGuard],
   },
+  // {
+  //   path: 'home',
+  //   component: HomePageComponent,
+  //   canActivate: [AuthGuard],
+  // },
   {
     path: 'posts',
     loadChildren: () =>
       import('./modules/posts/posts.module').then((m) => m.PostsModule),
+    canActivate: [AuthGuard],
   },
   { path: '404', component: NotFoundComponent },
   { path: '**', redirectTo: '/404', pathMatch: 'full' },
@@ -39,4 +44,4 @@ const appRoutes: Routes = [
   imports: [RouterModule.forRoot(appRoutes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
