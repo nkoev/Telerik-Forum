@@ -6,6 +6,7 @@ import { UsersDataService } from '../../services/users-data.service';
 import { FriendStatusDTO } from 'src/app/models/friend-status.dto';
 import { Subscription } from 'rxjs';
 import { SafeUrl } from '@angular/platform-browser';
+import { AvatarService } from 'src/app/modules/core/services/avatar.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -24,7 +25,8 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private authService: AuthService,
     private usersDataService: UsersDataService,
-    private actr: ActivatedRoute
+    private actr: ActivatedRoute,
+    private avatarService: AvatarService
   ) {}
 
   ngOnInit(): void {
@@ -35,27 +37,21 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       this.loggedUser = res;
       this.isAdmin = res.roles.includes('Admin');
     });
+    const sub3 = this.avatarService.avatarUpload$.subscribe((avatarUrl) => {
+      if (avatarUrl) {
+        this.avatar = avatarUrl;
+      }
+    });
     this.usersDataService.getFriendStatus(this.profileOwnerId).subscribe(
       (res: FriendStatusDTO) => (this.friendStatus = res),
       (err) => console.log(err)
     );
-    // this.usersDataService
-    //   .getAvatar(this.profileOwnerId)
-    //   .subscribe((avatarUrl) => {
-    //     if (avatarUrl) {
-    //       this.avatar = avatarUrl;
-    //     }
-    //   });
     this.actr.data.subscribe((data) => {
       if (data.avatar) {
         this.avatar = data.avatar;
       }
     });
-    this.subscriptions.push(sub1, sub2);
-  }
-
-  avatarUploaded(event: any) {
-    this.avatar = event;
+    this.subscriptions.push(sub1, sub2, sub3);
   }
 
   ngOnDestroy() {

@@ -16,6 +16,8 @@ export class AdminControlsComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  deleteUser() {}
+
   openDialog(dialogData: DialogData): Observable<any> {
     const dialogRef = this.dialog.open(DialogComponent, {
       width: '40em',

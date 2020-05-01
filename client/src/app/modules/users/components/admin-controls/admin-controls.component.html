@@ -9,4 +9,14 @@
 >
   Delete user
 </button>
-<button mat-raised-button>Ban user</button>
+<button
+  mat-raised-button
+  (click)="
+    openDialog({
+      title: 'ban user',
+      question: 'Are you sure you want to ban this user?'
+    })
+  "
+>
+  Ban user
+</button>

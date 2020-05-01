@@ -33,7 +33,9 @@ export class AuthService {
     return isUserValidated ? user : null;
   }
 
-  async login(loginUser: UserLoginDTO): Promise<{ token: string }> {
+  async login(
+    loginUser: UserLoginDTO,
+  ): Promise<{ token: string; avatar: string }> {
     const user = await this.validateUser(
       loginUser.username,
       loginUser.password,
@@ -52,9 +54,11 @@ export class AuthService {
       },
     );
     const token = await this.jwtService.signAsync(payload);
+    const avatar = user.avatar;
 
     return {
       token,
+      avatar,
     };
   }
 

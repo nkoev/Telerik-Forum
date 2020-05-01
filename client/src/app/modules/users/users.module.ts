@@ -12,7 +12,6 @@ import { AllUsersComponent } from './components/all-users/all-users.component';
 import { FriendRequestButtonsComponent } from './components/friend-request-buttons/friend-request-buttons.component';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { AdminControlsComponent } from './components/admin-controls/admin-controls.component';
-import { FileUploadService } from './components/file-upload/file-upload.service';
 
 @NgModule({
   declarations: [
@@ -29,6 +28,6 @@ import { FileUploadService } from './components/file-upload/file-upload.service'
   ],
   imports: [ReactiveFormsModule, SharedModule],
   exports: [AllUsersComponent],
-  providers: [UsersDataService, FileUploadService],
+  providers: [UsersDataService],
 })
 export class UsersModule {}

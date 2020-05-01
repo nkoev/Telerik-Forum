@@ -8,6 +8,7 @@ import { UserLoginDTO } from 'src/app/models/user-login-dto';
 import { StorageService } from './storage.service';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { UserDTO } from 'src/app/models/user.dto';
+import { AvatarService } from './avatar.service';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +24,8 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private storage: StorageService
+    private storage: StorageService,
+    private avatarService: AvatarService
   ) {}
 
   public get isLoggedIn$(): Observable<boolean> {
@@ -42,6 +44,8 @@ export class AuthService {
           const payload: any = jwt_decode(res.token);
           this.isLoggedInSubject$.next(true);
           this.loggedUserSubject$.next(payload);
+          this.avatarService.emitData(res.avatar);
+          console.log(res.avatar);
           setTimeout(() => {
             this.storage.delete('token');
             this.router.navigate(['login']);

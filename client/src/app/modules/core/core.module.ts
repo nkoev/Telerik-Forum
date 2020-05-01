@@ -6,12 +6,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { StorageService } from './services/storage.service';
 import { TokenInterceptorService } from './services/token-interceptor.service';
+import { AvatarService } from './services/avatar.service';
 
 @NgModule({
   declarations: [],
   providers: [
     AuthService,
     AuthGuard,
+    AvatarService,
     StorageService,
     {
       provide: HTTP_INTERCEPTORS,

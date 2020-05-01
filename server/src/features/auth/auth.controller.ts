@@ -28,7 +28,7 @@ export class AuthController {
       }),
     )
     user: UserLoginDTO,
-  ): Promise<{ token: string }> {
+  ): Promise<{ token: string; avatar: string }> {
     return await this.authService.login(user);
   }
 

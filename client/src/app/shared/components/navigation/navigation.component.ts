@@ -5,7 +5,7 @@ import { DialogService } from '../../services/dialog.service';
 import { Subscription } from 'rxjs';
 import { SafeUrl } from '@angular/platform-browser';
 import { UsersDataService } from 'src/app/modules/users/services/users-data.service';
-import { FileUploadService } from 'src/app/modules/users/components/file-upload/file-upload.service';
+import { AvatarService } from 'src/app/modules/core/services/avatar.service';
 
 @Component({
   selector: 'app-navigation',
@@ -21,7 +21,7 @@ export class NavigationComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private dialogService: DialogService,
-    private fileUploadService: FileUploadService,
+    private fileUploadService: AvatarService,
     private usersDataService: UsersDataService
   ) {}
 
