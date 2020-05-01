@@ -1,6 +1,7 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { UsersDataService } from '../../services/users-data.service';
-import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
+import { SafeUrl } from '@angular/platform-browser';
+import { FileUploadService } from './file-upload.service';
 
 @Component({
   selector: 'app-file-upload',
@@ -9,35 +10,29 @@ import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
 })
 export class FileUploadComponent implements OnInit {
   @Output()
-  public avatarLoaded = new EventEmitter<SafeUrl>();
-  public avatar: SafeUrl;
+  public avatarUploaded = new EventEmitter<SafeUrl>();
+  @Input()
+  public profileOwnerId: string;
 
   constructor(
     private usersDataService: UsersDataService,
-    private sanitizer: DomSanitizer
+    private fileUploadService: FileUploadService
   ) {}
 
   ngOnInit(): void {}
 
-  onFileSelected(event) {
+  onFileSelected(event: any) {
     const file = event.target.files[0];
     const fd = new FormData();
     fd.append('file', file, file.name);
 
-    this.usersDataService.uploadAvatar(fd).subscribe((res) => {
-      this.toDataUrl(res);
+    this.usersDataService.uploadAvatar(fd).subscribe(() => {
+      this.usersDataService
+        .getAvatar(this.profileOwnerId)
+        .subscribe((avatarUrl) => {
+          this.avatarUploaded.emit(avatarUrl);
+          this.fileUploadService.emitData(avatarUrl);
+        });
     });
-  }
-
-  private toDataUrl(buffer) {
-    const reader = new FileReader();
-    const blob = new Blob([new Uint8Array(buffer.data)]);
-    reader.readAsDataURL(blob);
-
-    reader.onload = () => {
-      this.avatarLoaded.emit(
-        this.sanitizer.bypassSecurityTrustUrl(reader.result as string)
-      );
-    };
   }
 }

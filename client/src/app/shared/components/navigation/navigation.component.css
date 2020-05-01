@@ -3,11 +3,30 @@
   display: flex;
   justify-content: space-around;
   background-color: #61892f;
-  height: 10%;
   overflow: hidden;
 }
 
 #logo {
   border-radius: 50%;
   background-color: white;
+}
+
+.avatar-image {
+  width: 4em;
+  height: 80%;
+  border: 5px solid #86c232;
+}
+
+.toolbar-container {
+  height: 11%;
+}
+
+.image-container {
+  height: auto;
+  cursor: pointer;
+}
+
+#username {
+  margin-left: 15%;
+  font-style: italic;
 }

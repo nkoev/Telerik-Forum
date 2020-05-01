@@ -8,5 +8,13 @@
     [profileOwnerId]="profileOwnerId"
     >{{ friendStatus }}</app-friend-request-buttons
   >
-  <app-file-upload *ngIf="loggedUser.id === profileOwnerId"></app-file-upload>
+  <app-file-upload
+    *ngIf="loggedUser.id === profileOwnerId"
+    [profileOwnerId]="profileOwnerId"
+    (avatarUploaded)="avatarUploaded($event)"
+  ></app-file-upload>
+  <app-admin-controls
+    class="admin-controls"
+    *ngIf="loggedUser.id !== profileOwnerId && isAdmin"
+  ></app-admin-controls>
 </div>

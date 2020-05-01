@@ -15,9 +15,10 @@ import { SafeUrl } from '@angular/platform-browser';
 export class UserProfileComponent implements OnInit, OnDestroy {
   profileOwnerId: string;
   loggedUser: UserDTO;
+  isAdmin: boolean;
   friendStatus: FriendStatusDTO;
   subscriptions: Subscription[] = [];
-  avatar: string | SafeUrl = 'assets/images/avatar.png';
+  avatar: string | SafeUrl = 'assets/posts/single-post-avatar.jpg';
 
   constructor(
     private route: ActivatedRoute,
@@ -29,19 +30,26 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     const sub1 = this.route.paramMap.subscribe(
       (params) => (this.profileOwnerId = params.get('userId'))
     );
-    const sub2 = this.authService.loggedUser$.subscribe(
-      (res) => (this.loggedUser = res)
-    );
+    const sub2 = this.authService.loggedUser$.subscribe((res) => {
+      this.loggedUser = res;
+      this.isAdmin = res.roles.includes('Admin');
+    });
     this.usersDataService.getFriendStatus(this.profileOwnerId).subscribe(
       (res: FriendStatusDTO) => (this.friendStatus = res),
       (err) => console.log(err)
     );
     this.usersDataService
       .getAvatar(this.profileOwnerId)
-      .subscribe((res: any) => {
-        this.avatar = res;
+      .subscribe((avatarUrl) => {
+        if (avatarUrl) {
+          this.avatar = avatarUrl;
+        }
       });
     this.subscriptions.push(sub1, sub2);
+  }
+
+  avatarUploaded(event: any) {
+    this.avatar = event;
   }
 
   ngOnDestroy() {

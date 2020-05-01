@@ -1,18 +1,26 @@
-<mat-toolbar class="navigation">
-  <a routerLink="/home"
-    ><div id="logo"><img src="/assets/images/logo.png" alt="Forum logo" /></div>
-  </a>
-  <button class="light-green-button" mat-raised-button>
-    Create post
-  </button>
-  <button
-    class="light-green-button"
-    mat-raised-button
-    [matMenuTriggerFor]="appMenu"
-  >
-    {{ loggedUser.username }}
-  </button>
-</mat-toolbar>
+<div class="toolbar-container">
+  <mat-toolbar class="navigation">
+    <a routerLink="/posts/all"
+      ><div id="logo">
+        <img src="/assets/images/logo.png" alt="Forum logo" />
+      </div>
+    </a>
+    <button class="light-green-button" mat-raised-button>
+      Hit the forum now!
+    </button>
+    <div id="username">
+      Hello, {{ loggedUser.username }}
+      <div *ngIf="isAdmin">
+        Admin
+      </div>
+    </div>
+    <div class="image-container">
+      <a [matMenuTriggerFor]="appMenu">
+        <img [src]="avatar" class="avatar-image" />
+      </a>
+    </div>
+  </mat-toolbar>
+</div>
 
 <mat-menu #appMenu="matMenu">
   <button mat-menu-item [routerLink]="['/profile/', loggedUser.id]">

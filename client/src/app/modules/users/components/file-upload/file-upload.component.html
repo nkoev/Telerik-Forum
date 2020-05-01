@@ -1,8 +1,4 @@
-<!-- <p>file-upload works!</p>
-<input type="file" (change)="onFileSelected($event)" />
-<img [src]="avatar" *ngIf="avatar" style="height: 300px; width: 500px;" /> -->
-
 <button type="button" mat-raised-button (click)="fileInput.click()">
-  Choose File
+  Upload avatar
 </button>
 <input hidden (change)="onFileSelected($event)" #fileInput type="file" />

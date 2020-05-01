@@ -1,31 +1,48 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from 'src/app/modules/core/services/auth.service';
 import { UserDTO } from 'src/app/models/user.dto';
 import { DialogService } from '../../services/dialog.service';
 import { Subscription } from 'rxjs';
+import { SafeUrl } from '@angular/platform-browser';
+import { UsersDataService } from 'src/app/modules/users/services/users-data.service';
+import { FileUploadService } from 'src/app/modules/users/components/file-upload/file-upload.service';
 
 @Component({
   selector: 'app-navigation',
   templateUrl: './navigation.component.html',
   styleUrls: ['./navigation.component.css'],
 })
-export class NavigationComponent implements OnInit {
+export class NavigationComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
-  isLoggedIn: boolean;
   loggedUser: UserDTO;
+  isAdmin: boolean;
+  avatar: string | SafeUrl = 'assets/posts/single-post-avatar.jpg';
 
   constructor(
     private authService: AuthService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private fileUploadService: FileUploadService,
+    private usersDataService: UsersDataService
   ) {}
 
   ngOnInit(): void {
-    this.subscriptions.push(
-      this.authService.loggedUser$.subscribe((res) => (this.loggedUser = res))
-    );
-    this.subscriptions.push(
-      this.authService.isLoggedIn$.subscribe((res) => (this.isLoggedIn = res))
-    );
+    const sub1 = this.authService.loggedUser$.subscribe((res) => {
+      this.loggedUser = res;
+      this.isAdmin = res.roles.includes('Admin');
+    });
+    const sub2 = this.fileUploadService.avatarUpload$.subscribe((avatarUrl) => {
+      if (avatarUrl) {
+        this.avatar = avatarUrl;
+      }
+    });
+    this.usersDataService
+      .getAvatar(this.loggedUser.id)
+      .subscribe((avatarUrl) => {
+        if (avatarUrl) {
+          this.avatar = avatarUrl;
+        }
+      });
+    this.subscriptions.push(sub1, sub2);
   }
 
   logout() {
@@ -38,5 +55,9 @@ export class NavigationComponent implements OnInit {
 
   openFriends() {
     this.dialogService.showUserFriends();
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 }
