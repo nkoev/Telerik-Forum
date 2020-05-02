@@ -1,5 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { Repository, DeepPartial } from "typeorm";
+import { DeepPartial } from "typeorm";
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CommentsService } from "./comments.service";
 import { ActivityService } from "../core/activity.service";
@@ -20,11 +20,13 @@ describe('Comments Service', () => {
     const postsRepository = {
         find() { return null; },
         findOne() { return null; },
+        save() { return null; },
         createQueryBuilder: jest.fn(() => ({
-            update: jest.fn().mockReturnThis(),
-            set: jest.fn().mockReturnThis(),
+            leftJoinAndSelect: jest.fn().mockReturnThis(),
+            loadRelationCountAndMap: jest.fn().mockReturnThis(),
             where: jest.fn().mockReturnThis(),
-            execute: jest.fn().mockReturnThis(),
+            addOrderBy: jest.fn().mockReturnThis(),
+            getOne: jest.fn().mockReturnThis(),
         })),
     };
     const commentsRepository = {
@@ -32,12 +34,6 @@ describe('Comments Service', () => {
         findOne() { return null; },
         save() { return null; },
         create() { return null; },
-        createQueryBuilder: jest.fn(() => ({
-            relation: jest.fn().mockReturnThis(),
-            of: jest.fn().mockReturnThis(),
-            add: jest.fn().mockReturnThis(),
-            remove: jest.fn().mockReturnThis(),
-        })),
     };
 
     let fakeUser: User;
@@ -633,17 +629,17 @@ describe('Comments Service', () => {
                 .rejects.toThrowError(ForumSystemException);
         });
 
-        it('should call commentsRepository createQueryBuilder() once', async () => {
-            // Arrange
-            jest.spyOn(commentsRepository, 'findOne')
-                .mockReturnValue(Promise.resolve(fakeComment));
+        // it('should call commentsRepository createQueryBuilder() once', async () => {
+        //     // Arrange
+        //     jest.spyOn(commentsRepository, 'findOne')
+        //         .mockReturnValue(Promise.resolve(fakeComment));
 
-            // Act
-            await commentsService.likeComment(fakeUser, 1, 2, true);
+        //     // Act
+        //     await commentsService.likeComment(fakeUser, 1, 2, true);
 
-            // Assert
-            expect(commentsRepository.createQueryBuilder).toHaveBeenCalledTimes(1);
-        });
+        //     // Assert
+        //     expect(commentsRepository.createQueryBuilder).toHaveBeenCalledTimes(1);
+        // });
 
         it('call activityService logCommentEvent() once with correct arguments', async () => {
             // Arrange
