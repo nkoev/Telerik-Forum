@@ -41,22 +41,26 @@ export class UsersService {
     if (existingUser !== undefined) {
       throw new ForumSystemException('Username taken', 409);
     }
+    try {
+      user.password = await bcrypt.hash(user.password, 10);
+      const newUser: User = this.usersRepository.create(user);
+      newUser.posts = Promise.resolve([]);
+      newUser.comments = Promise.resolve([]);
+      newUser.roles = [
+        await this.rolesRepository.findOne({
+          where: { name: 'Basic' },
+        }),
+      ];
+      newUser.avatar = '';
+      newUser.banStatus = await this.banStatusRepository.save(
+        this.banStatusRepository.create(),
+      );
+      await this.usersRepository.save(newUser);
 
-    user.password = await bcrypt.hash(user.password, 10);
-    const newUser: User = this.usersRepository.create(user);
-    newUser.posts = Promise.resolve([]);
-    newUser.comments = Promise.resolve([]);
-    newUser.roles = [
-      await this.rolesRepository.findOne({
-        where: { name: 'Basic' },
-      }),
-    ];
-    newUser.banStatus = await this.banStatusRepository.save(
-      this.banStatusRepository.create(),
-    );
-    await this.usersRepository.save(newUser);
-
-    return this.toUserShowDTO(newUser);
+      return this.toUserShowDTO(newUser);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   // UPLOAD AVATAR
