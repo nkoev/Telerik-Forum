@@ -1,2 +1,61 @@
 <app-navigation></app-navigation>
-<p>all-posts works!</p>
+
+<div class="center">
+    <mat-progress-spinner mode="indeterminate" value="50" diameter="70" *ngIf="!posts"></mat-progress-spinner>
+</div>
+
+<div class="all-posts-container" *ngIf="posts" (scroll)="onScroll($event)">
+    <div class="all-cards-container">
+
+        <div class="post-card" *ngFor="let post of posts">
+            <mat-card class="card" [routerLink]="['/posts', post.id]">
+
+                <div class="header-avatar" [routerLink]="['/profile', post.user.id]" (click)="$event.stopPropagation()">
+                </div>
+                <div class="header-title">{{post.title}}</div>
+                <div class="header-username" (click)="$event.stopPropagation()">
+                    <p [routerLink]="['/profile', post.user.id]">{{'@' + post.user.username}}</p>
+                </div>
+                <div class="header-icons">
+                    <div class="flag" *ngIf="!post.isAuthor && !post.isLocked"
+                        (click)="$event.stopPropagation(); flagPost(post)" [ngClass]="{'full': post.isFlagged}"></div>
+                    <div class="pencil" *ngIf="post.isAuthor && !post.isLocked"
+                        (click)="$event.stopPropagation(); updatePost(post)">
+                    </div>
+                    <div class="bin" *ngIf="(post.isAuthor || post.isAdmin) && !post.isLocked"
+                        (click)="$event.stopPropagation(); deletePost(post)"></div>
+                    <div class="padlock" *ngIf="post.isAdmin" (click)="$event.stopPropagation(); lockPost(post)"
+                        [ngClass]="{'full': post.isLocked}"></div>
+                </div>
+
+                <div class="card-content">
+                    <p class="content-text">{{getFirstNWords(20, post.content)}}</p>
+                </div>
+
+                <div class="card-footer">
+                    <div class="date">
+                        <div class="label">Created on:</div>
+                        <div class="value">{{post.createdOn | date}}</div>
+                    </div>
+                    <div class="likes">
+                        <div class="heart" *ngIf="!post.isAuthor && !post.isLocked"
+                            (click)="$event.stopPropagation(); likePost(post)" [ngClass]="{'full': post.isLiked}">
+                        </div>
+                        <div class="heart inactive" *ngIf="post.isAuthor || post.isLocked"
+                            (click)="$event.stopPropagation();">
+                        </div>
+                        <div class="value" (click)="$event.stopPropagation(); showPostVotes(post)" title="Show likes">
+                            {{post.votes.length}}</div>
+                    </div>
+                </div>
+
+            </mat-card>
+        </div>
+
+    </div>
+    <button mat-fab #create class="create" title="Add a new post" (click)="createPost()">+</button>
+
+    <mat-paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+        (page)="pageEvent = handlePage($event)">
+    </mat-paginator>
+</div>

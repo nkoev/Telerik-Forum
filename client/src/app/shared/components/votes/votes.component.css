@@ -1,11 +1,10 @@
-.activity-link {
+.user{
     margin: 0 4px 0 4px;
-    color: salmon;
-    cursor: pointer;
+    /* color: salmon; */
 }
 
 .container {
-    width: 30em;
+    width: 25em;
     min-height: 30vh;
     max-height: 80vh;
     overflow-y: auto;
@@ -14,8 +13,10 @@
 .item {
     background-color: whitesmoke;
     border-radius: 8px;
+    cursor: pointer;
     outline:0;
 }
+
 .item:hover {
     background-color: rgb(134, 194, 50, 0.3);
 }

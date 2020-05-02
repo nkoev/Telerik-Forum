@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { HomePageComponent } from './pages/home-page/home-page.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { AuthGuard } from './modules/core/services/auth.guard';
 import { LoginComponent } from './modules/users/pages/login-page/login.component';
@@ -9,7 +8,7 @@ import { UserProfileComponent } from './modules/users/pages/user-profile/profile
 import { AvatarResolverService } from './shared/services/avatar-resolver.service';
 
 const appRoutes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: 'posts', pathMatch: 'full' },
   {
     path: 'login',
     component: LoginComponent,
@@ -28,11 +27,6 @@ const appRoutes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: 'home',
-    component: HomePageComponent,
-    canActivate: [AuthGuard],
-  },
-  {
     path: 'posts',
     loadChildren: () =>
       import('./modules/posts/posts.module').then((m) => m.PostsModule),
@@ -46,4 +40,4 @@ const appRoutes: Routes = [
   imports: [RouterModule.forRoot(appRoutes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

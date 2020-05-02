@@ -22,7 +22,7 @@ export class UsersService {
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
     @InjectRepository(BanStatus)
     private readonly banStatusRepository: Repository<BanStatus>,
-  ) {}
+  ) { }
 
   // GET ALL USERS
   async getUsers() {
@@ -169,6 +169,10 @@ export class UsersService {
       .relation(User, 'activity')
       .of(user)
       .loadMany();
+
+    records.sort(function (a, b) {
+      return b.timeStamp - a.timeStamp;
+    });
 
     return records.map(this.toActivityShowDTO);
   }

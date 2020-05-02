@@ -1,73 +1,55 @@
 <app-navigation></app-navigation>
 
+<div class="center">
+  <mat-progress-spinner mode="indeterminate" value="50" diameter="70" *ngIf="!post"></mat-progress-spinner>
+</div>
+
 <div class="single-post-container" *ngIf="post">
-  <div class="single-post-card" [ngClass]="{ opened: commentsOpened }">
+  <div class="single-post-card" [ngClass]="{'opened': commentsOpened}">
+
     <div class="card-image">
-      <div class="avatar">
+      <div class="avatar" [routerLink]="['/profile', post.user.id]">
         <img *ngIf="avatar" [src]="avatar" class="avatar" />
       </div>
       <div class="username">
-        <a mat-button [routerLink]="['/profile/', post?.user.id]"
-          >@{{ post?.user.username }}</a
-        >
+        <p [routerLink]="['/profile', post.user.id]">@{{post?.user.username}}</p>
       </div>
     </div>
+
     <div class="card-text">
       <div class="icons">
-        <div
-          class="flag"
-          *ngIf="!isAuthor"
-          (click)="flagPost(post)"
-          [ngClass]="{ full: postFlagged }"
-        ></div>
-        <div class="pencil" *ngIf="isAuthor" (click)="updatePost(post)"></div>
-        <div
-          class="bin"
-          *ngIf="isAuthor || isAdmin"
-          (click)="deletePost(post)"
-        ></div>
-        <div
-          class="padlock"
-          *ngIf="isAdmin"
-          (click)="lockPost(post)"
-          [ngClass]="{ full: post?.isLocked }"
-        ></div>
+        <div class="flag" *ngIf="!isAuthor && !post.isLocked" (click)="flagPost(post)"
+          [ngClass]="{'full': postFlagged}"></div>
+        <div class="pencil" *ngIf="isAuthor && !post.isLocked" (click)="updatePost(post)"></div>
+        <div class="bin" *ngIf="(isAuthor || isAdmin) && !post.isLocked" (click)="deletePost(post)"></div>
+        <div class="padlock" *ngIf="isAdmin" (click)="lockPost(post)" [ngClass]="{'full': post?.isLocked}">
+        </div>
       </div>
-      <span class="date">{{ post?.createdOn | date }}</span>
-      <h2>{{ post?.title }}</h2>
-      <p>{{ post?.content }}</p>
+      <span class="date">{{post?.createdOn |date}}</span>
+      <h2>{{post?.title}}</h2>
+      <p>{{post?.content}}</p>
     </div>
-    <div class="card-stats" [ngClass]="{ opened: commentsOpened }">
-      <div
-        class="stat left"
-        (click)="loadComments(post.id)"
-        [ngClass]="{ opened: commentsOpened }"
-      >
-        <div class="value">{{ post?.commentsCount }}</div>
+
+    <div class="card-stats" [ngClass]="{'opened': commentsOpened}">
+      <div class="stat left" (click)="loadComments(post.id)" [ngClass]="{'opened': commentsOpened}">
+        <div class="value">{{post?.commentsCount}}</div>
         <div class="type">comments</div>
       </div>
-      <div
-        class="stat right"
-        (click)="likePost(post)"
-        [ngClass]="{ opened: commentsOpened }"
-      >
-        <div class="value">{{ post?.votes.length }}</div>
+
+      <div class="stat right" [ngClass]="{'opened': commentsOpened}">
+        <div class="heart" *ngIf="!isAuthor && !post.isLocked" (click)="likePost(post)" [ngClass]="{'full': postLiked}">
+        </div>
+        <div class="heart inactive" *ngIf="isAuthor || post.isLocked"></div>
+        <div class="value" (click)="$event.stopPropagation(); showPostVotes(post)" title="Show likes">
+          {{post?.votes.length}}</div>
         <div class="type">likes</div>
-        <div
-          class="heart"
-          *ngIf="!isAuthor"
-          [ngClass]="{ full: postLiked }"
-        ></div>
-        <div class="heart inactive" *ngIf="isAuthor"></div>
       </div>
     </div>
+
+    <button mat-fab #create class="create" title="Add a new comment" *ngIf="!post.isLocked"
+      (click)="child.createComment();">+</button>
   </div>
 
-  <app-all-comments
-    class="comments-section"
-    [ngClass]="{ opened: commentsOpened }"
-    [post]="post"
-    [comments]="post.comments"
-    (updateComments)="updateComments($event)"
-  ></app-all-comments>
+  <app-all-comments #child class="comments-section" [ngClass]="{'opened': commentsOpened}" [post]="post"
+    [comments]="post.comments" (updateComments)="updateComments($event)"></app-all-comments>
 </div>

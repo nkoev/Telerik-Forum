@@ -25,11 +25,15 @@ export class CommentsService {
 
     await this.getPostEntity(postId);
 
-    const comments = await this.commentsRepo.find({
+    let comments = await this.commentsRepo.find({
       where: {
         post: { id: postId },
         isDeleted: false
       }
+    });
+
+    comments = comments.sort(function (a, b) {
+      return b.votes.length - a.votes.length;
     });
 
     return comments.map(this.toCommentShowDTO);

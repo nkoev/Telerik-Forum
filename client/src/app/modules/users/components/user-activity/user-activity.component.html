@@ -1,12 +1,18 @@
-<div *ngIf="userActivity?.length; else elseBlock">
+<div class="container" *ngIf="userActivity?.length; else elseBlock">
   <h2>Your recent activity:</h2>
-  <mat-list *ngFor="let activity of userActivity">
-    <mat-list-item>
-      {{ activity.username }} {{ activity.action }} on
+  <mat-list *ngFor="let activity of userActivity" class="list">
+    <mat-list-item class="item">
+      {{ activity.username }} <span class="activity-link" (click)="targetRouter(activity)">{{ activity.action }}</span>
+      on
       {{ activity.timeStamp | date }}
     </mat-list-item>
   </mat-list>
 </div>
+
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Close</button>
+</div>
+
 <ng-template #elseBlock>
   <h2>
     Looks like you haven't been very active lately.

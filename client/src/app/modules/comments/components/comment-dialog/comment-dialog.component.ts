@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 export interface CommentDialogData {
   title: string;
@@ -14,6 +15,21 @@ export interface CommentDialogData {
   styleUrls: ['./comment-dialog.component.css']
 })
 export class CommentDialogComponent implements OnInit {
+
+  static openCommentDialog(dialog: MatDialog, dialogData: CommentDialogData): Observable<any> {
+    const dialogRef = dialog.open(CommentDialogComponent, {
+      width: '60em',
+      data: {
+        title: dialogData.title,
+        commentContentMessage: dialogData.commentContentMessage,
+        commentContent: dialogData.commentContent,
+      },
+      backdropClass: 'backdropClass',
+      panelClass: 'dialog',
+    });
+
+    return dialogRef.afterClosed();
+  }
 
   commentForm: FormGroup;
 
