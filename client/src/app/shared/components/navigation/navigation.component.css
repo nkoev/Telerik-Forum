@@ -19,23 +19,36 @@
 }
 
 .avatar-image {
-  width: 4em;
-  height: 80%;
+  border-radius: 50%;
+  width: 2.7em;
+  height: 2.7em;
   border: 5px solid #86c232;
-}
-
-.toolbar-container {
-  height: 11%;
+  align-self: center;
 }
 
 .image-container {
+  border-radius: 50%;
   height: auto;
   cursor: pointer;
 }
 
 #username {
-  margin-left: 15%;
+  margin-left: 5%;
+  margin-right: 3%;
   font-style: italic;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.welcome {
+  line-height: 1;
+}
+.role {
+  line-height: 1;
+  font-size: 15px;
+  color: salmon;
 }
 
 #ban-alert {
@@ -51,7 +64,7 @@
 }
 
 .navigation-actions .menu {
-  margin-right: 8px;
+  margin-right: 3px;
   cursor: pointer;
   transform: scale(1.4);
 }

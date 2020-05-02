@@ -1,32 +1,28 @@
-<div class="toolbar-container">
-  <mat-toolbar class="navigation">
+<mat-toolbar class="navigation">
 
-    <div class="navigation-logo">
-      <a routerLink="/posts">
-        <div id="logo">
-          <img src="/assets/images/logo.png" alt="Forum logo" />
-        </div>
+  <div class="navigation-logo">
+    <a routerLink="/posts">
+      <div id="logo">
+        <img src="/assets/images/logo.png" alt="Forum logo" />
+      </div>
+    </a>
+  </div>
+
+  <div class="navigation-actions">
+    <mat-icon class="menu" [matMenuTriggerFor]="postsMenu">menu</mat-icon>
+    <div id="username">
+      <div class="welcome">Hello, {{ loggedUser.username }}</div>
+      <div class="role" *ngIf="isAdmin"> Admin </div>
+    </div>
+    <div class="image-container">
+      <a [matMenuTriggerFor]="appMenu">
+        <div *ngIf="loggedUser.banStatus" id="ban-alert">BANNED</div>
+        <img [src]="avatar" class="avatar-image" />
       </a>
     </div>
+  </div>
 
-    <div class="navigation-actions">
-      <mat-icon class="menu" [matMenuTriggerFor]="postsMenu">menu</mat-icon>
-      <div id="username">
-        Hello, {{ loggedUser.username }}
-        <div *ngIf="isAdmin">
-          Admin
-        </div>
-      </div>
-      <div class="image-container">
-        <a [matMenuTriggerFor]="appMenu">
-          <div *ngIf="loggedUser.banStatus" id="ban-alert">BANNED</div>
-          <img [src]="avatar" class="avatar-image" />
-        </a>
-      </div>
-    </div>
-
-  </mat-toolbar>
-</div>
+</mat-toolbar>
 
 <mat-menu #appMenu="matMenu">
   <button mat-menu-item [routerLink]="['/profile/', loggedUser.id]">

@@ -45,8 +45,8 @@
     </div>
 
     <button mat-fab #create class="create" title="Add a new comment" (click)="child.createComment();">+</button>
-    <app-all-comments #child class="comments-section" [ngClass]="{'opened': commentsOpened}" [postId]="post.id"
-      [comments]="post.comments" (updateComments)="updateComments($event)"></app-all-comments>
-
   </div>
+
+  <app-all-comments #child class="comments-section" [ngClass]="{'opened': commentsOpened}" [postId]="post.id"
+    [comments]="post.comments" (updateComments)="updateComments($event)"></app-all-comments>
 </div>

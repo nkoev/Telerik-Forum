@@ -30,7 +30,6 @@ export class NavigationComponent implements OnInit, OnDestroy {
     private readonly router: Router,
   ) { }
 
-
   ngOnInit(): void {
     const sub1 = this.authService.loggedUser$.subscribe((res) => {
       this.loggedUser = res;

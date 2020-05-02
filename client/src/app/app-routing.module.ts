@@ -27,11 +27,6 @@ const appRoutes: Routes = [
     canActivate: [AuthGuard],
   },
   {
-    path: 'profile/:userId',
-    component: UserProfileComponent,
-    canActivate: [AuthGuard],
-  },
-  {
     path: 'posts',
     loadChildren: () =>
       import('./modules/posts/posts.module').then((m) => m.PostsModule),

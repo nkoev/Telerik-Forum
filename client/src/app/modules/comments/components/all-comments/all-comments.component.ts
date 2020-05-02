@@ -3,7 +3,6 @@ import { CommentDataService } from '../../comment-data.service';
 import { CommentShow } from 'src/app/modules/comments/models/comment-show.model';
 import { SafeUrl } from '@angular/platform-browser';
 import { DialogService } from 'src/app/shared/services/dialog.service';
-import { PostShow } from 'src/app/modules/posts/models/post-show.model';
 import { CommentBase } from '../../models/comment-base.model';
 
 @Component({

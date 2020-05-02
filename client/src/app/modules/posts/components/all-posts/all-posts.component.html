@@ -10,9 +10,10 @@
         <div class="post-card" *ngFor="let post of posts">
             <mat-card class="card" [routerLink]="['/posts', post.id]">
 
-                <div class="header-avatar" [routerLink]="['/profile', post.user.id]"></div>
+                <div class="header-avatar" [routerLink]="['/profile', post.user.id]" (click)="$event.stopPropagation()">
+                </div>
                 <div class="header-title">{{post.title}}</div>
-                <div class="header-username">
+                <div class="header-username" (click)="$event.stopPropagation()">
                     <p [routerLink]="['/profile', post.user.id]">{{'@' + post.user.username}}</p>
                 </div>
                 <div class="header-icons">
