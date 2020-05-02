@@ -46,12 +46,14 @@ const seedUsers = async (connection: any) => {
     const username = `user${i}`;
     const password = '1234';
     const hashedPassword = await bcrypt.hash(password, 10);
+    const avatar = '';
     const banStatus = await banStatusRepo.save(banStatusRepo.create());
 
     const newUser: User = userRepo.create({
       username,
       password: hashedPassword,
       roles: allUserRoles,
+      avatar: avatar,
       banStatus,
     });
 
