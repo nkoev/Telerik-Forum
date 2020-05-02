@@ -16,7 +16,7 @@ export class UserFriendsComponent implements OnInit {
     private dialogRef: MatDialogRef<UserFriendsComponent>,
     private router: Router,
     private usersDataService: UsersDataService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.router.events.subscribe(() => this.dialogRef.close());
@@ -30,5 +30,9 @@ export class UserFriendsComponent implements OnInit {
           .getUserFriends()
           .subscribe((res) => (this.userFriends = res))
       );
+  }
+
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 }
