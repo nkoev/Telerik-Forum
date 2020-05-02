@@ -30,3 +30,9 @@
   margin-left: 15%;
   font-style: italic;
 }
+
+#ban-alert {
+  margin-top: 5%;
+  color: red;
+  position: fixed;
+}

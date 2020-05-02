@@ -45,7 +45,6 @@ export class AuthService {
           this.isLoggedInSubject$.next(true);
           this.loggedUserSubject$.next(payload);
           this.avatarService.emitData(res.avatar);
-          console.log(res.avatar);
           setTimeout(() => {
             this.storage.delete('token');
             this.router.navigate(['login']);

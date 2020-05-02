@@ -5,5 +5,5 @@ export class UserDTO {
 
   public roles: string[];
 
-  public isBanned: boolean;
+  public banStatus: boolean;
 }

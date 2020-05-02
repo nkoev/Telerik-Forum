@@ -16,6 +16,7 @@
     </div>
     <div class="image-container">
       <a [matMenuTriggerFor]="appMenu">
+        <div *ngIf="loggedUser.banStatus" id="ban-alert">BANNED</div>
         <img [src]="avatar" class="avatar-image" />
       </a>
     </div>
