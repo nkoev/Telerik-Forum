@@ -4,6 +4,7 @@ import { CommentShow } from 'src/app/modules/comments/models/comment-show.model'
 import { SafeUrl } from '@angular/platform-browser';
 import { DialogService } from 'src/app/shared/services/dialog.service';
 import { CommentBase } from '../../models/comment-base.model';
+import { PostShow } from 'src/app/modules/posts/models/post-show.model';
 
 @Component({
   selector: 'app-all-comments',
@@ -12,7 +13,7 @@ import { CommentBase } from '../../models/comment-base.model';
 })
 export class AllCommentsComponent implements OnInit {
   @Input()
-  postId: number;
+  post: PostShow;
   @Input()
   comments: CommentShow[];
   @Output('updateComments')
@@ -33,7 +34,7 @@ export class AllCommentsComponent implements OnInit {
   }
 
   createComment(): void {
-    this.dialogService.createComment(this.postId,
+    this.dialogService.createComment(this.post.id,
       {
         next: data => {
           this.updateCommentsEmitter.emit({ comment: data, state: true });
@@ -59,7 +60,7 @@ export class AllCommentsComponent implements OnInit {
   saveUpdate(comment: CommentShow, newContent: string): void {
     if (comment.content !== newContent.trim()) {
       comment.content = newContent.trim();
-      this.commentDataService.updateComment(this.postId, comment).subscribe({
+      this.commentDataService.updateComment(this.post.id, comment).subscribe({
         next: (data) => {
           console.log('COMMENT EDITED');
         },
@@ -73,7 +74,7 @@ export class AllCommentsComponent implements OnInit {
 
   likeComment(comment: CommentShow): void {
     this.commentDataService
-      .likeComment(this.postId, comment.id, !comment.isLiked)
+      .likeComment(this.post.id, comment.id, !comment.isLiked)
       .subscribe({
         next: (data) => {
           // comment = data;
@@ -87,7 +88,7 @@ export class AllCommentsComponent implements OnInit {
   }
 
   deleteComment(comment: CommentShow): void {
-    this.dialogService.deleteComment(this.postId, comment,
+    this.dialogService.deleteComment(this.post.id, comment,
       {
         next: data => {
           this.updateCommentsEmitter.emit({ comment: data, state: false });

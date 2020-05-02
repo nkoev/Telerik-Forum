@@ -17,11 +17,12 @@
                     <p [routerLink]="['/profile', post.user.id]">{{'@' + post.user.username}}</p>
                 </div>
                 <div class="header-icons">
-                    <div class="flag" *ngIf="!post.isAuthor" (click)="$event.stopPropagation(); flagPost(post)"
-                        [ngClass]="{'full': post.isFlagged}"></div>
-                    <div class="pencil" *ngIf="post.isAuthor" (click)="$event.stopPropagation(); updatePost(post)">
+                    <div class="flag" *ngIf="!post.isAuthor && !post.isLocked"
+                        (click)="$event.stopPropagation(); flagPost(post)" [ngClass]="{'full': post.isFlagged}"></div>
+                    <div class="pencil" *ngIf="post.isAuthor && !post.isLocked"
+                        (click)="$event.stopPropagation(); updatePost(post)">
                     </div>
-                    <div class="bin" *ngIf="post.isAuthor || post.isAdmin"
+                    <div class="bin" *ngIf="(post.isAuthor || post.isAdmin) && !post.isLocked"
                         (click)="$event.stopPropagation(); deletePost(post)"></div>
                     <div class="padlock" *ngIf="post.isAdmin" (click)="$event.stopPropagation(); lockPost(post)"
                         [ngClass]="{'full': post.isLocked}"></div>
@@ -37,10 +38,11 @@
                         <div class="value">{{post.createdOn | date}}</div>
                     </div>
                     <div class="likes">
-                        <div class="heart" *ngIf="!post.isAuthor" (click)="$event.stopPropagation(); likePost(post)"
-                            [ngClass]="{'full': post.isLiked}">
+                        <div class="heart" *ngIf="!post.isAuthor && !post.isLocked"
+                            (click)="$event.stopPropagation(); likePost(post)" [ngClass]="{'full': post.isLiked}">
                         </div>
-                        <div class="heart inactive" *ngIf="post.isAuthor" (click)="$event.stopPropagation();">
+                        <div class="heart inactive" *ngIf="post.isAuthor || post.isLocked"
+                            (click)="$event.stopPropagation();">
                         </div>
                         <div class="value" (click)="$event.stopPropagation(); showPostVotes(post)" title="Show likes">
                             {{post.votes.length}}</div>

@@ -5,14 +5,15 @@
     <div class="avatar" [routerLink]="['/profile', comment.user.id]"></div>
     <div class="username" [routerLink]="['/profile', comment.user.id]">@{{comment.user.username}}</div>
     <div class="icons">
-      <div class="pencil" *ngIf="comment.isAuthor" (click)="updateComment(comment)"></div>
-      <div class="bin" *ngIf="comment.isAuthor || comment.isAdmin" (click)="deleteComment(comment)"></div>
+      <div class="pencil" *ngIf="comment.isAuthor && !post.isLocked" (click)="updateComment(comment)"></div>
+      <div class="bin" *ngIf="(comment.isAuthor || comment.isAdmin) && !post.isLocked" (click)="deleteComment(comment)">
+      </div>
     </div>
 
     <div class="content" *ngIf="!comment.inEditMode">{{comment.content}}</div>
     <textarea class="content edit" type="text" *ngIf="comment.inEditMode" [(ngModel)]="newContent"></textarea>
     <div class="actions">
-      <button mat-raised-button class="undo" *ngIf="comment.inEditMode" (click)="undoUpdate(comment)">Undo</button>
+      <button mat-raised-button class="undo" *ngIf="comment.inEditMode" (click)="undoUpdate(comment)">Cancel</button>
       <button mat-raised-button color="accent" class="save" *ngIf="comment.inEditMode"
         (click)="saveUpdate(comment, newContent)">Save</button>
     </div>
@@ -23,10 +24,10 @@
         <div class="value">{{comment.createdOn | date}}</div>
       </div>
       <div class="likes">
-        <div class="heart" *ngIf="!comment.isAuthor" (click)="likeComment(comment)"
+        <div class="heart" *ngIf="!comment.isAuthor && !post.isLocked" (click)="likeComment(comment)"
           [ngClass]="{'full': comment.isLiked}">
         </div>
-        <div class="heart inactive" *ngIf="comment.isAuthor">
+        <div class="heart inactive" *ngIf="comment.isAuthor || post.isLocked">
         </div>
         <div class="value" (click)="showCommentVotes(comment)" title="Show likes">{{comment.votes.length}}</div>
       </div>
