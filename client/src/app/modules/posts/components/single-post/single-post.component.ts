@@ -1,4 +1,11 @@
-import { Component, OnInit, Renderer2, ElementRef, HostListener, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Renderer2,
+  ElementRef,
+  HostListener,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PostDataService } from '../../post-data.service';
 import { PostShow } from '../../models/post-show.model';
@@ -10,6 +17,7 @@ import { SafeUrl } from '@angular/platform-browser';
 import { UsersDataService } from 'src/app/modules/users/services/users-data.service';
 import { DialogService } from 'src/app/shared/services/dialog.service';
 import { MatDialog } from '@angular/material/dialog';
+import { AvatarService } from 'src/app/modules/core/services/avatar.service';
 
 @Component({
   selector: 'app-single-post',
@@ -17,7 +25,6 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrls: ['./single-post.component.css'],
 })
 export class SinglePostComponent implements OnInit {
-
   @ViewChild('create', { read: ElementRef }) myBtn: ElementRef;
   @HostListener('window:scroll', ['$event']) // for window scroll events
   onScroll(event) {
@@ -25,17 +32,9 @@ export class SinglePostComponent implements OnInit {
       return;
     }
     if (event.path[1].scrollY > 100) {
-      this.renderer.setStyle(
-        this.myBtn?.nativeElement,
-        'display',
-        'block'
-      );
+      this.renderer.setStyle(this.myBtn?.nativeElement, 'display', 'block');
     } else {
-      this.renderer.setStyle(
-        this.myBtn?.nativeElement,
-        'display',
-        'none'
-      );
+      this.renderer.setStyle(this.myBtn?.nativeElement, 'display', 'none');
     }
   }
 
@@ -48,7 +47,7 @@ export class SinglePostComponent implements OnInit {
   commentsOpened: boolean = false;
   errorMessage: string = '';
   loggedUser: UserDTO;
-  avatar: SafeUrl;
+  avatar: string | SafeUrl;
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -56,11 +55,11 @@ export class SinglePostComponent implements OnInit {
     private readonly postDataService: PostDataService,
     private readonly commentDataService: CommentDataService,
     private authService: AuthService,
-    private usersDataService: UsersDataService,
     public dialog: MatDialog,
     private dialogService: DialogService,
     private renderer: Renderer2,
-  ) { }
+    private avatarService: AvatarService
+  ) {}
 
   ngOnInit(): void {
     console.log('COMPONENT INIT!');
@@ -80,11 +79,6 @@ export class SinglePostComponent implements OnInit {
             (this.isAuthor =
               this.post.user.id === this.loggedUser.id ? true : false);
           this.isAdmin = this.loggedUser.roles.includes('Admin');
-          this.usersDataService
-            .getAvatar(this.post.user.id)
-            .subscribe((res) => {
-              this.avatar = res;
-            });
         },
         error: (err) => {
           console.log(err);
@@ -92,20 +86,27 @@ export class SinglePostComponent implements OnInit {
         },
       });
     });
+    this.avatarService.getAvatar(this.post.user.id).subscribe((res) => {
+      this.avatar = res;
+    });
   }
 
   ngAfterViewInit() {
     let commentId: number;
 
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       commentId = params['comment'];
       if (commentId) {
-        setTimeout(() => { this.loadComments(this.post?.id); }, 1000);
+        setTimeout(() => {
+          this.loadComments(this.post?.id);
+        }, 1000);
       }
     });
 
     if (commentId) {
-      setTimeout(() => { document.querySelector(`#c${commentId}`).scrollIntoView(); }, 2000);
+      setTimeout(() => {
+        document.querySelector(`#c${commentId}`).scrollIntoView();
+      }, 2000);
     }
   }
 
@@ -132,7 +133,6 @@ export class SinglePostComponent implements OnInit {
         },
         error: (err) => console.log(err),
       });
-
     } else {
       this.commentsOpened = !this.commentsOpened;
     }
@@ -163,20 +163,19 @@ export class SinglePostComponent implements OnInit {
   }
 
   updatePost(post: PostShow): void {
-    this.dialogService.updatePost(post,
-      {
-        next: (data) => {
-          this.post = {
-            ...this.post,
-            title: data.title,
-            content: data.content,
-          };
-          console.log('POST UPDATED');
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
+    this.dialogService.updatePost(post, {
+      next: (data) => {
+        this.post = {
+          ...this.post,
+          title: data.title,
+          content: data.content,
+        };
+        console.log('POST UPDATED');
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 
   likePost(post: PostShow): void {
@@ -197,43 +196,40 @@ export class SinglePostComponent implements OnInit {
   }
 
   flagPost(post: PostShow): void {
-    this.dialogService.flagPost(post,
-      {
-        next: (data) => {
-          this.post = { ...this.post, flags: data.flags };
-          this.postFlagged = !this.postFlagged;
-          console.log('POST WAS (UN)FLAGGED');
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
+    this.dialogService.flagPost(post, {
+      next: (data) => {
+        this.post = { ...this.post, flags: data.flags };
+        this.postFlagged = !this.postFlagged;
+        console.log('POST WAS (UN)FLAGGED');
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 
   lockPost(post: PostShow): void {
-    this.dialogService.lockPost(post,
-      {
-        next: (data) => {
-          this.post = { ...this.post, isLocked: data.isLocked };
-          console.log('POST WAS (UN)LOCKED');
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
+    this.dialogService.lockPost(post, {
+      next: (data) => {
+        this.post = { ...this.post, isLocked: data.isLocked };
+        console.log('POST WAS (UN)LOCKED');
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 
   deletePost(post: PostShow): void {
-    this.dialogService.deletePost(post,
-      {
-        next: (data) => {
-          console.log('POST WAS  DELETED');
-          this.router.navigate(['/', 'posts']);
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
+    this.dialogService.deletePost(post, {
+      next: (data) => {
+        console.log('POST WAS  DELETED');
+        this.router.navigate(['/', 'posts']);
+      },
+      error: (err) => {
+        console.log(err);
+      },
+    });
   }
 
   showPostVotes(post: PostShow): void {
@@ -242,5 +238,4 @@ export class SinglePostComponent implements OnInit {
     }
     this.dialogService.showVotes(post.votes);
   }
-
 }

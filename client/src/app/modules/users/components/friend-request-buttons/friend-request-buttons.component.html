@@ -10,11 +10,11 @@
   <br />
   <br />
   <button mat-raised-button (click)="rejectFriendRequest(profileOwnerId)">
-    reject friend request
+    decline friend request
   </button>
 </div>
 <div *ngIf="friendStatus?.requestSent">
-  Friend request sent
+  <h4 style="color: white;">Friend request sent, waiting for reply</h4>
 </div>
 <div
   *ngIf="

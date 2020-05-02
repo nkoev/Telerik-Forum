@@ -12,6 +12,7 @@ import {
   BanDialogComponent,
 } from '../ban-dialog/ban-dialog.component';
 import { BanStatusDTO } from 'src/app/models/ban-status.dto';
+import { NotificatorService } from 'src/app/modules/core/services/notificator.service';
 
 @Component({
   selector: 'app-admin-controls',
@@ -24,7 +25,8 @@ export class AdminControlsComponent implements OnInit {
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private usersDataService: UsersDataService,
-    private router: Router
+    private router: Router,
+    private notificator: NotificatorService
   ) {}
 
   ngOnInit(): void {
@@ -36,13 +38,11 @@ export class AdminControlsComponent implements OnInit {
       title: 'delete user',
       question: 'Are you sure you want to delete this user permanently?',
     };
-    this.openConfirmDialog(data).subscribe((res) => {
-      if (res) {
-        this.usersDataService.deleteUser(userId).subscribe(() => {
-          console.log('user deleted');
-          this.router.navigate(['posts/all']);
-        });
-      }
+    this.openConfirmDialog(data).subscribe(() => {
+      this.usersDataService.deleteUser(userId).subscribe(() => {
+        this.router.navigate(['posts/all']);
+        this.notificator.success('User deleted');
+      });
     });
   }
 
@@ -58,7 +58,7 @@ export class AdminControlsComponent implements OnInit {
         description: res.description,
       };
       this.usersDataService.banUser(userId, body).subscribe(() => {
-        console.log('user banned');
+        this.notificator.success('User banned');
       });
     });
   }

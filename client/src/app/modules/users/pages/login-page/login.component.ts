@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit {
       .login({ username: this.username.value, password: this.password.value })
       .subscribe(
         () => this.router.navigate(['posts']),
-        (err) => this.notificator.error(`Wrong username or password!`)
+        () => this.notificator.error(`Wrong username or password!`)
       );
   }
 }

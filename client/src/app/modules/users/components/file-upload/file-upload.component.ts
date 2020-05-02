@@ -1,7 +1,7 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
-import { UsersDataService } from '../../services/users-data.service';
-import { SafeUrl } from '@angular/platform-browser';
+import { Component, OnInit, Input } from '@angular/core';
 import { AvatarService } from '../../../core/services/avatar.service';
+import { SafeUrl } from '@angular/platform-browser';
+import { NotificatorService } from 'src/app/modules/core/services/notificator.service';
 
 @Component({
   selector: 'app-file-upload',
@@ -11,10 +11,11 @@ import { AvatarService } from '../../../core/services/avatar.service';
 export class FileUploadComponent implements OnInit {
   @Input()
   public profileOwnerId: string;
+  public avatar: string | SafeUrl;
 
   constructor(
-    private usersDataService: UsersDataService,
-    private avatarService: AvatarService
+    private avatarService: AvatarService,
+    private notificator: NotificatorService
   ) {}
 
   ngOnInit(): void {}
@@ -24,12 +25,8 @@ export class FileUploadComponent implements OnInit {
     const fd = new FormData();
     fd.append('file', file, file.name);
 
-    this.usersDataService.uploadAvatar(fd).subscribe(() => {
-      this.usersDataService
-        .getAvatar(this.profileOwnerId)
-        .subscribe((avatarUrl) => {
-          this.avatarService.emitData(avatarUrl);
-        });
-    });
+    this.avatarService
+      .uploadAvatar(fd)
+      .subscribe(() => this.notificator.success('Image uploaded'));
   }
 }

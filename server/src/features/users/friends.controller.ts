@@ -15,7 +15,6 @@ import { User } from '../../database/entities/user.entity';
 import { UserShowDTO } from '../../models/users/user-show.dto';
 import { AuthGuardWithBlacklisting } from '../../common/guards/auth-guard-with-blacklisting.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
-import { BanGuard } from '../../common/guards/ban.guard';
 import { LoggedUser } from '../../common/decorators/user.decorator';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { FriendStatusDTO } from '../../models/users/friend.status.dto';

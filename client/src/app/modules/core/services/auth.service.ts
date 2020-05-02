@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
-import * as moment from 'moment';
 import * as jwt_decode from 'jwt-decode';
 import { Router } from '@angular/router';
 import { UserLoginDTO } from 'src/app/models/user-login-dto';
@@ -44,11 +43,10 @@ export class AuthService {
           const payload: any = jwt_decode(res.token);
           this.isLoggedInSubject$.next(true);
           this.loggedUserSubject$.next(payload);
-          this.avatarService.emitData(res.avatar);
-          setTimeout(() => {
-            this.storage.delete('token');
-            this.router.navigate(['login']);
-          }, Date.now() - payload.exp);
+          // setTimeout(() => {
+          //   this.storage.delete('token');
+          //   this.router.navigate(['login']);
+          // }, payload.exp - Date.now());
         } catch (err) {
           console.log(err);
         }

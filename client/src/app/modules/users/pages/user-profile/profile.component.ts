@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, DoCheck } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UserDTO } from 'src/app/models/user.dto';
 import { AuthService } from 'src/app/modules/core/services/auth.service';
@@ -29,15 +29,12 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.profileOwnerId = this.route.snapshot.params.userId;
+    this.route.params.subscribe(
+      (params) => (this.profileOwnerId = params.userId)
+    );
     const sub1 = this.authService.loggedUser$.subscribe((res) => {
       this.loggedUser = res;
       this.isAdmin = res.roles.includes('Admin');
-    });
-    const sub2 = this.avatarService.avatarUpload$.subscribe((avatarUrl) => {
-      if (avatarUrl) {
-        this.avatar = avatarUrl;
-      }
     });
     this.usersDataService.getFriendStatus(this.profileOwnerId).subscribe(
       (res: FriendStatusDTO) => (this.friendStatus = res),
@@ -46,9 +43,11 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     this.route.data.subscribe((data) => {
       if (data.avatar) {
         this.avatar = data.avatar;
+      } else {
+        this.avatar = 'assets/posts/single-post-avatar.jpg';
       }
     });
-    this.subscriptions.push(sub1, sub2);
+    this.subscriptions.push(sub1);
   }
 
   ngOnDestroy() {

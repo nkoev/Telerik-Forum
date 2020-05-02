@@ -84,7 +84,7 @@ export class UsersController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
     @UploadedFile()
-    file,
+    file: { data: string },
     @LoggedUser()
     loggedUser: User,
   ): Promise<string> {
