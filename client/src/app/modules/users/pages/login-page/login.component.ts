@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/modules/core/services/auth.service';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NotificatorService } from 'src/app/modules/core/services/notificator.service';
 
 @Component({
   selector: 'app-login',
@@ -14,8 +15,9 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private notificator: NotificatorService
+  ) {}
 
   ngOnInit() {
     this.loginForm = this.fb.group({
@@ -36,7 +38,7 @@ export class LoginComponent implements OnInit {
       .login({ username: this.username.value, password: this.password.value })
       .subscribe(
         () => this.router.navigate(['posts']),
-        (err) => console.log(err)
+        (err) => this.notificator.error(`Wrong username or password!`)
       );
   }
 }

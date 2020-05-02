@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
-import { AuthGuard } from './modules/core/services/auth.guard';
+import { AuthGuard } from './modules/core/guards/auth.guard';
 import { LoginComponent } from './modules/users/pages/login-page/login.component';
 import { RegisterComponent } from './modules/users/pages/register/register.component';
 import { UserProfileComponent } from './modules/users/pages/user-profile/profile.component';
@@ -40,4 +40,4 @@ const appRoutes: Routes = [
   imports: [RouterModule.forRoot(appRoutes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

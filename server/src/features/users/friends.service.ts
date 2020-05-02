@@ -102,7 +102,6 @@ export class FriendsService {
       false,
       false,
     );
-    console.log(foundFriendRequest);
     this.validateFriendRequest(foundFriendRequest, true);
     await this.friendRequestsRepository.save({
       ...foundFriendRequest,

@@ -1,12 +1,13 @@
 import { NgModule, Optional, SkipSelf } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { AuthService } from './services/auth.service';
-import { AuthGuard } from './services/auth.guard';
+import { AuthGuard } from './guards/auth.guard';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { StorageService } from './services/storage.service';
-import { TokenInterceptorService } from './services/token-interceptor.service';
+import { TokenInterceptorService } from './interceptors/token-interceptor.service';
 import { AvatarService } from './services/avatar.service';
+import { NotificatorService } from './services/notificator.service';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [],
@@ -15,13 +16,23 @@ import { AvatarService } from './services/avatar.service';
     AuthGuard,
     AvatarService,
     StorageService,
+    NotificatorService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptorService,
       multi: true,
     },
   ],
-  imports: [BrowserAnimationsModule, HttpClientModule],
+  imports: [
+    BrowserAnimationsModule,
+    HttpClientModule,
+    ToastrModule.forRoot({
+      timeOut: 30000,
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+      countDuplicates: true,
+    }),
+  ],
   exports: [BrowserAnimationsModule, HttpClientModule],
 })
 export class CoreModule {
