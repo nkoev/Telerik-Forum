@@ -6,6 +6,8 @@ import { Subscription } from 'rxjs';
 import { SafeUrl } from '@angular/platform-browser';
 import { UsersDataService } from 'src/app/modules/users/services/users-data.service';
 import { AvatarService } from 'src/app/modules/core/services/avatar.service';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navigation',
@@ -17,13 +19,16 @@ export class NavigationComponent implements OnInit, OnDestroy {
   loggedUser: UserDTO;
   isAdmin: boolean;
   avatar: string | SafeUrl = 'assets/posts/single-post-avatar.jpg';
+  isLoggedIn: boolean;
 
   constructor(
     private authService: AuthService,
     private dialogService: DialogService,
     private fileUploadService: AvatarService,
-    private usersDataService: UsersDataService
-  ) {}
+    private usersDataService: UsersDataService,
+    public dialog: MatDialog,
+    private readonly router: Router,
+  ) { }
 
   ngOnInit(): void {
     const sub1 = this.authService.loggedUser$.subscribe((res) => {
@@ -60,4 +65,20 @@ export class NavigationComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
+
+  createPost() {
+    this.dialogService.createPost(
+      {
+        next: data => {
+          data = { ...data, isAuthor: true };
+          console.log('COMMENT ADDED');
+          this.router.navigate(['/', 'posts', data.id]);
+        },
+        error: err => {
+          console.log(err);
+        }
+      }
+    );
+  }
+
 }

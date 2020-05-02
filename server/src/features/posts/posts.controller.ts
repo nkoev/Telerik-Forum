@@ -22,9 +22,19 @@ export class PostsController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async getPosts(): Promise<PostShowDTO[]> {
+  async getPosts(
+    @Query('limit', ParseIntPipe) limit: number,
+    @Query('offset', ParseIntPipe) offset: number,
+  ): Promise<PostShowDTO[]> {
 
-    return await this.postsService.getPosts();
+    return await this.postsService.getPosts(limit, offset);
+  }
+
+  @Get('/count')
+  @HttpCode(HttpStatus.OK)
+  async getPostsCount(): Promise<number> {
+
+    return await this.postsService.getPostsCount();
   }
 
   @Get('/:postId')

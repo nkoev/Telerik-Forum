@@ -1,14 +1,20 @@
-<div *ngIf="userFriends?.length; else elseBlock">
+<div *ngIf="userFriends?.length; else elseBlock" class="container">
   <h2>Your friends list:</h2>
-  <mat-list *ngFor="let friend of userFriends">
-    <mat-list-item>
-      <a [routerLink]="['/profile/', friend.id]">{{ friend.username }}</a>
-      &nbsp; &nbsp;
-      <button mat-button (click)="removeFriend(friend.id)">
-        unfriend
-      </button>
+  <mat-list *ngFor="let friend of userFriends" class="list">
+    <mat-list-item class="item">
+      <div class="user">
+        <span [routerLink]="['/profile/', friend.id]">{{ friend.username }}</span>
+      </div>
+      <div class="remove">
+        <button mat-button (click)="removeFriend(friend.id)">
+          unfriend
+        </button>
+      </div>
     </mat-list-item>
   </mat-list>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">Close</button>
 </div>
 <ng-template #elseBlock>
   <h2>

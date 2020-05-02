@@ -18,14 +18,27 @@ export class PostsService {
     @InjectRepository(Post) private readonly postsRepo: Repository<Post>,
     private readonly notificationsService: NotificationsService,
     private readonly activityService: ActivityService,
-  ) {}
+  ) { }
 
-  public async getPosts(): Promise<PostShowDTO[]> {
+  public async getPosts(limit: number, offset: number): Promise<PostShowDTO[]> {
     const posts: Post[] = await this.postsRepo.find({
       where: { isDeleted: false },
+      order: { createdOn: "DESC" },
+      skip: offset,
+      take: limit,
     });
 
     return posts.map(this.toPostShowDTO);
+  }
+
+  public async getPostsCount(): Promise<number> {
+
+    const [posts, count] = await this.postsRepo.findAndCount({
+      select: ["id"],
+      where: { isDeleted: false },
+    });
+
+    return count;
   }
 
   public async getSinglePost(postId: number): Promise<PostShowDTO> {

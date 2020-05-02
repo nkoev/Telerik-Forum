@@ -1,9 +1,16 @@
 .navigation {
   color: white;
   display: flex;
-  justify-content: space-around;
-  background-color: #61892f;
+  justify-content: space-between;
+  background: rgb(97,137,47);
+  background: radial-gradient(circle, rgba(97,137,47,0.9251050762101716) 12%, rgba(0,0,0,1) 100%, rgba(0,0,0,1) 100%);
+  height: 10%;
   overflow: hidden;
+  box-shadow: 0 0 25px 0 black;
+}
+
+.navigation-logo {
+  margin-left: 10%;
 }
 
 #logo {
@@ -12,27 +19,52 @@
 }
 
 .avatar-image {
-  width: 4em;
-  height: 80%;
+  border-radius: 50%;
+  width: 2.7em;
+  height: 2.7em;
   border: 5px solid #86c232;
-}
-
-.toolbar-container {
-  height: 11%;
+  align-self: center;
 }
 
 .image-container {
+  border-radius: 50%;
   height: auto;
   cursor: pointer;
 }
 
 #username {
-  margin-left: 15%;
+  margin-left: 5%;
+  margin-right: 3%;
   font-style: italic;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.welcome {
+  line-height: 1;
+}
+.role {
+  line-height: 1;
+  font-size: 15px;
+  color: salmon;
 }
 
 #ban-alert {
   margin-top: 5%;
   color: red;
   position: fixed;
+}
+
+.navigation-actions {
+  margin-right: 3%;
+  display: flex;
+  align-items: center;
+}
+
+.navigation-actions .menu {
+  margin-right: 3px;
+  cursor: pointer;
+  transform: scale(1.4);
 }

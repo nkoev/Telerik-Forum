@@ -1,35 +1,41 @@
 .not-found-container {
     display: grid;
-    grid-template-columns: 1fr 35em 7em 2fr ;
-    grid-template-rows: 10em 5em 30em 1fr;
-    grid-template-areas: " . . . . " 
-                         ". image . text1" 
-                         ". image . text2" 
-                         " . . . . ";
+    grid-template-columns: repeat(auto-fit, minmax(20em, 1fr));
+    grid-template-rows: repeat(auto-fit, min-content); 
 
     height: 100vh;
     background-color: rgb(168,200,185);
 }
 
+.text {
+    /* grid-area: text; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 .not-found-text1 {
     grid-area: text1;
     font-family: roboto;
-    font-size: 2.5rem;
+    font-size: 2.5em;
     font-weight: 500;
+    line-height: 1.2;
 }
 
 .not-found-text2 {
     grid-area: text2;
     font-family: roboto;
-    font-size: 1.5rem;
+    font-size: 1.5em;
     font-weight: 400;
 }
 
 .not-found-image {
-    grid-area: image;
-    height: 25em;
+    /* grid-area: image; */
     background: url("../../../assets/posts/missing-the-mark.jpg");
-    background-size: cover;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100%; 
 }
 
 span {

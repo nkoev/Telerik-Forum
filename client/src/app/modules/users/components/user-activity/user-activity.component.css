@@ -1,0 +1,21 @@
+.activity-link {
+    margin: 0 4px 0 4px;
+    color: salmon;
+    cursor: pointer;
+}
+
+.container {
+    width: 30em;
+    min-height: 30vh;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.item {
+    background-color: whitesmoke;
+    border-radius: 8px;
+    outline:0;
+}
+.item:hover {
+    background-color: rgb(134, 194, 50, 0.3);
+}
