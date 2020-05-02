@@ -1,0 +1,37 @@
+.user{
+    margin: 0 4px 0 4px;
+    /* color: salmon; */
+}
+
+.container {
+    width: 25em;
+    min-height: 30vh;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.item {
+    background-color: whitesmoke;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+::ng-deep .mat-list-item-content {
+    width: 100%;
+    display: flex !important;
+    flex-direction: row;
+    justify-content: space-between !important;
+}
+
+.item:hover {
+    background-color: rgb(134, 194, 50, 0.3);
+}
+
+.user span {
+    outline: 0;
+}
+
+.remove {
+    justify-self: flex-end;
+    color: salmon;
+}

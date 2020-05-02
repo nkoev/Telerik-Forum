@@ -13,8 +13,9 @@
                 <div class="header-avatar" [routerLink]="['/profile', post.user.id]" (click)="$event.stopPropagation()">
                 </div>
                 <div class="header-title">{{post.title}}</div>
-                <div class="header-username" (click)="$event.stopPropagation()">
-                    <p [routerLink]="['/profile', post.user.id]">{{'@' + post.user.username}}</p>
+                <div class="header-username">
+                    <p (click)="$event.stopPropagation()" [routerLink]="['/profile', post.user.id]">
+                        {{'@' + post.user.username}}</p>
                 </div>
                 <div class="header-icons">
                     <div class="flag" *ngIf="!post.isAuthor && !post.isLocked"

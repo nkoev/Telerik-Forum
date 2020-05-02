@@ -53,6 +53,7 @@ const seedAdmin = async (connection: any) => {
   const username = 'admin';
   const password = 'Aaa123';
   const hashedPassword = await bcrypt.hash(password, 10);
+  const avatar = '';
   const banStatus =
     await banStatusRepo.save(
       banStatusRepo.create()
@@ -62,6 +63,7 @@ const seedAdmin = async (connection: any) => {
     username,
     password: hashedPassword,
     roles: allUserRoles,
+    avatar: avatar,
     banStatus
   });
 

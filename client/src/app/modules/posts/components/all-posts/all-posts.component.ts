@@ -134,7 +134,7 @@ export class AllPostsComponent implements OnInit {
   }
 
   flagPost(post: PostShow): void {
-    this.dialogService.updatePost(post,
+    this.dialogService.flagPost(post,
       {
         next: (data) => {
           this.posts[this.posts.indexOf(post)].flags = data.flags;

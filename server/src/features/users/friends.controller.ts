@@ -22,7 +22,7 @@ import { FriendStatusDTO } from '../../models/users/friend.status.dto';
 
 @Controller('users/friends')
 @ApiBearerAuth()
-@UseGuards(AuthGuardWithBlacklisting, RolesGuard, BanGuard)
+@UseGuards(AuthGuardWithBlacklisting, RolesGuard)
 export class FriendsController {
   constructor(private readonly friendsService: FriendsService) {}
 
