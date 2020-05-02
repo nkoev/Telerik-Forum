@@ -1,5 +1,4 @@
 <mat-toolbar class="navigation">
-
   <div class="navigation-logo">
     <a routerLink="/posts">
       <div id="logo">
@@ -7,21 +6,19 @@
       </div>
     </a>
   </div>
-
+  <div *ngIf="loggedUser.banStatus" id="ban-alert">BANNED</div>
   <div class="navigation-actions">
     <mat-icon class="menu" [matMenuTriggerFor]="postsMenu">menu</mat-icon>
-    <div id="username">
-      <div class="welcome">Hello, {{ loggedUser.username }}</div>
-      <div class="role" *ngIf="isAdmin"> Admin </div>
-    </div>
     <div class="image-container">
       <a [matMenuTriggerFor]="appMenu">
-        <div *ngIf="loggedUser.banStatus" id="ban-alert">BANNED</div>
         <img [src]="avatar" class="avatar-image" />
       </a>
     </div>
+    <div id="username">
+      <div class="welcome">Hello, {{ loggedUser.username }}</div>
+      <div class="role" *ngIf="isAdmin">Admin</div>
+    </div>
   </div>
-
 </mat-toolbar>
 
 <mat-menu #appMenu="matMenu">
