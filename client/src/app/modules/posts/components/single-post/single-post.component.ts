@@ -79,15 +79,15 @@ export class SinglePostComponent implements OnInit {
             (this.isAuthor =
               this.post.user.id === this.loggedUser.id ? true : false);
           this.isAdmin = this.loggedUser.roles.includes('Admin');
+          this.avatarService.getAvatar(this.post.user.id).subscribe((res) => {
+            this.avatar = res;
+          });
         },
         error: (err) => {
           console.log(err);
           this.router.navigate(['/', '404']);
         },
       });
-    });
-    this.avatarService.getAvatar(this.post.user.id).subscribe((res) => {
-      this.avatar = res;
     });
   }
 

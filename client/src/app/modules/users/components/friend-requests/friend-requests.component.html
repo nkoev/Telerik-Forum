@@ -1,10 +1,12 @@
 <mat-card>
+  <h2>Awaiting friend requests:</h2>
   <div *ngIf="requests?.length; else elseBlock" class="container">
-    <h2>Awaiting friend requests:</h2>
     <mat-list *ngFor="let request of requests" class="list">
       <mat-list-item class="item">
         <div class="user">
-          <a [routerLink]="['/profile/', request.id]">{{ request.username }}</a>
+          <span [routerLink]="['/profile/', request.id]"
+            ><b>{{ request.username }}</b></span
+          >
           wants to be your friend.
         </div>
         <div class="remove">
@@ -21,6 +23,6 @@
     </mat-list>
   </div>
   <ng-template #elseBlock>
-    <h4>No waiting friend requests</h4>
+    <h4>Nobody wants to be your friend</h4>
   </ng-template>
 </mat-card>

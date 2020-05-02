@@ -10,7 +10,9 @@
   >
   <div *ngIf="loggedUser.id === profileOwnerId">
     <app-file-upload [profileOwnerId]="profileOwnerId"></app-file-upload>
-    <app-friend-requests></app-friend-requests>
+    <br />
+    <br />
+    <app-friend-requests class="friend-requests"></app-friend-requests>
   </div>
   <br />
   <app-admin-controls
