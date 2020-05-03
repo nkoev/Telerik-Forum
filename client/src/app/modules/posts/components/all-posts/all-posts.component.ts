@@ -13,6 +13,16 @@ import { PostShow } from '../../models/post-show.model';
 })
 export class AllPostsComponent implements OnInit {
 
+  loggedUser: UserDTO;
+  posts: PostShow[];
+
+  length = 100;
+  pageSize = 5;
+  pageSizeOptions: number[] = [5, 10, 15];
+  pageIndex: number;
+  pageEvent: PageEvent;
+  offset = 0;
+
   @ViewChild('create', { read: ElementRef }) myBtn: ElementRef;
   @HostListener('window:scroll', ['$event']) // for window scroll events
   onScroll(event) {
@@ -34,16 +44,6 @@ export class AllPostsComponent implements OnInit {
     }
   }
 
-  loggedUser: UserDTO;
-  posts: PostShow[];
-
-  length: number = 100;
-  pageSize: number = 5;
-  pageSizeOptions: number[] = [5, 10, 15];
-  pageIndex: number;
-  pageEvent: PageEvent;
-  offset: number = 0;
-
   constructor(
     private readonly postDataService: PostDataService,
     private authService: AuthService,
@@ -58,7 +58,7 @@ export class AllPostsComponent implements OnInit {
     this.loadPosts(this.pageSize, this.offset);
   }
 
-  updatePostsCount(): void {
+  private updatePostsCount(): void {
     this.postDataService.getPostsCount().subscribe({
       next: (data) => {
         this.length = data;
@@ -67,7 +67,7 @@ export class AllPostsComponent implements OnInit {
     });
   }
 
-  loadPosts(pageSize: number, offset: number): void {
+  private loadPosts(pageSize: number, offset: number): void {
     this.postDataService.getAllPosts(pageSize, offset).subscribe({
       next: (data) => {
         this.posts = data.map((post) => ({

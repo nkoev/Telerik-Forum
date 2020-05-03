@@ -1,20 +1,12 @@
-import { Routes, Router } from "@angular/router";
 import { AllPostsComponent } from './components/all-posts/all-posts.component';
 import { TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
 import { PostDataService } from './post-data.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { SharedModule } from "../../shared/modules/shared.module";
+import { SharedModule } from '../../shared/modules/shared.module';
 import { of } from 'rxjs';
-import { CommentsModule } from "../comments/comments.module";
-import { PostShow } from "./models/post-show.model";
+import { PostShow } from './models/post-show.model';
 
 describe('PostDataService', () => {
-
-    // const routes: Routes = [
-    //     { path: '', redirectTo: 'posts', pathMatch: 'full' },
-    //     { path: 'posts', component: AllPostsComponent },
-    // ];
 
     const http = {
         get: jest.fn().mockReturnThis(),
@@ -34,10 +26,9 @@ describe('PostDataService', () => {
         createdOn: new Date(),
         isLocked: false,
     };
-    const postsURL: string = 'http://localhost:3000/posts';
+    const postsURL = 'http://localhost:3000/posts';
 
     let getService: () => PostDataService;
-    let router: Router;
 
     beforeEach(() => {
         // clear all spies and mocks
@@ -45,9 +36,7 @@ describe('PostDataService', () => {
 
         TestBed.configureTestingModule({
             imports: [
-                // RouterTestingModule.withRoutes(routes),
                 SharedModule,
-                // CommentsModule,
             ],
             declarations: [AllPostsComponent],
             providers: [
@@ -59,7 +48,6 @@ describe('PostDataService', () => {
             .compileComponents();
 
         getService = () => TestBed.get(PostDataService);
-        // router = TestBed.get(Router);
     });
 
 
@@ -77,7 +65,7 @@ describe('PostDataService', () => {
             service.getAllPosts(1, 0);
 
             expect(http.get).toHaveBeenCalledTimes(1);
-            expect(http.get).toHaveBeenCalledWith(`${postsURL}`, { params: params });
+            expect(http.get).toHaveBeenCalledWith(`${postsURL}`, { params });
         });
 
         it('return an array of posts on subscribe', () => {
@@ -91,8 +79,8 @@ describe('PostDataService', () => {
 
             let result: PostShow[];
             service.getAllPosts(1, 0).subscribe({
-                next: res => { result = res },
-                error: err => { return err }
+                next: res => { result = res; },
+                error: err => err
             });
 
             expect(result).toEqual(posts);
@@ -100,7 +88,7 @@ describe('PostDataService', () => {
             expect(result[0]).toBe(post);
         });
 
-    })
+    });
 
     describe('getSinglePost should', () => {
 
@@ -124,14 +112,14 @@ describe('PostDataService', () => {
 
             let result: PostShow;
             service.getSinglePost(1).subscribe({
-                next: res => { result = res },
-                error: err => { return err }
+                next: res => { result = res; },
+                error: err => err
             });
 
             expect(result).toEqual(post);
         });
 
-    })
+    });
 
     describe('getPostsCount should', () => {
 
@@ -155,14 +143,14 @@ describe('PostDataService', () => {
 
             let result: number;
             service.getPostsCount().subscribe({
-                next: res => { result = res },
-                error: err => { return err }
+                next: res => { result = res; },
+                error: err => err
             });
 
             expect(result).toEqual(5);
         });
 
-    })
+    });
 
     describe('createPost should', () => {
 
@@ -186,14 +174,14 @@ describe('PostDataService', () => {
 
             let result: PostShow;
             service.createPost({ title: 'a', content: 'b' }).subscribe({
-                next: res => { result = res },
-                error: err => { return err }
+                next: res => { result = res; },
+                error: err => err
             });
 
             expect(result).toEqual(post);
         });
 
-    })
+    });
 
     describe('updatePost should', () => {
 
@@ -217,14 +205,14 @@ describe('PostDataService', () => {
 
             let result: PostShow;
             service.updatePost(1, { title: 'a', content: 'b' }).subscribe({
-                next: res => { result = res },
-                error: err => { return err }
+                next: res => { result = res; },
+                error: err => err
             });
 
             expect(result).toEqual(post);
         });
 
-    })
+    });
 
     describe('likePost should', () => {
 
@@ -238,7 +226,7 @@ describe('PostDataService', () => {
             const params = new HttpParams().set('state', `false`);
 
             expect(http.put).toHaveBeenCalledTimes(1);
-            expect(http.put).toHaveBeenCalledWith(`${postsURL}/${1}/votes`, {}, { params: params });
+            expect(http.put).toHaveBeenCalledWith(`${postsURL}/${1}/votes`, {}, { params });
         });
 
         it('return a single post on subscribe', () => {
@@ -249,14 +237,14 @@ describe('PostDataService', () => {
 
             let result: PostShow;
             service.likePost(1, false).subscribe({
-                next: res => { result = res },
-                error: err => { return err }
+                next: res => { result = res; },
+                error: err => err
             });
 
             expect(result).toEqual(post);
         });
 
-    })
+    });
 
     describe('flagPost should', () => {
 
@@ -270,7 +258,7 @@ describe('PostDataService', () => {
             const params = new HttpParams().set('state', `false`);
 
             expect(http.put).toHaveBeenCalledTimes(1);
-            expect(http.put).toHaveBeenCalledWith(`${postsURL}/${1}/flag`, {}, { params: params });
+            expect(http.put).toHaveBeenCalledWith(`${postsURL}/${1}/flag`, {}, { params });
         });
 
         it('return a single post on subscribe', () => {
@@ -281,14 +269,14 @@ describe('PostDataService', () => {
 
             let result: PostShow;
             service.flagPost(1, false).subscribe({
-                next: res => { result = res },
-                error: err => { return err }
+                next: res => { result = res; },
+                error: err => err
             });
 
             expect(result).toEqual(post);
         });
 
-    })
+    });
 
     describe('lockPost should', () => {
 
@@ -302,7 +290,7 @@ describe('PostDataService', () => {
             const params = new HttpParams().set('state', `false`);
 
             expect(http.put).toHaveBeenCalledTimes(1);
-            expect(http.put).toHaveBeenCalledWith(`${postsURL}/${1}/lock`, {}, { params: params });
+            expect(http.put).toHaveBeenCalledWith(`${postsURL}/${1}/lock`, {}, { params });
         });
 
         it('return a single post on subscribe', () => {
@@ -313,14 +301,14 @@ describe('PostDataService', () => {
 
             let result: PostShow;
             service.lockPost(1, false).subscribe({
-                next: res => { result = res },
-                error: err => { return err }
+                next: res => { result = res; },
+                error: err => err
             });
 
             expect(result).toEqual(post);
         });
 
-    })
+    });
 
     describe('deletePost should', () => {
 
@@ -345,13 +333,13 @@ describe('PostDataService', () => {
 
             let result: PostShow;
             service.deletePost(1).subscribe({
-                next: res => { result = res },
-                error: err => { return err }
+                next: res => { result = res; },
+                error: err => err
             });
 
             expect(result).toEqual(post);
         });
 
-    })
+    });
 
 });
