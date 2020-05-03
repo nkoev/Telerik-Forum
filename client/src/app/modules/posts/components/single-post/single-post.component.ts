@@ -25,6 +25,18 @@ import { AvatarService } from 'src/app/modules/core/services/avatar.service';
   styleUrls: ['./single-post.component.css'],
 })
 export class SinglePostComponent implements OnInit {
+
+  post: PostShow;
+  postLiked: boolean;
+  postFlagged: boolean;
+  isAuthor: boolean;
+  isAdmin: boolean;
+
+  commentsOpened = false;
+  errorMessage = '';
+  loggedUser: UserDTO;
+  avatar: string | SafeUrl;
+
   @ViewChild('create', { read: ElementRef }) myBtn: ElementRef;
   @HostListener('window:scroll', ['$event']) // for window scroll events
   onScroll(event) {
@@ -38,17 +50,6 @@ export class SinglePostComponent implements OnInit {
     }
   }
 
-  post: PostShow;
-  postLiked: boolean;
-  postFlagged: boolean;
-  isAuthor: boolean;
-  isAdmin: boolean;
-
-  commentsOpened: boolean = false;
-  errorMessage: string = '';
-  loggedUser: UserDTO;
-  avatar: string | SafeUrl;
-
   constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
@@ -59,7 +60,7 @@ export class SinglePostComponent implements OnInit {
     private dialogService: DialogService,
     private renderer: Renderer2,
     private avatarService: AvatarService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     console.log('COMPONENT INIT!');

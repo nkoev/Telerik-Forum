@@ -16,6 +16,8 @@ export interface CommentDialogData {
 })
 export class CommentDialogComponent implements OnInit {
 
+  commentForm: FormGroup;
+
   static openCommentDialog(dialog: MatDialog, dialogData: CommentDialogData): Observable<any> {
     const dialogRef = dialog.open(CommentDialogComponent, {
       width: '60em',
@@ -30,8 +32,6 @@ export class CommentDialogComponent implements OnInit {
 
     return dialogRef.afterClosed();
   }
-
-  commentForm: FormGroup;
 
   constructor(
     public dialogRef: MatDialogRef<CommentDialogComponent>,

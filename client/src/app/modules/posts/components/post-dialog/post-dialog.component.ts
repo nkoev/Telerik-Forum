@@ -8,7 +8,7 @@ export interface PostDialogData {
   postTitleMessage: string;
   postTitle: string;
   postContentMessage: string;
-  postContent: string,
+  postContent: string;
 }
 
 @Component({
@@ -17,6 +17,8 @@ export interface PostDialogData {
   styleUrls: ['./post-dialog.component.css']
 })
 export class PostDialogComponent implements OnInit {
+
+  postForm: FormGroup;
 
   static openPostDialog(dialog: MatDialog, dialogData: PostDialogData): Observable<any> {
     const dialogRef = dialog.open(PostDialogComponent, {
@@ -34,8 +36,6 @@ export class PostDialogComponent implements OnInit {
 
     return dialogRef.afterClosed();
   }
-
-  postForm: FormGroup;
 
   constructor(
     public dialogRef: MatDialogRef<PostDialogComponent>,

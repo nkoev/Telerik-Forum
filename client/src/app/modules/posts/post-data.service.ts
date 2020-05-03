@@ -8,59 +8,51 @@ import { PostCreate } from './models/post-create.model';
   providedIn: 'root',
 })
 export class PostDataService {
-  private _postsURL: string = 'http://localhost:3000/posts';
+  private postsURL = 'http://localhost:3000/posts';
 
   constructor(private readonly http: HttpClient) { }
 
   public getSinglePost(postId: number): Observable<PostShow> {
-    return this.http.get<PostShow>(`${this._postsURL}/${postId}`);
+    return this.http.get<PostShow>(`${this.postsURL}/${postId}`);
   }
 
   public getAllPosts(limit: number, offset: number): Observable<PostShow[]> {
     const params = new HttpParams().set('limit', `${limit}`).set('offset', `${offset}`);
 
-    return this.http.get<PostShow[]>(`${this._postsURL}`, {
-      params: params,
-    });
+    return this.http.get<PostShow[]>(`${this.postsURL}`, { params });
   }
 
   public getPostsCount(): Observable<number> {
-    return this.http.get<number>(`${this._postsURL}/count`);
+    return this.http.get<number>(`${this.postsURL}/count`);
   }
 
   public createPost(post: PostCreate): Observable<PostShow> {
-    return this.http.post<PostShow>(`${this._postsURL}`, post);
+    return this.http.post<PostShow>(`${this.postsURL}`, post);
   }
 
   public updatePost(postId: number, post: PostCreate): Observable<PostShow> {
-    return this.http.put<PostShow>(`${this._postsURL}/${postId}`, post);
+    return this.http.put<PostShow>(`${this.postsURL}/${postId}`, post);
   }
 
   public likePost(postId: number, state: boolean): Observable<PostShow> {
     const params = new HttpParams().set('state', `${state}`);
 
-    return this.http.put<PostShow>(`${this._postsURL}/${postId}/votes`, {}, {
-      params: params,
-    });
+    return this.http.put<PostShow>(`${this.postsURL}/${postId}/votes`, {}, { params });
   }
 
   public flagPost(postId: number, state: boolean): Observable<PostShow> {
     const params = new HttpParams().set('state', `${state}`);
 
-    return this.http.put<PostShow>(`${this._postsURL}/${postId}/flag`, {}, {
-      params: params,
-    });
+    return this.http.put<PostShow>(`${this.postsURL}/${postId}/flag`, {}, { params });
   }
 
   public lockPost(postId: number, state: boolean): Observable<PostShow> {
     const params = new HttpParams().set('state', `${state}`);
 
-    return this.http.put<PostShow>(`${this._postsURL}/${postId}/lock`, {}, {
-      params: params,
-    });
+    return this.http.put<PostShow>(`${this.postsURL}/${postId}/lock`, {}, { params });
   }
 
   public deletePost(postId: number): Observable<PostShow> {
-    return this.http.delete<PostShow>(`${this._postsURL}/${postId}`);
+    return this.http.delete<PostShow>(`${this.postsURL}/${postId}`);
   }
 }
