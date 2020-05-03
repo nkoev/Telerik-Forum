@@ -8,10 +8,12 @@
     [profileOwnerId]="profileOwnerId"
     >{{ friendStatus }}</app-friend-request-buttons
   >
-  <app-file-upload
-    *ngIf="loggedUser.id === profileOwnerId"
-    [profileOwnerId]="profileOwnerId"
-  ></app-file-upload>
+  <div *ngIf="loggedUser.id === profileOwnerId">
+    <app-file-upload [profileOwnerId]="profileOwnerId"></app-file-upload>
+    <br />
+    <br />
+    <app-friend-requests class="friend-requests"></app-friend-requests>
+  </div>
   <br />
   <app-admin-controls
     class="admin-controls"

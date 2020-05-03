@@ -13,7 +13,9 @@ export class TokenInterceptorService implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler) {
     const token = this.storageService.read('token') || '';
     const updatedRequest = request.clone({
-      headers: request.headers.set('Authorization', `Bearer ${token}`),
+      setHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     return next.handle(updatedRequest);

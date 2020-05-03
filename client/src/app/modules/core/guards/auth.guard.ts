@@ -18,6 +18,7 @@ export class AuthGuard implements CanActivate {
       tap((loggedIn) => {
         if (!loggedIn) {
           this.router.navigate(['login']);
+          this.notificator.warn('Please login first');
         }
       })
     );

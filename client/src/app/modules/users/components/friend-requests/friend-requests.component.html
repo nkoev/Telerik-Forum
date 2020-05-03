@@ -1,0 +1,28 @@
+<mat-card>
+  <h2>Awaiting friend requests:</h2>
+  <div *ngIf="requests?.length; else elseBlock" class="container">
+    <mat-list *ngFor="let request of requests" class="list">
+      <mat-list-item class="item">
+        <div class="user">
+          <span [routerLink]="['/profile/', request.id]"
+            ><b>{{ request.username }}</b></span
+          >
+          wants to be your friend.
+        </div>
+        <div class="remove">
+          <button mat-button (click)="acceptRequest(request.id)">
+            accept
+          </button>
+        </div>
+        <div class="remove">
+          <button mat-button (click)="rejectRequest(request.id)">
+            decline
+          </button>
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </div>
+  <ng-template #elseBlock>
+    <h4>Nobody wants to be your friend</h4>
+  </ng-template>
+</mat-card>

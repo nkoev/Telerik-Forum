@@ -13,6 +13,7 @@ import { FriendRequestButtonsComponent } from './components/friend-request-butto
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { AdminControlsComponent } from './components/admin-controls/admin-controls.component';
 import { BanDialogComponent } from './components/ban-dialog/ban-dialog.component';
+import { FriendRequestsComponent } from './components/friend-requests/friend-requests.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { BanDialogComponent } from './components/ban-dialog/ban-dialog.component
     FileUploadComponent,
     AdminControlsComponent,
     BanDialogComponent,
+    FriendRequestsComponent,
   ],
   imports: [ReactiveFormsModule, SharedModule],
   exports: [AllUsersComponent],
