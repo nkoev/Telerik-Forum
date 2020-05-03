@@ -12,7 +12,7 @@ export class PostDataService {
 
   constructor(private readonly http: HttpClient) { }
 
-  public getSinglePost(postId: string): Observable<PostShow> {
+  public getSinglePost(postId: number): Observable<PostShow> {
     return this.http.get<PostShow>(`${this._postsURL}/${postId}`);
   }
 
