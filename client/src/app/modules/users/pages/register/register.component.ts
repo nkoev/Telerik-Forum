@@ -63,7 +63,6 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(form: FormGroup) {
-    console.log(form);
     const username = form.get('username').value;
     const password = form.get('password').value;
     this.successMessage = '';
@@ -73,11 +72,8 @@ export class RegisterComponent implements OnInit {
       ? (this.errorMessage = 'Please check if all the fields are correct')
       : this.registeredUsernames.includes(username)
       ? (this.errorMessage = 'Username already taken')
-      : (this.successMessage = 'You have registered Successfully');
-
-    if (this.successMessage) {
-      this.registerUser(username, password);
-    }
+      : ((this.successMessage = 'You have registered Successfully'),
+        this.registerUser(username, password));
   }
 
   private registerUser(username: string, password: string) {

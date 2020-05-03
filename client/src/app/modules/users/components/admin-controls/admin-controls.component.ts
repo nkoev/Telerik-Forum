@@ -38,11 +38,13 @@ export class AdminControlsComponent implements OnInit {
       title: 'delete user',
       question: 'Are you sure you want to delete this user permanently?',
     };
-    this.openConfirmDialog(data).subscribe(() => {
-      this.usersDataService.deleteUser(userId).subscribe(() => {
-        this.router.navigate(['posts/all']);
-        this.notificator.success('User deleted');
-      });
+    this.openConfirmDialog(data).subscribe((res) => {
+      if (res) {
+        this.usersDataService.deleteUser(userId).subscribe(() => {
+          this.router.navigate(['posts/all']);
+          this.notificator.success('User deleted');
+        });
+      }
     });
   }
 
@@ -52,14 +54,16 @@ export class AdminControlsComponent implements OnInit {
       description: 'Please provide your reasons',
     };
     this.openBanDialog(data).subscribe((res) => {
-      const body: BanStatusDTO = {
-        isBanned: true,
-        expires: res.expiryDate,
-        description: res.description,
-      };
-      this.usersDataService.banUser(userId, body).subscribe(() => {
-        this.notificator.success('User banned');
-      });
+      if (res) {
+        const body: BanStatusDTO = {
+          isBanned: true,
+          expires: res.expiryDate,
+          description: res.description,
+        };
+        this.usersDataService.banUser(userId, body).subscribe(() => {
+          this.notificator.success('User banned');
+        });
+      }
     });
   }
 

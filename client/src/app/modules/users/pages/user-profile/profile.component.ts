@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, DoCheck } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UserDTO } from 'src/app/models/user.dto';
 import { AuthService } from 'src/app/modules/core/services/auth.service';
@@ -6,7 +6,6 @@ import { UsersDataService } from '../../services/users-data.service';
 import { FriendStatusDTO } from 'src/app/models/friend-status.dto';
 import { Subscription } from 'rxjs';
 import { SafeUrl } from '@angular/platform-browser';
-import { AvatarService } from 'src/app/modules/core/services/avatar.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -24,8 +23,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private authService: AuthService,
-    private usersDataService: UsersDataService,
-    private avatarService: AvatarService
+    private usersDataService: UsersDataService
   ) {}
 
   ngOnInit(): void {

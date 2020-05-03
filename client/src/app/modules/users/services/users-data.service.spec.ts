@@ -4,18 +4,20 @@ import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs';
 
 describe('UsersDataService', () => {
-  const usersUrl = 'http://localhost:3000/users';
-  const httpMock = {
-    get: jest.fn(),
-    put: jest.fn(),
-    post: jest.fn(),
-    delete: jest.fn(),
-  };
-
+  let usersUrl: string;
+  let httpMock: Partial<HttpClient>;
   let service: UsersDataService;
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    usersUrl = 'http://localhost:3000/users';
+    httpMock = {
+      get: jest.fn(),
+      put: jest.fn(),
+      post: jest.fn(),
+      delete: jest.fn(),
+    };
 
     TestBed.configureTestingModule({
       providers: [
