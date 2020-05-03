@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UsersDataService } from '../../services/users-data.service';
 import { UserDTO } from 'src/app/models/user.dto';
 
@@ -7,20 +7,14 @@ import { UserDTO } from 'src/app/models/user.dto';
   templateUrl: './friend-requests.component.html',
   styleUrls: ['./friend-requests.component.css'],
 })
-export class FriendRequestsComponent implements OnInit, OnChanges {
+export class FriendRequestsComponent implements OnInit {
   public requests: UserDTO[];
 
   constructor(private usersDataService: UsersDataService) {}
 
   ngOnInit(): void {
     this.usersDataService
-      .getReceivedFriendRequests()
-      .subscribe((requests) => (this.requests = requests));
-  }
-
-  ngOnChanges(): void {
-    this.usersDataService
-      .getReceivedFriendRequests()
+      .getFriendRequests()
       .subscribe((requests) => (this.requests = requests));
   }
 
@@ -29,7 +23,7 @@ export class FriendRequestsComponent implements OnInit, OnChanges {
       .rejectFriendRequest(userId)
       .subscribe(() =>
         this.usersDataService
-          .getReceivedFriendRequests()
+          .getFriendRequests()
           .subscribe((requests) => (this.requests = requests))
       );
   }
@@ -39,7 +33,7 @@ export class FriendRequestsComponent implements OnInit, OnChanges {
       .acceptFriendRequest(userId)
       .subscribe(() =>
         this.usersDataService
-          .getReceivedFriendRequests()
+          .getFriendRequests()
           .subscribe((requests) => (this.requests = requests))
       );
   }

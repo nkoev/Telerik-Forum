@@ -6,6 +6,4 @@ export class UserDTO {
   public roles: string[];
 
   public banStatus: boolean;
-
-  public avatar;
 }

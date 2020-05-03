@@ -74,7 +74,7 @@ export class UsersController {
       }),
     )
     user: UserRegisterDTO,
-  ) {
+  ): Promise<UserShowDTO> {
     return await this.usersService.registerUser(user);
   }
 
