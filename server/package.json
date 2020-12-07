@@ -38,7 +38,7 @@
     "@types/moment": "^2.13.0",
     "@types/passport": "^1.0.3",
     "bcrypt": "^4.0.1",
-    "class-transformer": "^0.2.3",
+    "class-transformer": "^0.3.1",
     "class-validator": "^0.12.0-rc.0",
     "helmet": "^3.22.0",
     "majestic": "^1.6.2",
